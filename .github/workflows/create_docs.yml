@@ -7,7 +7,6 @@ on:
     paths:
       - "src/**"
       - "docs/**"
-      - "scripts/generate_dataclass_docs.py"
       - "pyproject.toml"
       - ".github/workflows/docs.yml"
 
@@ -17,7 +16,6 @@ on:
     paths:
       - "src/**"
       - "docs/**"
-      - "scripts/generate_dataclass_docs.py"
       - "pyproject.toml"
       - ".github/workflows/docs.yml"
 
@@ -45,7 +43,7 @@ jobs:
 
       - name: Generate dataclass API docs
         run: |
-          python scripts/generate_dataclass_docs.py
+          python docs/scripts/generate_dataclass_docs.py
 
       - name: Build Sphinx docs
         run: |

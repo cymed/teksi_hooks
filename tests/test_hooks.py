@@ -2,7 +2,7 @@ import logging
 
 import pytest
 
-from teksi_hooks.hooks import (
+from teksi_hooks.hook import (
     HookBase,
     HookContext,
     HookHandler,
