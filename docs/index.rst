@@ -11,3 +11,4 @@ Contents
 
    architecture
    usage
+   api/index
