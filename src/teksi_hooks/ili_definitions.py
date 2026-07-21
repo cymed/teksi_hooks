@@ -2,7 +2,7 @@ import re
 
 from dataclasses import dataclass
 
-from ..utils.hooks.exceptions import TeksiHookError
+from .exceptions import TeksiHookError
 
 
 _STANDARDOID_PATTERN = re.compile(r"^\w{16}$")
