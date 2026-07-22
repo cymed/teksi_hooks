@@ -51,8 +51,6 @@ Capabilities provide services to hooks. The framework itself does not know or en
 Design Principles
 -----------------
 
-* Explicit over implicit
-* No global state
 * Service-oriented design
 * Framework does not know domain concepts
 * Applications define capabilities
