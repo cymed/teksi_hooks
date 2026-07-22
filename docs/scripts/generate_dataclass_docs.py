@@ -281,7 +281,6 @@ def render_module_page(
         "=" * len(title),
         "",
         f".. automodule:: {module_name}",
-        "   :members:",
         "",
     ]
 
