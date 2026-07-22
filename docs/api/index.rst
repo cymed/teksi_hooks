@@ -4,6 +4,6 @@ API Reference
 .. toctree::
    :maxdepth: 2
 
-   hooks
-   sql
-   identifiers
+   generated/hooks
+   generated/sql
+   generated/identifiers

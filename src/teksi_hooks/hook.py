@@ -10,6 +10,7 @@ import time
 import uuid
 from pathlib import Path
 from typing import Any, TypeVar
+from types import ModuleType
 
 from .exceptions import TeksiHookError
 
@@ -158,7 +159,7 @@ class HookHandler:
         Parameters
         ----------
         file:
-            Hook file path. Rel*tive paths are resolved against ``base_path``.
+            Hook file path. Relative paths are resolved against ``base_path``.
         base_path:
             Optional base directory used to resolve and constrain relative hook
             paths.
@@ -170,7 +171,7 @@ class HookHandler:
         if not self.file.is_absolute():
             if base_path is None:
                 raise ValueError(
-                    "Base path*must be provided for relative hook*paths."
+                    "Base path must be provided for relative hook paths."
                 )
 
             self.file = (
@@ -180,76 +181,77 @@ class HookHandler:
 
         self._module: ModuleType | None = None
         self._module_name: str | None = None
-        self._hook_c*ass: type[HookBase] | None = None
+        self._hook_class: type[HookBase] | None = None
         self._hook_instance: HookBase | None = None
-        self._sys_*ath_additions: list[str] = []
+        self._sys_path_additions: list[str] = []
 
     @property
     def hook(
         self,
     ) -> HookBase:
         """
-*       Return the loaded hook inst*nce.
+        Return the loaded hook instance.
 
         Raises
-        -----*
+        ------
         TeksiHookError
-          * If the hook has not been loaded.
-*       """
+          If the hook has not been loaded.
+       """
 
-        if self._hook_*nstance is None:
-            raise*TeksiHookError(
-                "H*ok has not been loaded."
-         *  )
-
-        return self._hook_ins*ance
-
-    def validate(
-        se*f,
-    ) -> None:
-        """
-    *   Load and validate the hook with*ut executing it.
-        """
-
-    *   try:
-            self._load()
- *      finally:
-            self._u*load()
-
-    def run(
-        self,*        context: HookContext,
-    * -> None:
-        """
-        Load* validate and execute the hook.
-  *     """
-
-        try:
-           *self._load()
-
-            self._va*idate_context(
-                con*ext,
+        if self._hook_instance is None:
+            raise TeksiHookError(
+                "Hook has not been loaded."
             )
 
-            st*rted = time.monotonic()
+        return self._hook_instance
 
-         *  try:
-                logger.info*
-                    "Executing ho*k '%s'.",
-                    self*hook.metadata.name,
-              * )
+    def validate(
+        self,
+    ) -> None:
+        """
+        Load and validate the hook with*ut executing it.
+        """
+
+        try:
+            self._load()
+        finally:
+            self._unload()
+
+    def run(
+        self,
+        context: HookContext,
+     ) -> None:
+        """
+        Load, validate and execute the hook.
+        """
+
+        try:
+            self._load()
+
+            self._validate_context(
+                context,
+            )
+
+            started = time.monotonic()
+
+            try:
+                logger.info(
+                    "Executing hook '%s'.",
+                    self.hook.metadata.name,
+                )
 
                 try:
-         *          self.hook.run_hook(
-    *                   context,
-      *             )
-                exc*pt Exception as exc:
-             *      raise TeksiHookError(
-      *                 f"Execution of ho*k '{self.file}' failed."
-         *          ) from exc
+                    self.hook.run_hook(
+                        context,
+                    )
+                except Exception as exc:
+                    raise TeksiHookError(
+                        f"Execution of hook '{self.file}' failed."
+                    ) from exc
 
-            *inally:
-                duration =*(
-                    time.monoton*c()
+            finally:
+                duration = (
+                    time.monotonic()
                     - started
                 )
 
