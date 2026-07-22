@@ -8,7 +8,7 @@ on:
       - "src/**"
       - "docs/**"
       - "pyproject.toml"
-      - ".github/workflows/docs.yml"
+      - ".github/workflows/create_docs.yml"
 
   pull_request:
     branches:
@@ -17,7 +17,7 @@ on:
       - "src/**"
       - "docs/**"
       - "pyproject.toml"
-      - ".github/workflows/docs.yml"
+      - ".github/workflows/create_docs.yml"
 
 permissions:
   contents: read
@@ -42,8 +42,9 @@ jobs:
           python -m pip install -e ".[docs]"
 
       - name: Generate dataclass API docs
+        working-directory: docs/scripts
         run: |
-          python docs/scripts/generate_dataclass_docs.py
+          python generate_dataclass_docs.py
 
       - name: Build Sphinx docs
         run: |
