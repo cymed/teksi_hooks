@@ -13,7 +13,10 @@ from ..models.conditions import (
     LocalCondition,
     RemoteCondition,
 )
-from ..models.privilege import Privilege
+from ..models.privilege import (
+    PrivilegeId,
+    PrivilegeMetadata,
+)
 from ..models.rights import (
     AttributeDefinition,
     ClassDefinition,
@@ -74,6 +77,7 @@ class RightsParser:
         self,
         data: dict[str, Any],
     ) -> RightsDefinition:
+
         settings = data.get(
             "settings",
             {},
@@ -97,6 +101,12 @@ class RightsParser:
 
         return RightsDefinition(
             defaults=defaults,
+            privileges=self._parse_privileges(
+                data.get(
+                    "privileges",
+                    {},
+                )
+        ),
             classes={
                 class_definition.id: class_definition
                 for class_definition in class_definitions
@@ -276,7 +286,7 @@ class RightsParser:
         raw: dict[str, Any],
     ) -> AttributeDefinition:
         return AttributeDefinition(
-            update_privileges=self._parse_privileges(
+            update_privileges=self._parse_privilege_ids(
                 raw.get(
                     "update",
                     [],
@@ -356,7 +366,7 @@ class RightsParser:
     ) -> Rule:
         if "privileges" in raw:
             return PrivilegeRule(
-                privileges=self._parse_privileges(
+                privileges=self._parse_privilege_ids(
                     raw["privileges"],
                 ),
                 when=self._parse_condition(
@@ -382,16 +392,40 @@ class RightsParser:
             f"Unknown rule definition: {raw!r}"
         )
 
-    def _parse_privileges(
+    def _parse_privilege_ids(
         self,
         raw: list[str],
     ) -> frozenset:
-        return frozenset(
-            Privilege(
-                value,
+        return frozenset(raw)
+
+    def _parse_privileges(
+        self,
+        raw_privileges: list[dict[str, Any]],
+    ) -> dict[
+        PrivilegeId,
+        PrivilegeMetadata,
+    ]:
+        privileges: dict[
+            PrivilegeId,
+            PrivilegeMetadata,
+        ] = {}
+
+        for raw in raw_privileges:
+            privilege = PrivilegeMetadata(
+                id=raw["id"],
+                labels=raw.get(
+                    "labels",
+                    {},
+                ),
+                descriptions=raw.get(
+                    "descriptions",
+                    {},
+                ),
             )
-            for value in raw
-        )
+
+            privileges[privilege.id] = privilege
+
+        return privileges
 
     def _parse_condition(
         self,
@@ -506,7 +540,7 @@ class RightsParser:
 
         ruleset = frozenset(
             StateTransitionRule(
-                privileges=self._parse_privileges(
+                privileges=self._parse_privilege_ids(
                     raw["privileges"],
                 ),
                 from_value=raw.get(
@@ -675,7 +709,7 @@ class WildcardRightsParser:
 
         return AttributeDefaultDefinition(
             pattern=pattern,
-            update_privileges=self._parse_privileges(
+            update_privileges=self._parse_privilege_ids(
                 raw.get(
                     "update",
                     [],
@@ -694,11 +728,8 @@ class WildcardRightsParser:
             for raw in raw_classes
         ]
 
-    def _parse_privileges(
+    def _parse_privilege_ids(
         self,
         raw: list[str],
-    ) -> frozenset[Privilege]:
-        return frozenset(
-            Privilege(value)
-            for value in raw
-        )
+    ) -> frozenset[PrivilegeId]:
+        return frozenset(raw)

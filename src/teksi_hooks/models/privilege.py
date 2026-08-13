@@ -19,9 +19,6 @@ class PrivilegeMetadata:
             "fr": "Gestionnaire cadastral",
         }
     """
-
-    id: PrivilegeId
-
     labels: Mapping[
         LanguageCode,
         str,

@@ -8,7 +8,6 @@ import yaml
 
 from ..models.oid import Oid
 
-from ..models.privilege import Privilege
 from ..models.provider import (
     Provider,
     ProviderPermission,
@@ -106,7 +105,4 @@ class ProviderRightsParser:
         self,
         raw: list[str],
     ) -> frozenset:
-        return frozenset(
-            Privilege(value)
-            for value in raw
-        )
+        return frozenset(raw)

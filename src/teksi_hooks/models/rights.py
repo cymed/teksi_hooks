@@ -4,7 +4,7 @@ from dataclasses import dataclass, field
 from collections.abc import Mapping
 from typing import Any
 
-from .privilege import PrivilegeId
+from .privilege import PrivilegeId,PrivilegeMetadata
 from .validation import AttributeValidation, TransitionValidation
 from .rulesets import CrudRules, ResolvedCrudRules, StateTransitionRule
 from .canonical_object import CanonicalObjectIdentity
@@ -230,6 +230,21 @@ class RightsDefinition:
 
     Runtime validation should use resolved class definitions instead.
     """
+
+    privileges: Mapping[
+        PrivilegeId,
+        PrivilegeMetadata,
+    ] = field(
+        default_factory=dict,
+        metadata={
+            "doc": (
+                "Privilege definitions keyed by privilege identifier. "
+                "These definitions provide metadata such as localized "
+                "labels and descriptions for privilege references used "
+                "throughout the rights configuration."
+            )
+        },
+    )
 
     defaults: DefaultDefinitions = field(
         default_factory=lambda: DefaultDefinitions(
