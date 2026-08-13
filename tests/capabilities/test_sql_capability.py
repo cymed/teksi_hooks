@@ -1,4 +1,4 @@
-from teksi_hooks.capabilities import SqlCapability
+from teksi_hooks.sql import SqlCapability
 
 
 class FakeCursor:
