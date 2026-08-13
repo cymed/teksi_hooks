@@ -116,6 +116,7 @@ def test_validation_evaluator_accepts_bilateral_transition(
 
     assert findings == ()
 
+
 def test_validation_evaluator_accepts_transitive_transition(
     resolved_rights, registry
 ) -> None:

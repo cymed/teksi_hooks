@@ -1,5 +1,6 @@
 import pytest
-from typing import ClassVar, Pattern
+from typing import ClassVar
+from re import Pattern
 import re
 
 from teksi_hooks.exceptions import TeksiHookError

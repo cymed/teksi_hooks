@@ -2,6 +2,7 @@ from teksi_hooks.models.oid import Standardoid
 
 from teksi_hooks.capabilities.privilege import ResolvedProviderCapability
 
+
 def test_provider_capability_returns_privileges(
     resolved_providers,
 ) -> None:
