@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from collections.abc import Mapping
 from typing import Any
 
-from teksi_hooks.ili_definitions import Standardoid
+from teksi_hooks.models.oid import Standardoid
 
 from ..capabilities.conditions import (
     ConditionsCapability,

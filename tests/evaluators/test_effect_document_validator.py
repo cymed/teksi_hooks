@@ -1,10 +1,10 @@
-from tww_hooks.evaluators.effects import (
+from teksi_hooks.evaluators.effects import (
     EffectDocumentValidator,
 )
-from tww_hooks.models.canonical_object import (
+from teksi_hooks.models.canonical_object import (
     CanonicalObjectIdentity,
 )
-from tww_hooks.models.effects import (
+from teksi_hooks.models.effects import (
     EffectDocument,
     EffectSource,
     UpdateAttributeEffect,

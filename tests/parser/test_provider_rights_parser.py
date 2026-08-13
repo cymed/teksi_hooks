@@ -1,10 +1,10 @@
 from pathlib import Path
 import pytest
 
-from teksi_hooks.ili_definitions import Standardoid
-from tww_hooks.models.provider import ResolvedProvider
-from tww_hooks.models.privilege import Privilege
-from tww_hooks.capabilities.privilege import ResolvedProviderCapability
+from teksi_hooks.models.oid import Standardoid
+from teksi_hooks.models.provider import ResolvedProvider
+from teksi_hooks.models.privilege import Privilege
+from teksi_hooks.capabilities.privilege import ResolvedProviderCapability
 
 
 def test_provider_rights_parser_imports_all_providers(providers) -> None:

@@ -1,10 +1,10 @@
 import pytest
-from tww_hooks.capabilities.rights import (
+from teksi_hooks.capabilities.rights import (
     RightsCapability,
     DerivedRightsCapability,
 )
-from tww_hooks.models.privilege import Privilege
-from tww_hooks.resolver.rights_resolver import RightsResolver
+from teksi_hooks.models.privilege import Privilege
+from teksi_hooks.resolver.rights_resolver import RightsResolver
 
 
 def test_rights_capability_returns_class_definition(

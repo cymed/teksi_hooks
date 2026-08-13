@@ -1,8 +1,8 @@
-from tww_hooks.capabilities.conditions import (
+from teksi_hooks.capabilities.conditions import (
     ConditionEvaluationContext,
     ConditionsCapability,
 )
-from tww_hooks.models.conditions import (
+from teksi_hooks.models.conditions import (
     AllOfCondition,
     AnyOfCondition,
     LocalCondition,

@@ -2,15 +2,15 @@ from pathlib import Path
 import pytest
 
 
-from tww_hooks.models.privilege import Privilege
-from tww_hooks.models.rulesets import (
+from teksi_hooks.models.privilege import Privilege
+from teksi_hooks.models.rulesets import (
     InheritRule,
     OwnershipRule,
     PrivilegeRule,
 )
-from tww_hooks.models.conditions import LocalCondition
-from tww_hooks.parser.rights_parser import RightsParser
-from tww_hooks.exceptions import Severity
+from teksi_hooks.models.conditions import LocalCondition
+from teksi_hooks.parser.rights_parser import RightsParser
+from teksi_hooks.exceptions import Severity
 
 
 def test_rights_parser_imports_minimal_yaml(rights_definition) -> None:

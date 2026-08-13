@@ -1,14 +1,14 @@
 from datetime import datetime
 
-from tww_hooks.models.canonical_object import (
+from teksi_hooks.models.canonical_object import (
     CanonicalObjectIdentity,
 )
-from tww_hooks.models.effects import (
+from teksi_hooks.models.effects import (
     EffectDocument,
     EffectSource,
     UpdateAttributeEffect,
 )
-from tww_hooks.services.diff_snapshot_builder import (
+from teksi_hooks.services.diff_snapshot_builder import (
     DiffSnapshotBuilder,
 )
 

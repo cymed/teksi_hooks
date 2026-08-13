@@ -11,7 +11,7 @@ from ..models.validation import (
     Change,
     ChangeOperation
 )
-from tww_hooks.exceptions import Severity
+from ..exceptions import Severity
 
 
 @dataclass(slots=True)

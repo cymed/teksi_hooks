@@ -4,32 +4,32 @@ import pytest
 
 
 
-from teksi_hooks.ili_definitions import Standardoid
-from tww_hooks.models.rights import (
+from teksi_hooks.models.oid import Standardoid
+from teksi_hooks.models.rights import (
     AttributeDefinition,
     ClassDefinition,
     RightsDefinition,
     ResolvedClassDefinition,
 )
-from tww_hooks.parser.provider_rights_parser import ProviderRightsParser
-from tww_hooks.parser.rights_parser import RightsParser, WildcardRightsParser
-from tww_hooks.parser.model_mapping_parser import ModelMappingParser
+from teksi_hooks.parser.provider_rights_parser import ProviderRightsParser
+from teksi_hooks.parser.rights_parser import RightsParser, WildcardRightsParser
+from teksi_hooks.parser.model_mapping_parser import ModelMappingParser
 
-from tww_hooks.models.provider import Provider, ResolvedProvider
-from tww_hooks.models.mapping import ModelMapping
+from teksi_hooks.models.provider import Provider, ResolvedProvider
+from teksi_hooks.models.mapping import ModelMapping
 
-from tww_hooks.capabilities.conditions import ConditionsCapability
-from tww_hooks.capabilities.rights import RightsCapability, DerivedRightsCapability, SubclassRightsCapability
-from tww_hooks.capabilities.privilege import ResolvedProviderCapability
-from tww_hooks.capabilities.validation import (
+from teksi_hooks.capabilities.conditions import ConditionsCapability
+from teksi_hooks.capabilities.rights import RightsCapability, DerivedRightsCapability, SubclassRightsCapability
+from teksi_hooks.capabilities.privilege import ResolvedProviderCapability
+from teksi_hooks.capabilities.validation import (
     ValidationRegistry,
 )
 
-from tww_hooks.resolver.rights_resolver import RightsResolver
-from tww_hooks.resolver.provider_resolver import ProviderResolver
+from teksi_hooks.resolver.rights_resolver import RightsResolver
+from teksi_hooks.resolver.provider_resolver import ProviderResolver
 
 
-from tww_hooks.evaluators.rights import RightsEvaluator
+from teksi_hooks.evaluators.rights import RightsEvaluator
 
 DATA_DIR = Path(__file__).parent / "parser/data"
 

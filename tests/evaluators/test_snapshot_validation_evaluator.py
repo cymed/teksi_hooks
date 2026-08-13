@@ -1,16 +1,16 @@
 from datetime import datetime, UTC
 
-from tww_hooks.capabilities.relation_lookup import (
+from teksi_hooks.capabilities.relation_lookup import (
     InMemoryRelationLookupCapability,
 )
-from tww_hooks.evaluators.snapshot import (
+from teksi_hooks.evaluators.snapshot import (
     SnapshotValidationEvaluator,
 )
-from tww_hooks.models.canonical_object import (
+from teksi_hooks.models.canonical_object import (
     CanonicalObject,
     CanonicalObjectIdentity,
 )
-from tww_hooks.models.diff_snapshot import (
+from teksi_hooks.models.diff_snapshot import (
     DiffSnapshot,
     SnapshotMetadata,
     SnapshotObject,

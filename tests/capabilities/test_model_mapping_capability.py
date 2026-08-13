@@ -1,4 +1,4 @@
-from tww_hooks.capabilities.mapping import ModelMappingCapability
+from teksi_hooks.capabilities.mapping import ModelMappingCapability
 
 
 def test_model_mapping_capability_returns_function_backed_class(

@@ -2,13 +2,13 @@
 from unittest.mock import Mock
 import pytest
 
-from tww_hooks.capabilities.rights import RightsCapability
-from tww_hooks.evaluators.validation import (
+from teksi_hooks.capabilities.rights import RightsCapability
+from teksi_hooks.evaluators.validation import (
     ValidationEvaluator,
     
 )
-from tww_hooks.resolver.rights_resolver import RightsResolver
-from tww_hooks.models.validation import (
+from teksi_hooks.resolver.rights_resolver import RightsResolver
+from teksi_hooks.models.validation import (
     AttributeValidation,
     Change,
     ChangeOperation,
@@ -16,21 +16,21 @@ from tww_hooks.models.validation import (
     ValidationFinding,
 )
 
-from tww_hooks.capabilities.validation import (
+from teksi_hooks.capabilities.validation import (
     ValidationRegistry,
 )
-from tww_hooks.models.canonical_object import (
+from teksi_hooks.models.canonical_object import (
     CanonicalObject,
     CanonicalObjectIdentity,
 )
-from tww_hooks.models.effects import (
+from teksi_hooks.models.effects import (
     UpdateAttributeEffect,
 )
-from tww_hooks.services.change_builder import (
+from teksi_hooks.services.change_builder import (
     ChangeBuilder,
 )
 
-from tww_hooks.exceptions import Severity
+from teksi_hooks.exceptions import Severity
 
 def test_validation_evaluator_uses_registry(
     resolved_rights,

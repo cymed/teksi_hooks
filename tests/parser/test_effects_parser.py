@@ -1,13 +1,13 @@
 import pytest
-from tww_hooks.models.effects import (
+from teksi_hooks.models.effects import (
     UpdateAttributeEffect,
     EnforceExistsEffect,
     EnforceNotExistsEffect,
 )
-from tww_hooks.models.canonical_object import CanonicalObjectIdentity
-from tww_hooks.parser.effects_parser import EffectParser
+from teksi_hooks.models.canonical_object import CanonicalObjectIdentity
+from teksi_hooks.parser.effects_parser import EffectParser
 
-from tww_hooks.exceptions import (
+from teksi_hooks.exceptions import (
     EffectValidationError,
 )
 
@@ -266,8 +266,8 @@ def test_parse_multiple_effects() -> None:
 
 import pytest
 
-from tww_hooks.exceptions import EffectValidationError
-from tww_hooks.parser.effects_parser import EffectParser
+from teksi_hooks.exceptions import EffectValidationError
+from teksi_hooks.parser.effects_parser import EffectParser
 
 
 def test_reject_contradicting_effects() -> None:

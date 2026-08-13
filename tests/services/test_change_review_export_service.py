@@ -5,10 +5,10 @@ from typing import Any
 
 import pytest
 
-from tww_hooks.models.review import (
+from teksi_hooks.models.review import (
     ReviewFeature,
 )
-from tww_hooks.models.validation import (
+from teksi_hooks.models.validation import (
     Change,
     ChangeClassification,
     ChangeClassificationMetadata,
@@ -17,7 +17,7 @@ from tww_hooks.models.validation import (
     ClassifiedChanges,
     ValidationFinding,
 )
-from tww_hooks.services.change_review_export import (
+from teksi_hooks.services.change_review_export import (
     ChangeReviewExportService,
 )
 

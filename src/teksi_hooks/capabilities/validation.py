@@ -8,7 +8,7 @@ from ..models.validation import (
     ValidationFinding,
     AttributeValidation
 )
-from tww_hooks.exceptions import Severity
+from ..exceptions import Severity
 
 
 @dataclass(slots=True)

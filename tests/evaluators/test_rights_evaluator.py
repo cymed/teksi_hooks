@@ -1,24 +1,24 @@
 from dataclasses import replace
 
-from teksi_hooks.ili_definitions import Standardoid
+from teksi_hooks.models.oid import Standardoid
 
-from tww_hooks.capabilities.conditions import ConditionsCapability
-from tww_hooks.capabilities.privilege import ResolvedProviderCapability
-from tww_hooks.capabilities.rights import (
+from teksi_hooks.capabilities.conditions import ConditionsCapability
+from teksi_hooks.capabilities.privilege import ResolvedProviderCapability
+from teksi_hooks.capabilities.rights import (
     DerivedRightsCapability,
     RightsCapability,
     SubclassRightsCapability,
 )
-from tww_hooks.evaluators.rights import (
+from teksi_hooks.evaluators.rights import (
     RightsEvaluationContext,
     RightsEvaluator,
 )
-from tww_hooks.models.privilege import Privilege
-from tww_hooks.models.rulesets import (
+from teksi_hooks.models.privilege import Privilege
+from teksi_hooks.models.rulesets import (
     OwnershipRule,
     PrivilegeRule,
 )
-from tww_hooks.models.validation import ChangeOperation
+from teksi_hooks.models.validation import ChangeOperation
 
 
 def _make_evaluator(

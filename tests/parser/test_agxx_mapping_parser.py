@@ -1,6 +1,6 @@
 from pathlib import Path
 import pytest
-from tww_hooks.parser.model_mapping_parser import ModelMappingParser
+from teksi_hooks.parser.model_mapping_parser import ModelMappingParser
 
 
 DATA_DIR = Path(__file__).parent / "data"

@@ -1,4 +1,4 @@
-from tww_hooks.capabilities.rights import DerivedRightsCapability
+from teksi_hooks.capabilities.rights import DerivedRightsCapability
 
 
 def test_derived_rights_capability_returns_networkelement_definition(

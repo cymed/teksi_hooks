@@ -1,16 +1,16 @@
 import pytest
 
-from tww_hooks.models.canonical_object import (
+from teksi_hooks.models.canonical_object import (
     CanonicalObject,
     CanonicalObjectIdentity,
 )
-from tww_hooks.models.effects import (
+from teksi_hooks.models.effects import (
     UpdateAttributeEffect,
 )
-from tww_hooks.models.validation import (
+from teksi_hooks.models.validation import (
     ChangeOperation,
 )
-from tww_hooks.services.change_builder import (
+from teksi_hooks.services.change_builder import (
     ChangeBuilder,
 )
 

@@ -9,7 +9,7 @@ from .validation import AttributeValidation, TransitionValidation
 from .rulesets import CrudRules, ResolvedCrudRules, StateTransitionRule
 from .canonical_object import CanonicalObjectIdentity
 from pathlib import Path
-from .ili_definitions import Oid
+from .oid import Oid
 from ..exceptions import  Finding
 
 

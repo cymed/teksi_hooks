@@ -1,10 +1,10 @@
-from tww_hooks.models.privilege import Privilege
-from tww_hooks.models.rulesets import (
+from teksi_hooks.models.privilege import Privilege
+from teksi_hooks.models.rulesets import (
     InheritRule,
     OwnershipRule,
     PrivilegeRule,
 )
-from tww_hooks.models.rulesets import ResolvedCrudRules
+from teksi_hooks.models.rulesets import ResolvedCrudRules
 
 
 def test_rights_resolver_resolves_classes(

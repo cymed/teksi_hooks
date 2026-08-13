@@ -2,7 +2,7 @@
 from dataclasses import dataclass, field
 from collections.abc import Mapping
 
-from .ili_definitions import Oid
+from .oid import Oid
 
 from .privilege import PrivilegeId
 

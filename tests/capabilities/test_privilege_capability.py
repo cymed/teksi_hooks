@@ -1,7 +1,7 @@
-from teksi_hooks.ili_definitions import Standardoid
+from teksi_hooks.models.oid import Standardoid
 
-from tww_hooks.capabilities.privilege import ResolvedProviderCapability
-from tww_hooks.models.privilege import Privilege
+from teksi_hooks.capabilities.privilege import ResolvedProviderCapability
+from teksi_hooks.models.privilege import Privilege
 
 
 def test_provider_capability_returns_privileges(

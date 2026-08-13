@@ -1,9 +1,9 @@
-from tww_hooks.models.privilege import Privilege
-from tww_hooks.models.rights import AttributeDefinition
-from tww_hooks.models.rulesets import StateTransitionRule
-from tww_hooks.models.validation import TransitionValidation
+from teksi_hooks.models.privilege import Privilege
+from teksi_hooks.models.rights import AttributeDefinition
+from teksi_hooks.models.rulesets import StateTransitionRule
+from teksi_hooks.models.validation import TransitionValidation
 
-from tww_hooks.resolver.validation_resolver import (
+from teksi_hooks.resolver.validation_resolver import (
     ValidationResolver,
 )
 
