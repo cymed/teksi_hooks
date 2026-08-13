@@ -6,7 +6,7 @@ from ..models.provider import (
     Provider,
     ResolvedProvider,
 )
-from ..models.privilege import Privilege
+from ..models.privilege import PrivilegeId
 
 
 @dataclass(slots=True)
@@ -25,7 +25,7 @@ class ProviderResolver:
     ) -> ResolvedProvider:
         permissions: dict[
             Oid,
-            set[Privilege],
+            set[PrivilegeId],
         ] = {}
 
         for permission in provider.permissions:
