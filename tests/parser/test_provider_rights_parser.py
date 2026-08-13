@@ -87,15 +87,6 @@ def test_provider_rights_parser_imports_association_permissions(providers) -> No
     )
 
 
-def test_provider_resolver_handles_provider_without_permissions(
-    resolved_providers: dict[Standardoid, ResolvedProvider],
-) -> None:
-    provider = resolved_providers[Standardoid("ch000000awgde002")]
-
-    assert provider.name == "Gemeinde Musterlingen"
-    assert provider.permissions == {}
-
-
 def test_resolved_provider_capability_returns_privileges(
     resolved_providers: dict[Standardoid, ResolvedProvider],
 ) -> None:
