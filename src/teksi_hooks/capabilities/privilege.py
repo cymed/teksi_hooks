@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 
-from .oid import Oid
+from ..models.oid import Oid
 
 from ..models.provider import (
     Provider,
