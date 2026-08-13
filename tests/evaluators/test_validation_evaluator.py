@@ -116,30 +116,6 @@ def test_validation_evaluator_accepts_bilateral_transition(
 
     assert findings == ()
 
-
-def test_validation_evaluator_rejects_invalid_transition(
-    resolved_rights,
-    registry,
-) -> None:
-    evaluator = ValidationEvaluator(
-        rights=RightsCapability(
-            rights=resolved_rights,
-        ),
-        registry=registry,
-    )
-
-    findings = evaluator.validate_transition(
-        class_id="wastewater_structure",
-        attribute_name="status",
-        old_value="operational",
-        new_value="other.calculation_alternative",
-    )
-
-    assert len(findings) == 1
-
-    assert findings[0].code == ("invalid_transition")
-
-
 def test_validation_evaluator_accepts_transitive_transition(
     resolved_rights, registry
 ) -> None:

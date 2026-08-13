@@ -2,7 +2,6 @@ import pytest
 from teksi_hooks.capabilities.rights import (
     RightsCapability,
 )
-from teksi_hooks.models.privilege import Privilege
 from teksi_hooks.resolver.rights_resolver import RightsResolver
 
 
@@ -34,8 +33,8 @@ def test_rights_capability_returns_attribute_definition(
 
     assert attribute.update_privileges == frozenset(
         {
-            Privilege.DBW_GEP,
-            Privilege.DBW_WI,
+            "DBW_GEP",
+            "DBW_WI",
         }
     )
 
@@ -52,8 +51,8 @@ def test_rights_capability_returns_update_privileges(
         "status",
     ) == frozenset(
         {
-            Privilege.DBW_GEP,
-            Privilege.DBW_WI,
+            "DBW_GEP",
+            "DBW_WI",
         }
     )
 

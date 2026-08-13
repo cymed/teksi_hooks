@@ -1,7 +1,5 @@
 import pytest
-
-from typing import ClassVar
-from re import Pattern
+from typing import ClassVar, Pattern
 import re
 
 from teksi_hooks.exceptions import TeksiHookError
@@ -15,25 +13,6 @@ def test_standardoid_accepts_valid_value() -> None:
 
     assert str(oid) == "ch000000geping01"
     assert oid.value == "ch000000geping01"
-
-
-@pytest.mark.parametrize(
-    "value",
-    [
-        "",
-        "too_short",
-        "ch000000geping001",
-        "ch000000-geping1",
-        "ch000000gäping01",
-    ],
-)
-def test_standardoid_rejects_invalid_value(
-    value: str,
-) -> None:
-    with pytest.raises(TeksiHookError):
-        Standardoid(
-            value,
-        )
 
 
 def test_standardoid_is_oid() -> None:

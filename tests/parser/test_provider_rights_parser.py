@@ -1,6 +1,5 @@
 from teksi_hooks.models.oid import Standardoid
 from teksi_hooks.models.provider import ResolvedProvider
-from teksi_hooks.models.privilege import Privilege
 from teksi_hooks.capabilities.privilege import ResolvedProviderCapability
 
 
@@ -38,20 +37,20 @@ def test_provider_rights_parser_imports_permissions(providers) -> None:
 
     assert permissions_by_owner["ch000000awverbnd"].privileges == frozenset(
         {
-            Privilege.DBW_GEP,
+            "DBW_GEP",
         }
     )
 
     assert permissions_by_owner["ch000000awgde001"].privileges == frozenset(
         {
-            Privilege.DBW_WI,
-            Privilege.DBW_GEP,
+            "DBW_WI",
+            "DBW_GEP",
         }
     )
 
     assert permissions_by_owner["ch000000awgde002"].privileges == frozenset(
         {
-            Privilege.FI_BU,
+            "FI_BU",
         }
     )
 
@@ -83,56 +82,7 @@ def test_provider_rights_parser_imports_association_permissions(providers) -> No
     assert str(permission.dataowner_oid) == "ch000000awverbnd"
     assert permission.privileges == frozenset(
         {
-            Privilege.FI_BU,
-        }
-    )
-
-
-def test_provider_resolver_resolves_all_providers(
-    resolved_providers: dict[Standardoid, ResolvedProvider],
-) -> None:
-    assert set(resolved_providers) == {
-        Standardoid("ch000000geping01"),
-        Standardoid("ch000000geping02"),
-        Standardoid("ch000000dbwwi001"),
-        Standardoid("ch000000awverbnd"),
-        Standardoid("ch000000awgde001"),
-        Standardoid("ch000000awgde002"),
-    }
-
-
-def test_provider_resolver_keeps_provider_metadata(
-    resolved_providers: dict[Standardoid, ResolvedProvider],
-) -> None:
-    provider = resolved_providers[Standardoid("ch000000geping01")]
-
-    assert provider.name == "Muster Ingenieure AG"
-    assert provider.organisation_oid == Standardoid(
-        "ch000000geping01",
-    )
-
-
-def test_provider_resolver_resolves_permissions(
-    resolved_providers: dict[Standardoid, ResolvedProvider],
-) -> None:
-    provider = resolved_providers[Standardoid("ch000000geping01")]
-
-    assert provider.permissions[Standardoid("ch000000awverbnd")] == frozenset(
-        {
-            Privilege.DBW_GEP,
-        }
-    )
-
-    assert provider.permissions[Standardoid("ch000000awgde001")] == frozenset(
-        {
-            Privilege.DBW_WI,
-            Privilege.DBW_GEP,
-        }
-    )
-
-    assert provider.permissions[Standardoid("ch000000awgde002")] == frozenset(
-        {
-            Privilege.FI_BU,
+            "FI_BU",
         }
     )
 
@@ -159,8 +109,8 @@ def test_resolved_provider_capability_returns_privileges(
         Standardoid("ch000000awgde001"),
     ) == frozenset(
         {
-            Privilege.DBW_WI,
-            Privilege.DBW_GEP,
+            "DBW_WI",
+            "DBW_GEP",
         }
     )
 
@@ -176,7 +126,7 @@ def test_resolved_provider_capability_checks_existing_privilege(
 
     assert capability.has_privilege(
         Standardoid("ch000000awgde001"),
-        Privilege.DBW_GEP,
+        "DBW_GEP",
     )
 
 
@@ -191,7 +141,7 @@ def test_resolved_provider_capability_rejects_missing_privilege(
 
     assert not capability.has_privilege(
         Standardoid("ch000000awverbnd"),
-        Privilege.DBW_WI,
+        "DBW_WI",
     )
 
 
@@ -226,20 +176,20 @@ def test_provider_resolver_resolves_permissions(
 
     assert provider.permissions[Standardoid("ch000000awverbnd")] == frozenset(
         {
-            Privilege.DBW_GEP,
+            "DBW_GEP",
         }
     )
 
     assert provider.permissions[Standardoid("ch000000awgde001")] == frozenset(
         {
-            Privilege.DBW_WI,
-            Privilege.DBW_GEP,
+            "DBW_WI",
+            "DBW_GEP",
         }
     )
 
     assert provider.permissions[Standardoid("ch000000awgde002")] == frozenset(
         {
-            Privilege.FI_BU,
+            "FI_BU",
         }
     )
 

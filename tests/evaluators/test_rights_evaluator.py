@@ -13,7 +13,6 @@ from teksi_hooks.evaluators.rights import (
     RightsEvaluationContext,
     RightsEvaluator,
 )
-from teksi_hooks.models.privilege import Privilege
 from teksi_hooks.models.rulesets import (
     OwnershipRule,
     PrivilegeRule,
@@ -100,7 +99,7 @@ def test_rights_evaluator_applies_privilege_rule(
     rule = PrivilegeRule(
         privileges=frozenset(
             {
-                Privilege.DBW_GEP,
+                "DBW_GEP",
             }
         ),
     )

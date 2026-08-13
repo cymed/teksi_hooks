@@ -1,8 +1,6 @@
 from teksi_hooks.models.oid import Standardoid
 
 from teksi_hooks.capabilities.privilege import ResolvedProviderCapability
-from teksi_hooks.models.privilege import Privilege
-
 
 def test_provider_capability_returns_privileges(
     resolved_providers,
@@ -17,8 +15,8 @@ def test_provider_capability_returns_privileges(
         Standardoid("ch000000awgde001"),
     ) == frozenset(
         {
-            Privilege.DBW_WI,
-            Privilege.DBW_GEP,
+            "DBW_WI",
+            "DBW_GEP",
         }
     )
 
@@ -34,7 +32,7 @@ def test_provider_capability_checks_privilege(
 
     assert capability.has_privilege(
         Standardoid("ch000000awgde001"),
-        Privilege.DBW_GEP,
+        "DBW_GEP",
     )
 
 

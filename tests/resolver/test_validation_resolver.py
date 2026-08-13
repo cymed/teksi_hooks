@@ -1,4 +1,3 @@
-from teksi_hooks.models.privilege import Privilege
 from teksi_hooks.models.rights import AttributeDefinition
 from teksi_hooks.models.rulesets import StateTransitionRule
 from teksi_hooks.models.validation import TransitionValidation
@@ -19,7 +18,7 @@ def test_validation_resolver_collects_transition_rules() -> None:
                         StateTransitionRule(
                             privileges=frozenset(
                                 {
-                                    Privilege.DBW_GEP,
+                                    "DBW_GEP",
                                 }
                             ),
                             from_value="planned",
@@ -54,7 +53,7 @@ def test_validation_resolver_expands_bilateral_rule() -> None:
                         StateTransitionRule(
                             privileges=frozenset(
                                 {
-                                    Privilege.DBW_GEP,
+                                    "DBW_GEP",
                                 }
                             ),
                             from_value="planned",
@@ -107,7 +106,7 @@ def test_validation_resolver_groups_rules_by_attribute() -> None:
                         StateTransitionRule(
                             privileges=frozenset(
                                 {
-                                    Privilege.DBW_GEP,
+                                    "DBW_GEP",
                                 }
                             ),
                             from_value="planned",

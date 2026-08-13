@@ -1,4 +1,3 @@
-from teksi_hooks.models.privilege import Privilege
 from teksi_hooks.models.rulesets import (
     InheritRule,
     OwnershipRule,
@@ -66,7 +65,7 @@ def test_rights_parser_imports_privilege_rules_with_conditions(
 
     assert first_rule.privileges == frozenset(
         {
-            Privilege.DBW_GEP,
+            "DBW_GEP",
         }
     )
 
@@ -117,8 +116,8 @@ def test_rights_parser_imports_attributes_and_transitions(rights_definition) -> 
 
     assert status.update_privileges == frozenset(
         {
-            Privilege.DBW_GEP,
-            Privilege.DBW_WI,
+            "DBW_GEP",
+            "DBW_WI",
         }
     )
 
@@ -139,7 +138,7 @@ def test_rights_parser_imports_attributes_and_transitions(rights_definition) -> 
     assert bilateral_rule.to_value == "other.planned"
     assert bilateral_rule.privileges == frozenset(
         {
-            Privilege.DBW_GEP,
+            "DBW_GEP",
         }
     )
 
@@ -157,8 +156,8 @@ def test_rights_parser_imports_crud_rules_shortcut(rights_definition) -> None:
     assert isinstance(create_rule, PrivilegeRule)
     assert create_rule.privileges == frozenset(
         {
-            Privilege.DBW_WI,
-            Privilege.DBW_GEP,
+            "DBW_WI",
+            "DBW_GEP",
         }
     )
 
@@ -238,12 +237,12 @@ def test_wildcard_rights_parser_imports_defaults_and_classes(
 
     assert defaults_by_pattern["ag64_*"].update_privileges == frozenset(
         {
-            Privilege.DBW_WI,
+            "DBW_WI",
         }
     )
 
     assert defaults_by_pattern["ag96_*"].update_privileges == frozenset(
         {
-            Privilege.DBW_GEP,
+            "DBW_GEP",
         }
     )

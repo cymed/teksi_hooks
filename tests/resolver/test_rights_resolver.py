@@ -1,4 +1,3 @@
-from teksi_hooks.models.privilege import Privilege
 from teksi_hooks.models.rulesets import (
     InheritRule,
     OwnershipRule,
@@ -73,7 +72,7 @@ def test_rights_resolver_preserves_privilege_rules(
 
     assert first_rule.privileges == frozenset(
         {
-            Privilege.DBW_GEP,
+            "DBW_GEP",
         }
     )
 
@@ -100,8 +99,8 @@ def test_rights_resolver_expands_crud_rules_shortcut(
 
     assert create_rule.privileges == frozenset(
         {
-            Privilege.DBW_WI,
-            Privilege.DBW_GEP,
+            "DBW_WI",
+            "DBW_GEP",
         }
     )
 
@@ -119,8 +118,8 @@ def test_rights_resolver_preserves_attribute_privileges(
 
     assert status.update_privileges == frozenset(
         {
-            Privilege.DBW_GEP,
-            Privilege.DBW_WI,
+            "DBW_GEP",
+            "DBW_WI",
         }
     )
 
