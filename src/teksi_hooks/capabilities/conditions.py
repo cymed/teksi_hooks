@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from collections.abc import Mapping
 from typing import Any
 
-from teksi_hooks.sql import SqlCapability
+from .sql import SqlCapability
 from ..models.conditions import Condition, AnyOfCondition, AllOfCondition, LocalCondition, RemoteCondition
 
 
