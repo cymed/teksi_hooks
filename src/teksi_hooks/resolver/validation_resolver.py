@@ -48,9 +48,7 @@ class ValidationResolver:
             attribute_id,
             attribute_definition,
         ) in cls.attributes.items():
-            attributes[
-                attribute_id
-            ] = self.resolve_attribute(
+            attributes[attribute_id] = self.resolve_attribute(
                 attribute_definition,
             )
 
@@ -59,9 +57,7 @@ class ValidationResolver:
             )
 
             if resolved_transitions:
-                transition_rules[
-                    attribute_id
-                ] = resolved_transitions
+                transition_rules[attribute_id] = resolved_transitions
 
         return (
             attributes,
@@ -97,9 +93,7 @@ class ValidationResolver:
         Flatten transition validations into effective transition rules.
         """
 
-        rules: set[
-            StateTransitionRule
-        ] = set()
+        rules: set[StateTransitionRule] = set()
 
         for transition_validation in attribute.transitions:
             for rule in transition_validation.ruleset:
@@ -124,7 +118,7 @@ class ValidationResolver:
         return frozenset(
             rules,
         )
-    
+
     def resolve_class_transition_rules(
         self,
         attributes: Mapping[
@@ -134,7 +128,7 @@ class ValidationResolver:
     ) -> Mapping[
         str,
         frozenset[StateTransitionRule],
-        ]:
+    ]:
         rules: dict[
             str,
             frozenset[StateTransitionRule],

@@ -1,4 +1,3 @@
-
 from dataclasses import dataclass, field
 from collections.abc import Mapping
 
@@ -19,17 +18,14 @@ class ProviderPermission:
 
     dataowner_oid: Oid = field(
         metadata={
-            "doc": (
-                "Identifier of the data owner for which the privileges apply."
-            )
+            "doc": ("Identifier of the data owner for which the privileges apply.")
         },
     )
 
     privileges: frozenset[PrivilegeId] = field(
         metadata={
             "doc": (
-                "PrivilegeIds granted to the provider for the corresponding "
-                "data owner."
+                "PrivilegeIds granted to the provider for the corresponding data owner."
             )
         },
     )
@@ -46,19 +42,11 @@ class Provider:
     """
 
     name: str = field(
-        metadata={
-            "doc": (
-                "Human-readable provider name."
-            )
-        },
+        metadata={"doc": ("Human-readable provider name.")},
     )
 
     organisation_oid: Oid = field(
-        metadata={
-            "doc": (
-                "Canonical organization identifier of the provider."
-            )
-        },
+        metadata={"doc": ("Canonical organization identifier of the provider.")},
     )
 
     permissions: frozenset[ProviderPermission] = field(
@@ -72,7 +60,6 @@ class Provider:
     )
 
 
-
 @dataclass(slots=True, frozen=True)
 class ResolvedProvider:
     """
@@ -84,19 +71,11 @@ class ResolvedProvider:
     """
 
     name: str = field(
-        metadata={
-            "doc": (
-                "Human-readable provider name."
-            )
-        },
+        metadata={"doc": ("Human-readable provider name.")},
     )
 
     organisation_oid: Oid = field(
-        metadata={
-            "doc": (
-                "Canonical organization identifier of the provider."
-            )
-        },
+        metadata={"doc": ("Canonical organization identifier of the provider.")},
     )
 
     permissions: Mapping[

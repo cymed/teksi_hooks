@@ -170,11 +170,7 @@ def render_class(
 
     title = cls.__name__
 
-    bases = [
-        base.__name__
-        for base in cls.__bases__
-        if base is not object
-    ]
+    bases = [base.__name__ for base in cls.__bases__ if base is not object]
 
     lines: list[str] = [
         title,
@@ -253,13 +249,17 @@ def module_title(
         f"{PACKAGE_NAME}.",
     )
 
-    return short_name.replace(
-        ".",
-        " / ",
-    ).replace(
-        "_",
-        " ",
-    ).title()
+    return (
+        short_name.replace(
+            ".",
+            " / ",
+        )
+        .replace(
+            "_",
+            " ",
+        )
+        .title()
+    )
 
 
 def page_name(
@@ -431,9 +431,7 @@ def generate(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description=(
-            "Generate dataclass API documentation from field metadata."
-        ),
+        description=("Generate dataclass API documentation from field metadata."),
     )
 
     parser.add_argument(

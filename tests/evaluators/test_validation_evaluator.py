@@ -1,11 +1,9 @@
-
 from unittest.mock import Mock
 import pytest
 
 from teksi_hooks.capabilities.rights import RightsCapability
 from teksi_hooks.evaluators.validation import (
     ValidationEvaluator,
-    
 )
 from teksi_hooks.resolver.rights_resolver import RightsResolver
 from teksi_hooks.models.validation import (
@@ -31,6 +29,7 @@ from teksi_hooks.services.change_builder import (
 )
 
 from teksi_hooks.exceptions import Severity
+
 
 def test_validation_evaluator_uses_registry(
     resolved_rights,
@@ -75,6 +74,7 @@ def test_validation_evaluator_uses_registry(
 
     assert len(findings) == 1
 
+
 def test_validation_evaluator_accepts_allowed_transition(
     resolved_rights,
     registry,
@@ -94,6 +94,7 @@ def test_validation_evaluator_accepts_allowed_transition(
     )
 
     assert findings == ()
+
 
 def test_validation_evaluator_accepts_bilateral_transition(
     resolved_rights,
@@ -115,6 +116,7 @@ def test_validation_evaluator_accepts_bilateral_transition(
 
     assert findings == ()
 
+
 def test_validation_evaluator_rejects_invalid_transition(
     resolved_rights,
     registry,
@@ -135,13 +137,11 @@ def test_validation_evaluator_rejects_invalid_transition(
 
     assert len(findings) == 1
 
-    assert findings[0].code == (
-        "invalid_transition"
-    )
+    assert findings[0].code == ("invalid_transition")
+
 
 def test_validation_evaluator_accepts_transitive_transition(
-    resolved_rights,
-    registry
+    resolved_rights, registry
 ) -> None:
     evaluator = ValidationEvaluator(
         rights=RightsCapability(
@@ -159,9 +159,9 @@ def test_validation_evaluator_accepts_transitive_transition(
 
     assert findings == ()
 
+
 def test_validation_evaluator_rejects_invalid_transition(
-    resolved_rights,
-    registry
+    resolved_rights, registry
 ) -> None:
     evaluator = ValidationEvaluator(
         rights=RightsCapability(
@@ -179,13 +179,10 @@ def test_validation_evaluator_rejects_invalid_transition(
 
     assert len(findings) == 1
 
-    assert findings[0].code == (
-        "invalid_transition"
-    )
+    assert findings[0].code == ("invalid_transition")
 
-    assert findings[0].attribute_name == (
-        "status"
-    )
+    assert findings[0].attribute_name == ("status")
+
 
 def test_validation_evaluator_ignores_attribute_without_transition_rules(
     resolved_rights,
@@ -207,11 +204,12 @@ def test_validation_evaluator_ignores_attribute_without_transition_rules(
 
     assert findings == ()
 
+
 def test_validation_evaluator_uses_transitive_transition_flag(
     rights_definition_non_transitive,
     registry,
 ) -> None:
-    resolved_rights=RightsResolver().resolve(
+    resolved_rights = RightsResolver().resolve(
         rights_definition_non_transitive,
     )
     evaluator = ValidationEvaluator(
@@ -230,13 +228,9 @@ def test_validation_evaluator_uses_transitive_transition_flag(
 
     assert len(findings) == 1
 
-    assert findings[0].code == (
-        "invalid_transition"
-    )
+    assert findings[0].code == ("invalid_transition")
 
-    assert findings[0].attribute_name == (
-        "status"
-    )
+    assert findings[0].attribute_name == ("status")
 
     def test_validation_finding_is_created() -> None:
         finding = ValidationFinding(
@@ -247,6 +241,7 @@ def test_validation_evaluator_uses_transitive_transition_flag(
         )
 
         assert finding.code == "newer_than_existing"
+
 
 def test_validation_evaluator_accepts_newer_than_existing(
     registry,
@@ -269,6 +264,7 @@ def test_validation_evaluator_accepts_newer_than_existing(
 
     assert findings == ()
 
+
 def test_validation_evaluator_rejects_older_than_existing(
     registry,
 ) -> None:
@@ -290,9 +286,8 @@ def test_validation_evaluator_rejects_older_than_existing(
 
     assert len(findings) == 1
 
-    assert findings[0].code == (
-        "newer_than_existing"
-    )
+    assert findings[0].code == ("newer_than_existing")
+
 
 def test_validation_evaluator_accepts_non_decreasing_value(
     registry,
@@ -315,6 +310,7 @@ def test_validation_evaluator_accepts_non_decreasing_value(
 
     assert findings == ()
 
+
 def test_validation_evaluator_rejects_decreasing_value(
     registry,
 ) -> None:
@@ -336,9 +332,7 @@ def test_validation_evaluator_rejects_decreasing_value(
 
     assert len(findings) == 1
 
-    assert findings[0].code == (
-        "cannot_decrease"
-    )
+    assert findings[0].code == ("cannot_decrease")
 
 
 def test_validation_registry_rejects_unknown_validation(
@@ -350,6 +344,7 @@ def test_validation_registry_rejects_unknown_validation(
         registry.validation(
             "does_not_exist",
         )
+
 
 def test_validation_evaluator_executes_cannot_decrease(
     resolved_rights,
@@ -372,18 +367,11 @@ def test_validation_evaluator_executes_cannot_decrease(
 
     assert len(findings) == 1
 
-    assert findings[0].code == (
-        "cannot_decrease"
-    )
+    assert findings[0].code == ("cannot_decrease")
 
-    assert findings[0].attribute_name == (
-        "status_survey_year"
-    )
+    assert findings[0].attribute_name == ("status_survey_year")
 
-    assert (
-        findings[0].severity
-        == Severity.WARNING
-    )
+    assert findings[0].severity == Severity.WARNING
 
 
 def test_validation_evaluator_validates_change(
@@ -427,15 +415,10 @@ def test_validation_evaluator_validates_change(
 
     finding = findings[0]
 
-    assert (
-        finding.code
-        == "cannot_decrease"
-    )
+    assert finding.code == "cannot_decrease"
 
-    assert (
-        finding.attribute_name
-        == "status_survey_year"
-    )
+    assert finding.attribute_name == "status_survey_year"
+
 
 def test_validation_evaluator_accepts_valid_change(
     resolved_rights,
@@ -477,7 +460,6 @@ def test_validation_evaluator_accepts_valid_change(
     assert findings == ()
 
 
-
 def test_validation_evaluator_rejects_insert_context_value_mismatch(
     resolved_rights,
     registry,
@@ -500,10 +482,7 @@ def test_validation_evaluator_rejects_insert_context_value_mismatch(
         },
     )
 
-    assert {
-        attribute.attribute_name
-        for attribute in change.changed_attributes
-    } == {
+    assert {attribute.attribute_name for attribute in change.changed_attributes} == {
         "fk_provider",
         "fk_dataowner",
     }
@@ -526,24 +505,19 @@ def test_validation_evaluator_rejects_insert_context_value_mismatch(
         },
     )
 
-    assert len(
-        findings,
-    ) == 1
-
     assert (
-        findings[0].code
-        == "equals_context_value"
+        len(
+            findings,
+        )
+        == 1
     )
 
-    assert (
-        findings[0].severity
-        == Severity.ERROR
-    )
+    assert findings[0].code == "equals_context_value"
 
-    assert (
-        findings[0].attribute_name
-        == "fk_provider"
-    )
+    assert findings[0].severity == Severity.ERROR
+
+    assert findings[0].attribute_name == "fk_provider"
+
 
 def test_validation_evaluator_accepts_matching_insert_context_values(
     resolved_rights,

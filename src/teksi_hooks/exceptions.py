@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import StrEnum
-from typing import Iterable
+from collections.abc import Iterable
+
 
 # Base exception for all TEKSI Hook errors
 class TeksiHookException(Exception):
@@ -12,12 +13,14 @@ class TeksiHookException(Exception):
         1.0.0
     """
 
+
 class TeksiHookError(TeksiHookException):
     """Exception raised for errors by an invalid hook.
 
     Version Added:
         1.0.0
     """
+
     """
     Base class for framework failures backed by findings.
     """
@@ -28,12 +31,7 @@ class TeksiHookError(TeksiHookException):
     ):
         self.findings = findings
 
-        super().__init__(
-            "\n".join(
-                finding.message
-                for finding in findings
-            )
-        )
+        super().__init__("\n".join(finding.message for finding in findings))
 
     @classmethod
     def raise_if_errors(
@@ -41,9 +39,7 @@ class TeksiHookError(TeksiHookException):
         findings: Iterable[Finding],
     ) -> None:
         errors = tuple(
-            finding
-            for finding in findings
-            if finding.severity == Severity.ERROR
+            finding for finding in findings if finding.severity == Severity.ERROR
         )
 
         if errors:
@@ -91,24 +87,17 @@ class Severity(StrEnum):
     WARNING = "warning"
     ERROR = "error"
 
+
 @dataclass(slots=True, frozen=True)
-class Finding():
+class Finding:
     """
     Base class for findings.
     """
 
     severity: Severity = field(
-        metadata={
-            "doc": (
-                "Severity level assigned to the finding."
-            )
-        },
+        metadata={"doc": ("Severity level assigned to the finding.")},
     )
 
     message: str = field(
-        metadata={
-            "doc": (
-                "Human-readable description of the validation issue."
-            )
-        },
+        metadata={"doc": ("Human-readable description of the validation issue.")},
     )

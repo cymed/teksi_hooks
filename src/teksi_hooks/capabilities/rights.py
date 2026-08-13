@@ -1,4 +1,3 @@
-from collections.abc import Mapping
 from dataclasses import dataclass, field
 
 from ..models.privilege import PrivilegeId
@@ -37,13 +36,9 @@ class RightsCapability:
     """
 
     rights: ResolvedRights = field(
-        metadata={
-            "doc": (
-                "Fully resolved runtime rights configuration."
-            )
-        },
+        metadata={"doc": ("Fully resolved runtime rights configuration.")},
     )
-    
+
     def class_definition(
         self,
         class_id: str,
@@ -60,9 +55,7 @@ class RightsCapability:
         try:
             return self.rights.classes[class_id]
         except KeyError as exc:
-            raise KeyError(
-                f"Unknown class: {class_id}"
-            ) from exc
+            raise KeyError(f"Unknown class: {class_id}") from exc
 
     def try_class_definition(
         self,
@@ -96,8 +89,7 @@ class RightsCapability:
             return cls.attributes[attribute_name]
         except KeyError as exc:
             raise KeyError(
-                f"Unknown attribute {attribute_name!r} "
-                f"for class {class_id!r}"
+                f"Unknown attribute {attribute_name!r} for class {class_id!r}"
             ) from exc
 
     def try_attribute_definition(
@@ -312,9 +304,7 @@ class RightsCapability:
         )
 
         try:
-            return cls.transition_rules[
-                attribute_name
-            ]
+            return cls.transition_rules[attribute_name]
         except KeyError as exc:
             raise KeyError(
                 f"Unknown transition attribute "
@@ -323,9 +313,9 @@ class RightsCapability:
             ) from exc
 
     def try_transition_rules(
-    self,
-    class_id: str,
-    attribute_name: str,
+        self,
+        class_id: str,
+        attribute_name: str,
     ):
         cls = self.try_class_definition(
             class_id,
@@ -344,6 +334,7 @@ class RightsCapability:
     ) -> bool:
         return self.rights.allow_transitive_transitions
 
+
 @dataclass(slots=True, frozen=True)
 class DerivedRightsCapability:
     """
@@ -352,12 +343,9 @@ class DerivedRightsCapability:
     This capability exposes relationships through which rights may be
     inherited from related canonical objects.
     """
+
     rights: ResolvedRights = field(
-        metadata={
-            "doc": (
-                "Fully resolved runtime rights configuration."
-            )
-        },
+        metadata={"doc": ("Fully resolved runtime rights configuration.")},
     )
 
     def derived_rights(
@@ -376,9 +364,7 @@ class DerivedRightsCapability:
         try:
             return self.rights.derived_rights[class_id]
         except KeyError as exc:
-            raise KeyError(
-                f"Unknown class: {class_id}"
-            ) from exc
+            raise KeyError(f"Unknown class: {class_id}") from exc
 
     def try_derived_rights(
         self,
@@ -394,6 +380,7 @@ class DerivedRightsCapability:
             class_id,
         )
 
+
 @dataclass(slots=True, frozen=True)
 class SubclassRightsCapability:
     """
@@ -404,11 +391,7 @@ class SubclassRightsCapability:
     """
 
     rights: ResolvedRights = field(
-        metadata={
-            "doc": (
-                "Fully resolved runtime rights configuration."
-            )
-        },
+        metadata={"doc": ("Fully resolved runtime rights configuration.")},
     )
 
     def subclasses(
@@ -427,9 +410,7 @@ class SubclassRightsCapability:
         try:
             return self.rights.subclass_rights[class_id]
         except KeyError as exc:
-            raise KeyError(
-                f"Unknown class: {class_id}"
-            ) from exc
+            raise KeyError(f"Unknown class: {class_id}") from exc
 
     def try_subclasses(
         self,

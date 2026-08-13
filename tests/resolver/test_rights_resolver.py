@@ -10,11 +10,11 @@ from teksi_hooks.models.rulesets import ResolvedCrudRules
 def test_rights_resolver_resolves_classes(
     resolved_rights,
 ) -> None:
-    assert "wastewater_structure"in resolved_rights.classes
-    assert "wastewater_networkelement"in resolved_rights.classes
-    assert "wastewater_node"in resolved_rights.classes
-    assert "maintenance"in resolved_rights.classes
-    assert "pipe_profile"in resolved_rights.classes
+    assert "wastewater_structure" in resolved_rights.classes
+    assert "wastewater_networkelement" in resolved_rights.classes
+    assert "wastewater_node" in resolved_rights.classes
+    assert "maintenance" in resolved_rights.classes
+    assert "pipe_profile" in resolved_rights.classes
 
 
 def test_rights_resolver_returns_resolved_crud_rules(
@@ -51,13 +51,11 @@ def test_rights_resolver_expands_inherit_rules(
     assert len(resolved.crud_rules.delete_rules) == 2
 
     assert all(
-        not isinstance(rule, InheritRule)
-        for rule in resolved.crud_rules.update_rules
+        not isinstance(rule, InheritRule) for rule in resolved.crud_rules.update_rules
     )
 
     assert all(
-        not isinstance(rule, InheritRule)
-        for rule in resolved.crud_rules.delete_rules
+        not isinstance(rule, InheritRule) for rule in resolved.crud_rules.delete_rules
     )
 
 
@@ -126,6 +124,7 @@ def test_rights_resolver_preserves_attribute_privileges(
         }
     )
 
+
 def test_rights_resolver_inherits_derived_rights_to_reach(
     resolved_rights,
 ) -> None:
@@ -135,6 +134,7 @@ def test_rights_resolver_inherits_derived_rights_to_reach(
         relation.class_id == "wastewater_structure"
         for relation in resolved_rights.derived_rights["reach"]
     )
+
 
 def test_rights_resolver_preserves_attribute_transitions(
     resolved_rights,

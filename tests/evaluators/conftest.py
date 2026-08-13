@@ -1,9 +1,8 @@
-from typing import Sequence
-
 import pytest
 from teksi_hooks.capabilities.relation_lookup import InMemoryRelationLookupCapability
 
-from teksi_hooks.models.canonical_object import CanonicalObjectIdentity,CanonicalObject
+from teksi_hooks.models.canonical_object import CanonicalObjectIdentity, CanonicalObject
+
 
 @pytest.fixture
 def relation_lookup():

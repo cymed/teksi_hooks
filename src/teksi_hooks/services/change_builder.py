@@ -26,15 +26,10 @@ class ChangeBuilder:
         self,
         *,
         current_object: CanonicalObject | None,
-        effects: tuple[
-            Effect,
-            ...
-        ],
+        effects: tuple[Effect, ...],
     ) -> Change:
         if not effects:
-            raise ValueError(
-                "At least one effect is required."
-            )
+            raise ValueError("At least one effect is required.")
 
         reference = effects[0].identity
 
@@ -60,9 +55,7 @@ class ChangeBuilder:
             )
 
         operation = (
-            ChangeOperation.INSERT
-            if current_object is None
-            else ChangeOperation.UPDATE
+            ChangeOperation.INSERT if current_object is None else ChangeOperation.UPDATE
         )
 
         return Change(
@@ -87,15 +80,10 @@ class ChangeBuilder:
             effect,
             UpdateAttributeEffect,
         ):
-            values[
-                effect.attribute_id
-            ] = effect.value
+            values[effect.attribute_id] = effect.value
             return
 
-        raise NotImplementedError(
-            f"Unsupported effect type: "
-            f"{type(effect).__name__}"
-        )
+        raise NotImplementedError(f"Unsupported effect type: {type(effect).__name__}")
 
     def _object_id(
         self,
@@ -107,15 +95,6 @@ class ChangeBuilder:
             )
 
         if len(identity) == 1:
-            return str(
-                next(
-                    iter(
-                        identity.values()
-                    )
-                )
-            )
+            return str(next(iter(identity.values())))
 
-        raise ValueError(
-            "Cannot derive object_id "
-            "from identity."
-        )
+        raise ValueError("Cannot derive object_id from identity.")

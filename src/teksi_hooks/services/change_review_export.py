@@ -47,9 +47,7 @@ class ChangeReviewExportService:
 
     geometry_attribute_names_by_class: Mapping[
         str,
-        Sequence[
-            str,
-        ],
+        Sequence[str,],
     ] = field(
         default_factory=dict,
     )
@@ -59,9 +57,7 @@ class ChangeReviewExportService:
         classified: ClassifiedChanges,
     ) -> dict[
         str,
-        list[
-            ReviewFeature,
-        ],
+        list[ReviewFeature,],
     ]:
         """
         Build review features grouped by canonical class.
@@ -69,9 +65,7 @@ class ChangeReviewExportService:
 
         features_by_class: dict[
             str,
-            list[
-                ReviewFeature,
-            ],
+            list[ReviewFeature,],
         ] = {}
 
         for classified_change in self._classified_changes(
@@ -93,10 +87,7 @@ class ChangeReviewExportService:
     def _classified_changes(
         self,
         classified: ClassifiedChanges,
-    ) -> tuple[
-        ClassifiedChange,
-        ...
-    ]:
+    ) -> tuple[ClassifiedChange, ...]:
         return (
             *classified.created_objects,
             *classified.altered_objects,
@@ -249,15 +240,11 @@ class ChangeReviewExportService:
 
         for attribute_name in attribute_names:
             if attribute_name in change.new_values:
-                values[attribute_name] = change.new_values[
-                    attribute_name
-                ]
+                values[attribute_name] = change.new_values[attribute_name]
                 continue
 
             if attribute_name in change.old_values:
-                values[attribute_name] = change.old_values[
-                    attribute_name
-                ]
+                values[attribute_name] = change.old_values[attribute_name]
 
         return values
 
@@ -269,7 +256,7 @@ class ChangeReviewExportService:
             str,
             Any,
         ],
-        ...
+        ...,
     ]:
         payload = []
 
@@ -392,18 +379,12 @@ class ChangeReviewExportService:
         for geometry_attribute_name in self._geometry_attribute_names(
             change.table_name,
         ):
-            attributes[
-                f"{geometry_attribute_name}_changed"
-            ] = (
-                geometry_attribute_name
-                in changed_geometry_names
+            attributes[f"{geometry_attribute_name}_changed"] = (
+                geometry_attribute_name in changed_geometry_names
             )
 
-            attributes[
-                f"{geometry_attribute_name}_changed_without_permission"
-            ] = (
-                geometry_attribute_name
-                in changed_geometry_names
+            attributes[f"{geometry_attribute_name}_changed_without_permission"] = (
+                geometry_attribute_name in changed_geometry_names
                 and bool(
                     attributes["permission_findings"]
                     or attributes["validation_findings"]
@@ -413,10 +394,7 @@ class ChangeReviewExportService:
     def _changed_geometry_attributes(
         self,
         change: Change,
-    ) -> tuple[
-        str,
-        ...
-    ]:
+    ) -> tuple[str, ...]:
         geometry_attribute_names = set(
             self._geometry_attribute_names(
                 change.table_name,
@@ -456,10 +434,7 @@ class ChangeReviewExportService:
     def _geometry_attribute_names(
         self,
         class_id: str,
-    ) -> tuple[
-        str,
-        ...
-    ]:
+    ) -> tuple[str, ...]:
         return tuple(
             self.geometry_attribute_names_by_class.get(
                 class_id,
@@ -471,25 +446,16 @@ class ChangeReviewExportService:
         self,
         change: Change,
     ) -> bool:
-        return (
-            change.operation
-            == ChangeOperation.INSERT
-        )
+        return change.operation == ChangeOperation.INSERT
 
     def _is_altered(
         self,
         change: Change,
     ) -> bool:
-        return (
-            change.operation
-            == ChangeOperation.UPDATE
-        )
+        return change.operation == ChangeOperation.UPDATE
 
     def _is_deleted(
         self,
         change: Change,
     ) -> bool:
-        return (
-            change.operation
-            == ChangeOperation.DELETE
-        )
+        return change.operation == ChangeOperation.DELETE

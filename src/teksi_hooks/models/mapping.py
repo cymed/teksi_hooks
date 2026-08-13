@@ -5,11 +5,13 @@ from collections.abc import Mapping
 
 from .canonical_object import CanonicalIdentityMapping
 
+
 @dataclass(slots=True, frozen=True)
 class ValueMapping:
     """
     Maps a source-model value list entry to the canonical internal model.
     """
+
     canonical_value_id: int = field(
         metadata={
             "doc": (
@@ -19,7 +21,7 @@ class ValueMapping:
         }
     )
 
-    value: str =field(
+    value: str = field(
         metadata={
             "doc": (
                 "Source-model value that maps to the canonical value "
@@ -47,8 +49,8 @@ class ForeignKeyMapping:
             )
         },
     )
-    referenced_attribute_id: str  = field(
-        default='obj_id',
+    referenced_attribute_id: str = field(
+        default="obj_id",
         metadata={
             "doc": (
                 "Canonical attribute identifier this source class maps to. "
@@ -79,8 +81,7 @@ class FunctionMapping:
     schema: str = field(
         metadata={
             "doc": (
-                "Database schema containing the mapping function. "
-                "Example: `tww_app`."
+                "Database schema containing the mapping function. Example: `tww_app`."
             )
         },
     )
@@ -107,11 +108,13 @@ class FunctionMapping:
         },
     )
 
+
 @dataclass(slots=True, frozen=True)
 class AttributeMapping:
     """
     Maps a source-model attribute to the canonical internal model.
     """
+
     canonical_class_id: str | None = field(
         default=None,
         metadata={
@@ -122,7 +125,7 @@ class AttributeMapping:
             )
         },
     )
-    canonical_attr_id: str | None  = field(
+    canonical_attr_id: str | None = field(
         default=None,
         metadata={
             "doc": (
@@ -145,16 +148,16 @@ class AttributeMapping:
 
     values: Mapping[str, ValueMapping] = field(
         default_factory=dict,
-        metadata={
-            "doc": "Optional value mappings keyed by source-model value."
-        },
+        metadata={"doc": "Optional value mappings keyed by source-model value."},
     )
+
 
 @dataclass(slots=True, frozen=True)
 class ClassMapping:
     """
     Maps a source-model class to the canonical internal model.
     """
+
     canonical_class_id: str | None = field(
         default=None,
         metadata={
@@ -171,7 +174,7 @@ class ClassMapping:
             canonical_attribute="obj_id",
         ),
     )
-        
+
     attributes: Mapping[str, AttributeMapping] = field(
         default_factory=dict,
         metadata={
@@ -199,27 +202,27 @@ class ClassMapping:
         },
     )
 
+
 @dataclass(slots=True, frozen=True)
 class ModelMapping:
     """
     Describes how one source model maps to the canonical internal model.
     """
-    classes: Mapping[str, ClassMapping]= field(
+
+    classes: Mapping[str, ClassMapping] = field(
         default_factory=dict,
-        metadata={
-            "doc": "Class mappings keyed by source-model value."
-        },
+        metadata={"doc": "Class mappings keyed by source-model value."},
     )
     is_ssot: bool = field(
         default=False,
         metadata={
-           "doc": (
+            "doc": (
                 "Whether this model mapping describes the canonical source "
                 "of truth model."
             )
-
         },
     )
+
 
 @dataclass(frozen=True)
 class RelationContext:
@@ -231,17 +234,8 @@ class RelationContext:
     """
 
     relation: type = field(
-        metadata={
-            "doc": (
-                "ORM relation generated from sqlalchemy."
-            )
-        },
+        metadata={"doc": ("ORM relation generated from sqlalchemy.")},
     )
     class_mapping: ClassMapping = field(
-        metadata={
-            "doc": (
-                "Class mappings keyed by source-model class identifier."
-            )
-        },
+        metadata={"doc": ("Class mappings keyed by source-model class identifier.")},
     )
-

@@ -54,9 +54,12 @@ def test_model_mapping_capability_try_class_definition_returns_none(
         mapping=agxx_mapping,
     )
 
-    assert capability.try_class_definition(
-        "DoesNotExist",
-    ) is None
+    assert (
+        capability.try_class_definition(
+            "DoesNotExist",
+        )
+        is None
+    )
 
 
 def test_model_mapping_capability_try_attribute_definition_returns_none(
@@ -66,7 +69,10 @@ def test_model_mapping_capability_try_attribute_definition_returns_none(
         mapping=agxx_mapping,
     )
 
-    assert capability.try_attribute_definition(
-        "VersickerungsbereichAG",
-        "does_not_exist",
-    ) is None
+    assert (
+        capability.try_attribute_definition(
+            "VersickerungsbereichAG",
+            "does_not_exist",
+        )
+        is None
+    )

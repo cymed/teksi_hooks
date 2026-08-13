@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Protocol
 from collections.abc import Mapping, Sequence
@@ -10,6 +9,7 @@ from ..models.validation import (
 )
 
 from ..models.review import ReviewFeature
+
 
 class ChangeFeatureProvider(Protocol):
     """
@@ -42,6 +42,7 @@ class ChangeFeatureProvider(Protocol):
         Used mainly for created and altered objects.
         """
 
+
 class ReviewArtifactWriter(Protocol):
     """
     Writes grouped review features to an artifact.
@@ -55,9 +56,7 @@ class ReviewArtifactWriter(Protocol):
         path: Path,
         layers: Mapping[
             str,
-            Sequence[
-                ReviewFeature,
-            ],
+            Sequence[ReviewFeature,],
         ],
     ) -> None:
         """

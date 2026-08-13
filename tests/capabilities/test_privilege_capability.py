@@ -7,9 +7,7 @@ from teksi_hooks.models.privilege import Privilege
 def test_provider_capability_returns_privileges(
     resolved_providers,
 ) -> None:
-    provider = resolved_providers[
-        Standardoid("ch000000geping01")
-    ]
+    provider = resolved_providers[Standardoid("ch000000geping01")]
 
     capability = ResolvedProviderCapability(
         provider=provider,
@@ -28,9 +26,7 @@ def test_provider_capability_returns_privileges(
 def test_provider_capability_checks_privilege(
     resolved_providers,
 ) -> None:
-    provider = resolved_providers[
-        Standardoid("ch000000geping01")
-    ]
+    provider = resolved_providers[Standardoid("ch000000geping01")]
 
     capability = ResolvedProviderCapability(
         provider=provider,
@@ -45,14 +41,15 @@ def test_provider_capability_checks_privilege(
 def test_provider_capability_returns_empty_for_unknown_dataowner(
     resolved_providers,
 ) -> None:
-    provider = resolved_providers[
-        Standardoid("ch000000geping01")
-    ]
+    provider = resolved_providers[Standardoid("ch000000geping01")]
 
     capability = ResolvedProviderCapability(
         provider=provider,
     )
 
-    assert capability.privileges_for(
-        Standardoid("ch999999unknown0"),
-    ) == frozenset()
+    assert (
+        capability.privileges_for(
+            Standardoid("ch999999unknown0"),
+        )
+        == frozenset()
+    )

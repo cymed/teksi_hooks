@@ -26,8 +26,7 @@ def test_validator_accepts_valid_document() -> None:
                     identity=CanonicalObjectIdentity(
                         class_id="agxx_wastewater_node",
                         attributes={
-                            "fk_wastewater_node":
-                                "ch123456AG987654",
+                            "fk_wastewater_node": "ch123456AG987654",
                         },
                     ),
                     tww_attribute_id="ag64_function",
@@ -38,6 +37,7 @@ def test_validator_accepts_valid_document() -> None:
     )
 
     assert findings == ()
+
 
 def test_validator_rejects_unknown_version() -> None:
     validator = EffectDocumentValidator()
@@ -56,10 +56,8 @@ def test_validator_rejects_unknown_version() -> None:
 
     assert len(findings) == 1
 
-    assert (
-        "Unsupported effect document version"
-        in findings[0].message
-    )
+    assert "Unsupported effect document version" in findings[0].message
+
 
 def test_validator_rejects_missing_identity_attributes() -> None:
     validator = EffectDocumentValidator()
@@ -86,10 +84,8 @@ def test_validator_rejects_missing_identity_attributes() -> None:
 
     assert len(findings) == 1
 
-    assert (
-        "Effect identity is missing identity attributes."
-        in findings[0].message
-    )
+    assert "Effect identity is missing identity attributes." in findings[0].message
+
 
 def test_validator_rejects_missing_attribute_id() -> None:
     validator = EffectDocumentValidator()
@@ -106,8 +102,7 @@ def test_validator_rejects_missing_attribute_id() -> None:
                     identity=CanonicalObjectIdentity(
                         class_id="agxx_wastewater_node",
                         attributes={
-                            "fk_wastewater_node":
-                                "ch123456AG987654",
+                            "fk_wastewater_node": "ch123456AG987654",
                         },
                     ),
                     tww_attribute_id="",
@@ -119,10 +114,8 @@ def test_validator_rejects_missing_attribute_id() -> None:
 
     assert len(findings) == 1
 
-    assert (
-        "Update effect missing tww_attribute_id."
-        in findings[0].message
-    )
+    assert "Update effect missing tww_attribute_id." in findings[0].message
+
 
 def test_validator_rejects_missing_identity_class() -> None:
     validator = EffectDocumentValidator()
@@ -139,8 +132,7 @@ def test_validator_rejects_missing_identity_class() -> None:
                     identity=CanonicalObjectIdentity(
                         class_id="",
                         attributes={
-                            "fk_wastewater_node":
-                                "ch123456AG987654",
+                            "fk_wastewater_node": "ch123456AG987654",
                         },
                     ),
                     tww_attribute_id="ag64_function",
@@ -152,7 +144,4 @@ def test_validator_rejects_missing_identity_class() -> None:
 
     assert len(findings) == 1
 
-    assert (
-        "Effect identity is missing class_id."
-        in findings[0].message
-    )
+    assert "Effect identity is missing class_id." in findings[0].message

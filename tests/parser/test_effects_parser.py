@@ -11,6 +11,7 @@ from teksi_hooks.exceptions import (
     EffectValidationError,
 )
 
+
 def test_parse_update_attribute_effect() -> None:
     parser = EffectParser()
 
@@ -52,13 +53,11 @@ def test_parse_update_attribute_effect() -> None:
         UpdateAttributeEffect,
     )
 
-
     assert effect.identity == (
         CanonicalObjectIdentity(
             class_id="agxx_wastewater_node",
             attributes={
-                "fk_wastewater_node":
-                    "ch123456AG987654",
+                "fk_wastewater_node": "ch123456AG987654",
             },
         )
     )
@@ -104,8 +103,7 @@ def test_parse_enforce_exists_effect() -> None:
         CanonicalObjectIdentity(
             class_id="agxx_wastewater_node",
             attributes={
-                "fk_wastewater_node":
-                    "ch123456AG987654",
+                "fk_wastewater_node": "ch123456AG987654",
             },
         )
     )
@@ -145,13 +143,11 @@ def test_parse_enforce_not_exists_effect() -> None:
         EnforceNotExistsEffect,
     )
 
-
     assert effect.identity == (
         CanonicalObjectIdentity(
             class_id="agxx_wastewater_node",
             attributes={
-                "fk_wastewater_node":
-                    "ch123456AG987654",
+                "fk_wastewater_node": "ch123456AG987654",
             },
         )
     )
@@ -183,9 +179,7 @@ def test_reject_unknown_effect_kind() -> None:
             exc,
         )
     else:
-        raise AssertionError(
-            "Expected ValueError"
-        )
+        raise AssertionError("Expected ValueError")
 
 
 def test_reject_unsupported_version() -> None:
@@ -250,9 +244,12 @@ def test_parse_multiple_effects() -> None:
     assert document.version == 1
     assert len(document.effects) == 2
 
-    assert len(
-        document.effects,
-    ) == 2
+    assert (
+        len(
+            document.effects,
+        )
+        == 2
+    )
 
     assert isinstance(
         document.effects[0],
@@ -263,11 +260,6 @@ def test_parse_multiple_effects() -> None:
         document.effects[1],
         UpdateAttributeEffect,
     )
-
-import pytest
-
-from teksi_hooks.exceptions import EffectValidationError
-from teksi_hooks.parser.effects_parser import EffectParser
 
 
 def test_reject_contradicting_effects() -> None:

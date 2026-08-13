@@ -131,7 +131,6 @@ class ProviderResolver:
             name=provider.name,
             organisation_oid=provider.organisation_oid,
             permissions={
-                oid: frozenset(privileges)
-                for oid, privileges in permissions.items()
+                oid: frozenset(privileges) for oid, privileges in permissions.items()
             },
         )

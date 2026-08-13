@@ -1,7 +1,3 @@
-from pathlib import Path
-import pytest
-
-
 from teksi_hooks.models.privilege import Privilege
 from teksi_hooks.models.rulesets import (
     InheritRule,
@@ -14,7 +10,6 @@ from teksi_hooks.exceptions import Severity
 
 
 def test_rights_parser_imports_minimal_yaml(rights_definition) -> None:
-
     assert rights_definition.allow_transitive_transitions is True
 
     assert "wastewater_structure" in rights_definition.classes
@@ -26,9 +21,7 @@ def test_rights_parser_imports_minimal_yaml(rights_definition) -> None:
     assert "last_modification" in rights_definition.validation_rules
     assert len(rights_definition.validation_rules["last_modification"]) == 1
 
-    last_modification_rule = rights_definition.validation_rules[
-        "last_modification"
-    ][0]
+    last_modification_rule = rights_definition.validation_rules["last_modification"][0]
 
     assert last_modification_rule.id == "newer_than_existing"
     assert last_modification_rule.level == Severity.INFO
@@ -51,16 +44,18 @@ def test_rights_parser_imports_default_create_rules() -> None:
 
     create_rules = definition.defaults.crud_rules.create_rules
 
-    assert len(
-        create_rules,
-    ) == 1
+    assert (
+        len(
+            create_rules,
+        )
+        == 1
+    )
 
 
-def test_rights_parser_imports_privilege_rules_with_conditions(rights_definition) -> None:
-
-    wastewater_structure = rights_definition.classes[
-        "wastewater_structure"
-    ]
+def test_rights_parser_imports_privilege_rules_with_conditions(
+    rights_definition,
+) -> None:
+    wastewater_structure = rights_definition.classes["wastewater_structure"]
 
     create_rules = wastewater_structure.crud_rules.create_rules
 
@@ -83,25 +78,25 @@ def test_rights_parser_imports_privilege_rules_with_conditions(rights_definition
         "other.calculation_alternative",
     ]
 
+
 def test_rights_parser_imports_default_validation_rules(
     rights_definition,
 ) -> None:
+    provider_rules = rights_definition.validation_rules["fk_provider"]
 
-    provider_rules = rights_definition.validation_rules[
-        "fk_provider"
-    ]
-
-    assert len(
-        provider_rules,
-    ) == 1
+    assert (
+        len(
+            provider_rules,
+        )
+        == 1
+    )
 
     assert provider_rules[0].id == "equals_context_value"
     assert provider_rules[0].context_value == "provider_oid"
 
+
 def test_rights_parser_imports_inherit_rules(rights_definition) -> None:
-    wastewater_structure = rights_definition.classes[
-        "wastewater_structure"
-    ]
+    wastewater_structure = rights_definition.classes["wastewater_structure"]
 
     update_rules = wastewater_structure.crud_rules.update_rules
     delete_rules = wastewater_structure.crud_rules.delete_rules
@@ -116,9 +111,7 @@ def test_rights_parser_imports_inherit_rules(rights_definition) -> None:
 
 
 def test_rights_parser_imports_attributes_and_transitions(rights_definition) -> None:
-    wastewater_structure = rights_definition.classes[
-        "wastewater_structure"
-    ]
+    wastewater_structure = rights_definition.classes["wastewater_structure"]
 
     status = wastewater_structure.attributes["status"]
 
@@ -136,11 +129,7 @@ def test_rights_parser_imports_attributes_and_transitions(rights_definition) -> 
     assert transition_validation.allow_transitive is True
     assert len(transition_validation.ruleset) == 2
 
-    bilateral_rules = [
-        rule
-        for rule in transition_validation.ruleset
-        if rule.bilateral
-    ]
+    bilateral_rules = [rule for rule in transition_validation.ruleset if rule.bilateral]
 
     assert len(bilateral_rules) == 1
 
@@ -175,14 +164,11 @@ def test_rights_parser_imports_crud_rules_shortcut(rights_definition) -> None:
 
 
 def test_rights_parser_imports_extends_and_derived_rights(rights_definition) -> None:
-
     wastewater_node = rights_definition.classes["wastewater_node"]
 
     assert wastewater_node.superclass_id == "wastewater_networkelement"
 
-    wastewater_networkelement = rights_definition.classes[
-        "wastewater_networkelement"
-    ]
+    wastewater_networkelement = rights_definition.classes["wastewater_networkelement"]
 
     assert len(wastewater_networkelement.derive_rights_from) == 1
 
@@ -219,6 +205,7 @@ def test_rights_parser_imports_extends_and_derived_rights(rights_definition) -> 
         for derived in reach_point.derive_rights_from
     )
 
+
 def test_rights_parser_imports_ownership_update_rules(rights_definition) -> None:
     maintenance = rights_definition.classes["maintenance"]
 
@@ -237,7 +224,9 @@ def test_rights_parser_imports_ownership_update_rules(rights_definition) -> None
     assert delete_rules[0].source == "update_rules"
 
 
-def test_wildcard_rights_parser_imports_defaults_and_classes(wildcard_rights_definition) -> None:
+def test_wildcard_rights_parser_imports_defaults_and_classes(
+    wildcard_rights_definition,
+) -> None:
     assert "agxx_wastewater_networkelement" in wildcard_rights_definition.classes
 
     assert len(wildcard_rights_definition.defaults.attribute_defaults) == 2
@@ -247,17 +236,13 @@ def test_wildcard_rights_parser_imports_defaults_and_classes(wildcard_rights_def
         for default in wildcard_rights_definition.defaults.attribute_defaults
     }
 
-    assert defaults_by_pattern[
-        "ag64_*"
-    ].update_privileges == frozenset(
+    assert defaults_by_pattern["ag64_*"].update_privileges == frozenset(
         {
             Privilege.DBW_WI,
         }
     )
 
-    assert defaults_by_pattern[
-        "ag96_*"
-    ].update_privileges == frozenset(
+    assert defaults_by_pattern["ag96_*"].update_privileges == frozenset(
         {
             Privilege.DBW_GEP,
         }

@@ -9,11 +9,15 @@ from ..capabilities.conditions import (
     ConditionEvaluationContext,
 )
 from ..capabilities.privilege import ResolvedProviderCapability
-from ..capabilities.rights import RightsCapability,DerivedRightsCapability, SubclassRightsCapability
+from ..capabilities.rights import (
+    RightsCapability,
+    DerivedRightsCapability,
+    SubclassRightsCapability,
+)
 from ..capabilities.relation_lookup import RelationLookupCapability
 
 
-from ..models.rights import CanonicalDerivedRights, DerivedRights
+from ..models.rights import CanonicalDerivedRights
 from ..models.canonical_object import CanonicalObjectIdentity
 from ..models.rulesets import (
     Rule,
@@ -133,7 +137,6 @@ class RightsEvaluator:
             context,
             visited=(),
         )
-
 
     def _can_update(
         self,
@@ -280,9 +283,7 @@ class RightsEvaluator:
                 context,
             )
 
-        raise TypeError(
-            f"Unsupported rule type: {type(rule)!r}"
-        )
+        raise TypeError(f"Unsupported rule type: {type(rule)!r}")
 
     def can_apply_privilege_rule(
         self,
@@ -371,7 +372,7 @@ class RightsEvaluator:
         self,
         class_id: str,
         context: RightsEvaluationContext,
-        visited: tuple[str, ...] =(),
+        visited: tuple[str, ...] = (),
     ) -> bool:
         """
         Check whether update rights may be inherited from subclasses.
@@ -401,10 +402,8 @@ class RightsEvaluator:
         class_id: str,
         context: RightsEvaluationContext,
     ) -> CanonicalDerivedRights:
-        definitions = (
-            self.derived_rights.try_derived_rights(
-                class_id,
-            )
+        definitions = self.derived_rights.try_derived_rights(
+            class_id,
         )
 
         if not definitions:
@@ -422,15 +421,11 @@ class RightsEvaluator:
             },
         )
 
-        remote_objects: list[
-            CanonicalObjectIdentity
-        ] = []
+        remote_objects: list[CanonicalObjectIdentity] = []
 
         for relation in definitions:
             try:
-                value = local_object.attributes[
-                    relation.local_attribute
-                ]
+                value = local_object.attributes[relation.local_attribute]
             except KeyError:
                 continue
 
@@ -445,9 +440,7 @@ class RightsEvaluator:
             )
 
         return CanonicalDerivedRights(
-            local_objects=(
-                local_object,
-            ),
+            local_objects=(local_object,),
             remote_objects=tuple(
                 remote_objects,
             ),

@@ -2,19 +2,17 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from collections.abc import Mapping
 from enum import StrEnum
-from typing import Any
 
 from .effects import Effect
-from.canonical_object import CanonicalObjectIdentity
-
+from .canonical_object import CanonicalObjectIdentity
 
 
 class SnapshotState(StrEnum):
     CURRENT = "current"
     MODIFIED = "modified"
     DELETED = "deleted"
+
 
 @dataclass(slots=True, frozen=True)
 class SnapshotMetadata:
@@ -23,34 +21,20 @@ class SnapshotMetadata:
     """
 
     created_at: datetime = field(
-        metadata={
-            "doc": (
-                "Timestamp when the snapshot was generated."
-            )
-        },
+        metadata={"doc": ("Timestamp when the snapshot was generated.")},
     )
 
     source_model: str = field(
-        metadata={
-            "doc": (
-                "Source model from which the snapshot was generated."
-            )
-        },
+        metadata={"doc": ("Source model from which the snapshot was generated.")},
     )
 
     source_class_id: str = field(
-        metadata={
-            "doc": (
-                "Source class that initiated snapshot creation."
-            )
-        },
+        metadata={"doc": ("Source class that initiated snapshot creation.")},
     )
 
     source_object_id: str = field(
         metadata={
-            "doc": (
-                "Source object identifier that initiated snapshot creation."
-            )
+            "doc": ("Source object identifier that initiated snapshot creation.")
         },
     )
 
@@ -62,11 +46,7 @@ class SnapshotObject:
     """
 
     identity: CanonicalObjectIdentity = field(
-        metadata={
-            "doc": (
-                "Canonical identity of the referenced object."
-            )
-        },
+        metadata={"doc": ("Canonical identity of the referenced object.")},
     )
 
     last_modification: datetime | None = field(
@@ -91,30 +71,19 @@ class DiffSnapshot:
     """
 
     metadata: SnapshotMetadata = field(
-        metadata={
-            "doc": (
-                "Snapshot creation metadata."
-            )
-        },
+        metadata={"doc": ("Snapshot creation metadata.")},
     )
 
     objects: tuple[SnapshotObject, ...] = field(
         default_factory=tuple,
-        metadata={
-            "doc": (
-                "Canonical objects referenced by the snapshot."
-            )
-        },
+        metadata={"doc": ("Canonical objects referenced by the snapshot.")},
     )
 
     effects: tuple[Effect, ...] = field(
         default_factory=tuple,
-        metadata={
-            "doc": (
-                "Canonical effects captured in the snapshot."
-            )
-        },
+        metadata={"doc": ("Canonical effects captured in the snapshot.")},
     )
+
 
 @dataclass(slots=True, frozen=True)
 class SnapshotValidationFinding:

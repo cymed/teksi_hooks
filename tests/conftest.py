@@ -3,11 +3,8 @@ from collections.abc import Mapping
 import pytest
 
 
-
 from teksi_hooks.models.oid import Standardoid
 from teksi_hooks.models.rights import (
-    AttributeDefinition,
-    ClassDefinition,
     RightsDefinition,
     ResolvedClassDefinition,
 )
@@ -19,7 +16,11 @@ from teksi_hooks.models.provider import Provider, ResolvedProvider
 from teksi_hooks.models.mapping import ModelMapping
 
 from teksi_hooks.capabilities.conditions import ConditionsCapability
-from teksi_hooks.capabilities.rights import RightsCapability, DerivedRightsCapability, SubclassRightsCapability
+from teksi_hooks.capabilities.rights import (
+    RightsCapability,
+    DerivedRightsCapability,
+    SubclassRightsCapability,
+)
 from teksi_hooks.capabilities.privilege import ResolvedProviderCapability
 from teksi_hooks.capabilities.validation import (
     ValidationRegistry,
@@ -33,11 +34,13 @@ from teksi_hooks.evaluators.rights import RightsEvaluator
 
 DATA_DIR = Path(__file__).parent / "parser/data"
 
+
 @pytest.fixture
 def wildcard_rights_definition() -> RightsDefinition:
     return WildcardRightsParser().parse_file(
         DATA_DIR / "provider_privilege_agxx.yaml",
     )
+
 
 @pytest.fixture
 def rights_definition() -> RightsDefinition:
@@ -45,11 +48,13 @@ def rights_definition() -> RightsDefinition:
         DATA_DIR / "rights_parser_minimal.yaml",
     )
 
+
 @pytest.fixture
 def rights_definition_non_transitive() -> RightsDefinition:
     return RightsParser().parse_file(
         DATA_DIR / "rights_parser_minimal_non_transitive.yaml",
     )
+
 
 @pytest.fixture
 def providers() -> tuple[Provider, ...]:
@@ -82,14 +87,15 @@ def agxx_mapping() -> ModelMapping:
         DATA_DIR / "agxx_mapping_minimal.yaml",
     )
 
+
 @pytest.fixture
 def derived_rights(
     rights_definition,
 ):
-
     return RightsResolver().resolve_derived_rights_config(
         rights_definition,
     )
+
 
 @pytest.fixture
 def evaluator(
@@ -102,9 +108,7 @@ def evaluator(
             rights=resolved_rights,
         ),
         provider=ResolvedProviderCapability(
-            provider=resolved_providers[
-                Standardoid("ch000000geping01")
-            ],
+            provider=resolved_providers[Standardoid("ch000000geping01")],
         ),
         conditions=ConditionsCapability(),
         relation_lookup=relation_lookup,

@@ -52,6 +52,7 @@ class RightsParser:
     or inherited rule references. That is the responsibility of the
     rights resolver.
     """
+
     def parse_text(
         self,
         txt: str,
@@ -61,12 +62,12 @@ class RightsParser:
         return self._parse_dict(
             data or {},
         )
-    
+
     def parse_file(
         self,
         path: str | Path,
     ) -> RightsDefinition:
-        with open(path, "r", encoding="utf-8") as file:
+        with open(path, encoding="utf-8") as file:
             data = yaml.safe_load(file)
 
         return self._parse_dict(
@@ -77,7 +78,6 @@ class RightsParser:
         self,
         data: dict[str, Any],
     ) -> RightsDefinition:
-
         settings = data.get(
             "settings",
             {},
@@ -106,7 +106,7 @@ class RightsParser:
                     "privileges",
                     {},
                 )
-        ),
+            ),
             classes={
                 class_definition.id: class_definition
                 for class_definition in class_definitions
@@ -388,9 +388,7 @@ class RightsParser:
                 source=raw["inherit"],
             )
 
-        raise ValueError(
-            f"Unknown rule definition: {raw!r}"
-        )
+        raise ValueError(f"Unknown rule definition: {raw!r}")
 
     def _parse_privilege_ids(
         self,
@@ -472,9 +470,7 @@ class RightsParser:
                 ),
             )
 
-        raise ValueError(
-            f"Unknown condition definition: {raw!r}"
-        )
+        raise ValueError(f"Unknown condition definition: {raw!r}")
 
     def _parse_local_condition(
         self,
@@ -514,18 +510,15 @@ class RightsParser:
             "relation",
         }
 
-        operator_keys = [
-            key
-            for key in raw
-            if key not in ignored_keys
-        ]
+        operator_keys = [key for key in raw if key not in ignored_keys]
 
-        if len(
-            operator_keys,
-        ) != 1:
-            raise ValueError(
-                f"Expected exactly one condition operator in {raw!r}"
+        if (
+            len(
+                operator_keys,
             )
+            != 1
+        ):
+            raise ValueError(f"Expected exactly one condition operator in {raw!r}")
 
         operator = operator_keys[0]
 
@@ -566,13 +559,8 @@ class RightsParser:
 
     def _parse_attribute_validations(
         self,
-        raw_validations: list[
-            dict[str, Any]
-        ],
-    ) -> tuple[
-        AttributeValidation,
-        ...
-    ]:
+        raw_validations: list[dict[str, Any]],
+    ) -> tuple[AttributeValidation, ...]:
         return tuple(
             self._parse_attribute_validation(
                 raw_validation,
@@ -585,10 +573,7 @@ class RightsParser:
         raw_rules: dict[str, Any],
     ) -> dict[
         str,
-        tuple[
-            AttributeValidation,
-            ...
-        ],
+        tuple[AttributeValidation, ...],
     ]:
         return {
             attribute_name: self._parse_attribute_validations(
@@ -599,8 +584,6 @@ class RightsParser:
             )
             for attribute_name, definition in raw_rules.items()
         }
-
-
 
     def _merge_validation_rules(
         self,
@@ -616,11 +599,8 @@ class RightsParser:
 
         for attribute_name, rules in override.items():
             if attribute_name in merged:
-                merged[attribute_name] = (
-                    merged[attribute_name]
-                    + tuple(
-                        rules,
-                    )
+                merged[attribute_name] = merged[attribute_name] + tuple(
+                    rules,
                 )
             else:
                 merged[attribute_name] = tuple(
@@ -649,7 +629,7 @@ class WildcardRightsParser:
         self,
         path: str | Path,
     ) -> RightsDefinition:
-        with open(path, "r", encoding="utf-8") as file:
+        with open(path, encoding="utf-8") as file:
             data = yaml.safe_load(file)
 
         return self._parse_dict(
@@ -700,11 +680,9 @@ class WildcardRightsParser:
         pattern: str,
         raw: dict[str, Any],
     ) -> AttributeDefaultDefinition:
-
         if not isinstance(raw, dict):
             raise TypeError(
-                f"Expected mapping for wildcard default {pattern!r}, "
-                f"got {type(raw)!r}"
+                f"Expected mapping for wildcard default {pattern!r}, got {type(raw)!r}"
             )
 
         return AttributeDefaultDefinition(

@@ -28,19 +28,11 @@ class HookMetadata:
     """
 
     name: str = dataclasses.field(
-        metadata={
-            "doc": (
-                "Human-readable hook name used in logs and diagnostics."
-            )
-        },
+        metadata={"doc": ("Human-readable hook name used in logs and diagnostics.")},
     )
 
     description: str = dataclasses.field(
-        metadata={
-            "doc": (
-                "Short description of what the hook does."
-            )
-        },
+        metadata={"doc": ("Short description of what the hook does.")},
     )
 
 
@@ -66,10 +58,7 @@ class HookContext:
     logger: logging.Logger = dataclasses.field(
         default_factory=lambda: logging.getLogger(__name__),
         metadata={
-            "doc": (
-                "Logger that hook implementations should use for runtime "
-                "messages."
-            )
+            "doc": ("Logger that hook implementations should use for runtime messages.")
         },
     )
 
@@ -132,10 +121,8 @@ class HookBase(abc.ABC):
         Return hook metadata.
         """
 
-        raise NotImplementedError(
-            "HookMetadata must be implemented in the subclass."
-        )
-    
+        raise NotImplementedError("HookMetadata must be implemented in the subclass.")
+
 
 class HookHandler:
     """
@@ -170,14 +157,9 @@ class HookHandler:
         self.file = Path(file)
         if not self.file.is_absolute():
             if base_path is None:
-                raise ValueError(
-                    "Base path must be provided for relative hook paths."
-                )
+                raise ValueError("Base path must be provided for relative hook paths.")
 
-            self.file = (
-                base_path
-                / self.file
-            ).resolve()
+            self.file = (base_path / self.file).resolve()
 
         self._module: ModuleType | None = None
         self._module_name: str | None = None
@@ -196,12 +178,10 @@ class HookHandler:
         ------
         TeksiHookError
           If the hook has not been loaded.
-       """
+        """
 
         if self._hook_instance is None:
-            raise TeksiHookError(
-                "Hook has not been loaded."
-            )
+            raise TeksiHookError("Hook has not been loaded.")
 
         return self._hook_instance
 
@@ -220,7 +200,7 @@ class HookHandler:
     def run(
         self,
         context: HookContext,
-     ) -> None:
+    ) -> None:
         """
         Load, validate and execute the hook.
         """
@@ -250,10 +230,7 @@ class HookHandler:
                     ) from exc
 
             finally:
-                duration = (
-                    time.monotonic()
-                    - started
-                )
+                duration = time.monotonic() - started
 
                 logger.info(
                     "Hook '%s' finished in %.3f s.",
@@ -302,10 +279,7 @@ class HookHandler:
         importlib.invalidate_caches()
 
         try:
-            module_name = (
-                f"teksi_hook_{self.file.stem}_"
-                f"{uuid.uuid4().hex}"
-            )
+            module_name = f"teksi_hook_{self.file.stem}_{uuid.uuid4().hex}"
 
             spec = importlib.util.spec_from_file_location(
                 module_name,
@@ -407,19 +381,13 @@ class HookHandler:
         """
 
         if not self.file.exists():
-            raise TeksiHookError(
-                f"Hook file '{self.file}' does not exist."
-            )
+            raise TeksiHookError(f"Hook file '{self.file}' does not exist.")
 
         if not self.file.is_file():
-            raise TeksiHookError(
-                f"Hook file '{self.file}' is not a file."
-            )
+            raise TeksiHookError(f"Hook file '{self.file}' is not a file.")
 
         if self.file.suffix.lower() != ".py":
-            raise TeksiHookError(
-                f"Unsupported hook file type '{self.file.suffix}'."
-            )
+            raise TeksiHookError(f"Unsupported hook file type '{self.file.suffix}'.")
 
         if self.base_path is not None:
             try:
@@ -428,8 +396,7 @@ class HookHandler:
                 )
             except ValueError as exc:
                 raise TeksiHookError(
-                    f"Hook file '{self.file}' is outside base path "
-                    f"'{self.base_path}'."
+                    f"Hook file '{self.file}' is outside base path '{self.base_path}'."
                 ) from exc
 
     def _validate_context(
@@ -443,8 +410,7 @@ class HookHandler:
         for capability_type in self.hook.required_capabilities:
             if capability_type not in context.capabilities:
                 raise TeksiHookError(
-                    "Required capability "
-                    f"'{capability_type.__name__}' is missing."
+                    f"Required capability '{capability_type.__name__}' is missing."
                 )
 
     def _cleanup_sys_path(
@@ -481,19 +447,13 @@ class HookHandler:
         )
 
         if len(parameters) != 2:
-            raise TeksiHookError(
-                "run_hook(self, context) expected."
-            )
+            raise TeksiHookError("run_hook(self, context) expected.")
 
         if parameters[0].name != "self":
-            raise TeksiHookError(
-                "run_hook(self, context) expected."
-            )
+            raise TeksiHookError("run_hook(self, context) expected.")
 
         if parameters[1].name != "context":
-            raise TeksiHookError(
-                "run_hook(self, context) expected."
-            )
+            raise TeksiHookError("run_hook(self, context) expected.")
 
     def _validate_metadata(
         self,
@@ -508,19 +468,13 @@ class HookHandler:
             metadata,
             HookMetadata,
         ):
-            raise TeksiHookError(
-                "metadata must return a HookMetadata instance."
-            )
+            raise TeksiHookError("metadata must return a HookMetadata instance.")
 
         if not metadata.name.strip():
-            raise TeksiHookError(
-                "Hook metadata name must not be empty."
-            )
+            raise TeksiHookError("Hook metadata name must not be empty.")
 
         if not metadata.description.strip():
-            raise TeksiHookError(
-                "Hook metadata description must not be empty."
-            )
+            raise TeksiHookError("Hook metadata description must not be empty.")
 
     def _validate_required_capabilities(
         self,
@@ -535,9 +489,7 @@ class HookHandler:
             capabilities,
             frozenset,
         ):
-            raise TeksiHookError(
-                "required_capabilities must be a frozenset."
-            )
+            raise TeksiHookError("required_capabilities must be a frozenset.")
 
         for capability in capabilities:
             if not isinstance(

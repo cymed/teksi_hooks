@@ -48,25 +48,25 @@ def test_change_builder_builds_insert() -> None:
             tww_attribute_id="status",
             value="operational",
         ),
-    UpdateAttributeEffect(
-        identity=CanonicalObjectIdentity(
-            class_id="wastewater_structure",
-            attributes={
-                "obj_id": "ch987654WS123456",
-            },
+        UpdateAttributeEffect(
+            identity=CanonicalObjectIdentity(
+                class_id="wastewater_structure",
+                attributes={
+                    "obj_id": "ch987654WS123456",
+                },
+            ),
+            tww_attribute_id="fk_provider",
+            value="ch000000geping01",
         ),
-        tww_attribute_id="fk_provider",
-        value="ch000000geping01",
-        ),
-    UpdateAttributeEffect(
-        identity=CanonicalObjectIdentity(
-            class_id="wastewater_structure",
-            attributes={
-                "obj_id": "ch987654WS123456",
-            },
-        ),
-        tww_attribute_id="fk_dataowner",
-        value="ch000000awgde001",
+        UpdateAttributeEffect(
+            identity=CanonicalObjectIdentity(
+                class_id="wastewater_structure",
+                attributes={
+                    "obj_id": "ch987654WS123456",
+                },
+            ),
+            tww_attribute_id="fk_dataowner",
+            value="ch000000awgde001",
         ),
     )
 
@@ -75,10 +75,7 @@ def test_change_builder_builds_insert() -> None:
         effects=effects,
     )
 
-    assert (
-        change.operation
-        == ChangeOperation.INSERT
-    )
+    assert change.operation == ChangeOperation.INSERT
 
     assert change.old_values == {}
 
@@ -115,10 +112,7 @@ def test_change_builder_builds_update(
         ),
     )
 
-    assert (
-        change.operation
-        == ChangeOperation.UPDATE
-    )
+    assert change.operation == ChangeOperation.UPDATE
 
     assert change.old_values == {
         "status": "other.planned",
@@ -136,9 +130,12 @@ def test_change_builder_builds_update(
         "fk_dataowner": "ch000000awgde001",
     }
 
-    assert len(
-        change.changed_attributes,
-    ) == 3
+    assert (
+        len(
+            change.changed_attributes,
+        )
+        == 3
+    )
 
 
 def test_change_builder_preserves_unchanged_attributes(
@@ -157,10 +154,7 @@ def test_change_builder_preserves_unchanged_attributes(
         ),
     )
 
-    assert (
-        change.new_values["fk_provider"]
-        == "ch000000geping01"
-    )
+    assert change.new_values["fk_provider"] == "ch000000geping01"
 
     changed_attributes = {
         attribute_change.attribute_name
@@ -169,20 +163,11 @@ def test_change_builder_preserves_unchanged_attributes(
 
     assert "status" in changed_attributes
 
-    assert (
-        "fk_provider"
-        not in changed_attributes
-    )
+    assert "fk_provider" not in changed_attributes
 
-    assert (
-        "remark"
-        not in changed_attributes
-    )
+    assert "remark" not in changed_attributes
 
-    assert (
-        "status_survey_year"
-        not in changed_attributes
-    )
+    assert "status_survey_year" not in changed_attributes
 
 
 def test_change_builder_changed_attributes_contain_expected_values(
@@ -201,9 +186,12 @@ def test_change_builder_changed_attributes_contain_expected_values(
         ),
     )
 
-    assert len(
-        change.changed_attributes,
-    ) == 1
+    assert (
+        len(
+            change.changed_attributes,
+        )
+        == 1
+    )
 
     changed = next(
         iter(
@@ -211,20 +199,11 @@ def test_change_builder_changed_attributes_contain_expected_values(
         )
     )
 
-    assert (
-        changed.attribute_name
-        == "status"
-    )
+    assert changed.attribute_name == "status"
 
-    assert (
-        changed.old_value
-        == "other.planned"
-    )
+    assert changed.old_value == "other.planned"
 
-    assert (
-        changed.new_value
-        == "operational"
-    )
+    assert changed.new_value == "operational"
 
 
 def test_change_builder_rejects_empty_effects() -> None:

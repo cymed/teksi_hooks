@@ -1,6 +1,7 @@
 import pytest
 
-from typing import ClassVar, Pattern
+from typing import ClassVar
+from re import Pattern
 import re
 
 from teksi_hooks.exceptions import TeksiHookError
@@ -46,8 +47,6 @@ def test_standardoid_is_oid() -> None:
     )
 
 
-
-
 class DummyOid(Oid):
     _pattern: ClassVar[Pattern[str]] = re.compile(
         r"^DUMMY$",
@@ -68,14 +67,15 @@ def test_oid_base_class_rejects_invalid_pattern() -> None:
             "INVALID",
         )
 
+
 @pytest.mark.parametrize(
     "value",
     [
         "",
         "too_short",
         "ch000000geping001",  # too long
-        "ch000000-geping1",   # dash
-        "ch000000gäping01",    # non-ASCII
+        "ch000000-geping1",  # dash
+        "ch000000gäping01",  # non-ASCII
     ],
 )
 def test_standardoid_rejects_invalid_value(

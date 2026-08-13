@@ -9,6 +9,7 @@ from ..models.canonical_object import (
     CanonicalObjectIdentity,
 )
 
+
 class RelationLookupCapability(Protocol):
     """
     Capability providing canonical object relationship lookups.
@@ -28,9 +29,7 @@ class RelationLookupCapability(Protocol):
         local_attribute: str,
         related_attribute: str,
         value: Any,
-    ) -> Sequence[
-        CanonicalObjectIdentity
-    ]:
+    ) -> Sequence[CanonicalObjectIdentity]:
         """
         Return related objects matching the supplied join condition.
 
@@ -71,28 +70,17 @@ class InMemoryRelationLookupCapability(RelationLookupCapability):
     In this chain, `reach` is first a related object, then a local object.
     """
 
-    objects: tuple[
-        CanonicalObject,
-        ...
-    ] = field(
+    objects: tuple[CanonicalObject, ...] = field(
         default_factory=tuple,
-        metadata={
-            "doc": (
-                "Canonical objects available for lookup."
-            )
-        },
+        metadata={"doc": ("Canonical objects available for lookup.")},
     )
 
     @classmethod
     def from_sides(
         cls,
         *,
-        local_objects: Sequence[
-            CanonicalObject
-        ] = (),
-        related_objects: Sequence[
-            CanonicalObject
-        ] = (),
+        local_objects: Sequence[CanonicalObject] = (),
+        related_objects: Sequence[CanonicalObject] = (),
     ) -> InMemoryRelationLookupCapability:
         """
         Convenience constructor for tests that want to express local and
@@ -126,9 +114,7 @@ class InMemoryRelationLookupCapability(RelationLookupCapability):
         local_attribute: str,
         related_attribute: str,
         value: Any,
-    ) -> Sequence[
-        CanonicalObjectIdentity
-    ]:
+    ) -> Sequence[CanonicalObjectIdentity]:
         """
         Return related object identities matching the configured join.
 
@@ -197,9 +183,7 @@ class InMemoryRelationLookupCapability(RelationLookupCapability):
         """
 
         if attribute_name in obj.values:
-            return obj.values[
-                attribute_name
-            ]
+            return obj.values[attribute_name]
 
         return obj.identity.attributes.get(
             attribute_name,

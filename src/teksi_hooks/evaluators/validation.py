@@ -9,7 +9,7 @@ from ..models.validation import (
     ValidationContext,
     ValidationFinding,
     Change,
-    ChangeOperation
+    ChangeOperation,
 )
 from ..exceptions import Severity
 
@@ -30,10 +30,7 @@ class ValidationEvaluator:
         attribute_name: str,
         old_value: str | None,
         new_value: str | None,
-    ) -> tuple[
-        ValidationFinding,
-        ...
-    ]:
+    ) -> tuple[ValidationFinding, ...]:
         rules = self.rights.try_transition_rules(
             class_id,
             attribute_name,
@@ -53,11 +50,7 @@ class ValidationEvaluator:
             ValidationFinding(
                 code="invalid_transition",
                 severity=Severity.ERROR,
-                message=(
-                    f"Transition "
-                    f"{old_value!r} -> {new_value!r} "
-                    f"is not allowed."
-                ),
+                message=(f"Transition {old_value!r} -> {new_value!r} is not allowed."),
                 attribute_name=attribute_name,
             ),
         )
@@ -73,8 +66,7 @@ class ValidationEvaluator:
 
         # Direct edge
         if any(
-            rule.from_value == old_value
-            and rule.to_value == new_value
+            rule.from_value == old_value and rule.to_value == new_value
             for rule in rules
         ):
             return True
@@ -100,10 +92,7 @@ class ValidationEvaluator:
         ] = {}
 
         for rule in rules:
-            if (
-                rule.from_value is None
-                or rule.to_value is None
-            ):
+            if rule.from_value is None or rule.to_value is None:
                 continue
 
             graph.setdefault(
@@ -117,9 +106,7 @@ class ValidationEvaluator:
             [start],
         )
 
-        visited: set[
-            str | None
-        ] = set()
+        visited: set[str | None] = set()
 
         while queue:
             current = queue.popleft()
@@ -153,10 +140,7 @@ class ValidationEvaluator:
         new_value,
         operation: ChangeOperation,
         context_values={},
-    ) -> tuple[
-        ValidationFinding,
-        ...
-    ]:
+    ) -> tuple[ValidationFinding, ...]:
         validations = self.rights.try_validations(
             class_id,
             attribute_name,
@@ -165,9 +149,7 @@ class ValidationEvaluator:
         if not validations:
             return ()
 
-        findings: list[
-            ValidationFinding
-        ] = []
+        findings: list[ValidationFinding] = []
 
         context = ValidationContext(
             attribute_name=attribute_name,
@@ -202,14 +184,10 @@ class ValidationEvaluator:
         context_values: Mapping[
             str,
             Any,
-        ] | None = None,
-    ) -> tuple[
-        ValidationFinding,
-        ...
-    ]:
-        findings: list[
-            ValidationFinding
-        ] = []
+        ]
+        | None = None,
+    ) -> tuple[ValidationFinding, ...]:
+        findings: list[ValidationFinding] = []
 
         if context_values is None:
             context_values = {}

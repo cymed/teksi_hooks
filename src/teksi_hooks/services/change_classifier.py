@@ -55,21 +55,18 @@ class ChangeClassifier:
 
     def classify(
         self,
-        changes: Sequence[
-            Change,
-        ],
+        changes: Sequence[Change,],
         context: RightsEvaluationContext,
         validation_findings_by_change_key: Mapping[
             ChangeKey,
-            tuple[
-                ValidationFinding,
-                ...
-            ],
-        ] | None = None,
+            tuple[ValidationFinding, ...],
+        ]
+        | None = None,
         metadata: dict[
             str,
             str,
-        ] | None = None,
+        ]
+        | None = None,
     ) -> ClassifiedChanges:
         """
         Classify a sequence of changes.
@@ -91,10 +88,7 @@ class ChangeClassifier:
             Optional workflow-level metadata copied into the result.
         """
 
-        validation_findings_by_change_key = (
-            validation_findings_by_change_key
-            or {}
-        )
+        validation_findings_by_change_key = validation_findings_by_change_key or {}
 
         result = ClassifiedChanges(
             metadata=metadata or {},
@@ -124,10 +118,7 @@ class ChangeClassifier:
         self,
         change: Change,
         base_context: RightsEvaluationContext,
-        validation_findings: tuple[
-            ValidationFinding,
-            ...
-        ],
+        validation_findings: tuple[ValidationFinding, ...],
     ) -> ClassifiedChange:
         context = self._context_for_change(
             base_context=base_context,
@@ -184,9 +175,7 @@ class ChangeClassifier:
                     classification=ChangeClassification.UNPERMITTED_CHANGE,
                     permitted=False,
                     severity=permission_finding.severity,
-                    permission_findings=(
-                        permission_finding,
-                    ),
+                    permission_findings=(permission_finding,),
                     validation_findings=(),
                 ),
             )
@@ -249,10 +238,7 @@ class ChangeClassifier:
         change: Change,
         context: RightsEvaluationContext,
         permitted: bool,
-    ) -> tuple[
-        PermissionFinding,
-        ...
-    ]:
+    ) -> tuple[PermissionFinding, ...]:
         if permitted:
             return ()
 
@@ -260,15 +246,11 @@ class ChangeClassifier:
             PermissionFinding(
                 code="permission_denied",
                 severity=Severity.ERROR,
-                message=(
-                    "Change is not permitted by rights evaluation."
-                ),
+                message=("Change is not permitted by rights evaluation."),
                 attribute_name=None,
                 provider_oid=context.provider_oid,
                 dataowner_oid=context.dataowner_oid,
-                transitive_evaluation_enabled=(
-                    self._transitive_evaluation_enabled()
-                ),
+                transitive_evaluation_enabled=(self._transitive_evaluation_enabled()),
                 details={
                     "class_id": change.table_name,
                     "object_id": change.object_id,
@@ -286,15 +268,11 @@ class ChangeClassifier:
         return PermissionFinding(
             code="unsupported_change_operation",
             severity=Severity.ERROR,
-            message=(
-                f"Unsupported change operation: {change.operation!r}."
-            ),
+            message=(f"Unsupported change operation: {change.operation!r}."),
             attribute_name=None,
             provider_oid=context.provider_oid,
             dataowner_oid=context.dataowner_oid,
-            transitive_evaluation_enabled=(
-                self._transitive_evaluation_enabled()
-            ),
+            transitive_evaluation_enabled=(self._transitive_evaluation_enabled()),
             details={
                 "class_id": change.table_name,
                 "object_id": change.object_id,
@@ -306,13 +284,8 @@ class ChangeClassifier:
 
     def _blocking_validation_findings(
         self,
-        findings: Sequence[
-            ValidationFinding,
-        ],
-    ) -> tuple[
-        ValidationFinding,
-        ...
-    ]:
+        findings: Sequence[ValidationFinding,],
+    ) -> tuple[ValidationFinding, ...]:
         """
         Return validation findings that should reject the import.
 
@@ -321,9 +294,7 @@ class ChangeClassifier:
         """
 
         return tuple(
-            finding
-            for finding in findings
-            if finding.severity == Severity.ERROR
+            finding for finding in findings if finding.severity == Severity.ERROR
         )
 
     def _classification_for_operation(
@@ -356,10 +327,7 @@ class ChangeClassifier:
         if not findings:
             return None
 
-        severities = tuple(
-            finding.severity
-            for finding in findings
-        )
+        severities = tuple(finding.severity for finding in findings)
 
         for severity in (
             Severity.ERROR,

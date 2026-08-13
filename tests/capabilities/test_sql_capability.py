@@ -76,26 +76,20 @@ def test_sql_capability_executes_statement() -> None:
 
     capability.execute(
         "SELECT 1 WHERE id = %s",
-        (
-            1,
-        ),
+        (1,),
     )
 
     assert connection.cursor_instance.executed == [
         (
             "SELECT 1 WHERE id = %s",
-            (
-                1,
-            ),
+            (1,),
         )
     ]
 
 
 def test_sql_capability_returns_fetchone() -> None:
     connection = FakeConnection()
-    connection.cursor_instance.fetchone_result = (
-        "value",
-    )
+    connection.cursor_instance.fetchone_result = ("value",)
 
     capability = SqlCapability(
         connection=connection,
@@ -103,20 +97,14 @@ def test_sql_capability_returns_fetchone() -> None:
 
     assert capability.fetchone(
         "SELECT value",
-    ) == (
-        "value",
-    )
+    ) == ("value",)
 
 
 def test_sql_capability_returns_fetchall() -> None:
     connection = FakeConnection()
     connection.cursor_instance.fetchall_result = [
-        (
-            "a",
-        ),
-        (
-            "b",
-        ),
+        ("a",),
+        ("b",),
     ]
 
     capability = SqlCapability(
@@ -126,12 +114,8 @@ def test_sql_capability_returns_fetchall() -> None:
     assert capability.fetchall(
         "SELECT value",
     ) == [
-        (
-            "a",
-        ),
-        (
-            "b",
-        ),
+        ("a",),
+        ("b",),
     ]
 
 
@@ -146,9 +130,12 @@ def test_sql_capability_returns_scalar() -> None:
         connection=connection,
     )
 
-    assert capability.scalar(
-        "SELECT value",
-    ) == "value"
+    assert (
+        capability.scalar(
+            "SELECT value",
+        )
+        == "value"
+    )
 
 
 def test_sql_capability_returns_none_for_missing_scalar() -> None:
@@ -159,9 +146,12 @@ def test_sql_capability_returns_none_for_missing_scalar() -> None:
         connection=connection,
     )
 
-    assert capability.scalar(
-        "SELECT value",
-    ) is None
+    assert (
+        capability.scalar(
+            "SELECT value",
+        )
+        is None
+    )
 
 
 def test_sql_capability_commits_and_rolls_back() -> None:

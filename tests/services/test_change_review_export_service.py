@@ -1,9 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any
 
-import pytest
 
 from teksi_hooks.models.review import (
     ReviewFeature,
@@ -107,9 +105,12 @@ def test_change_review_export_service_groups_features_by_class() -> None:
         "reach",
     }
 
-    assert len(
-        features_by_class["reach"],
-    ) == 1
+    assert (
+        len(
+            features_by_class["reach"],
+        )
+        == 1
+    )
 
     feature = features_by_class["reach"][0]
 
@@ -238,7 +239,9 @@ def test_change_review_export_service_deleted_feature_uses_old_values() -> None:
     }
 
 
-def test_change_review_export_service_uses_metadata_driven_geometry_attributes() -> None:
+def test_change_review_export_service_uses_metadata_driven_geometry_attributes() -> (
+    None
+):
     change = Change(
         table_name="reach",
         object_id="ch000000re000003",
@@ -272,9 +275,7 @@ def test_change_review_export_service_uses_metadata_driven_geometry_attributes()
             new_features={},
         ),
         geometry_attribute_names_by_class={
-            "reach": (
-                "progression_geometry",
-            ),
+            "reach": ("progression_geometry",),
         },
     )
 
@@ -290,14 +291,13 @@ def test_change_review_export_service_uses_metadata_driven_geometry_attributes()
 
     assert feature.attributes["progression_geometry_changed"] is True
     assert (
-        feature.attributes[
-            "progression_geometry_changed_without_permission"
-        ]
-        is False
+        feature.attributes["progression_geometry_changed_without_permission"] is False
     )
 
 
-def test_change_review_export_service_ignores_geometry_like_names_not_in_metadata() -> None:
+def test_change_review_export_service_ignores_geometry_like_names_not_in_metadata() -> (
+    None
+):
     change = Change(
         table_name="reach",
         object_id="ch000000re000004",
@@ -371,9 +371,7 @@ def test_change_review_export_service_marks_rejected_geometry_change() -> None:
                 metadata=ChangeClassificationMetadata(
                     classification=ChangeClassification.UNPERMITTED_CHANGE,
                     permitted=True,
-                    validation_findings=(
-                        finding,
-                    ),
+                    validation_findings=(finding,),
                 ),
             )
         ],
@@ -385,9 +383,7 @@ def test_change_review_export_service_marks_rejected_geometry_change() -> None:
             new_features={},
         ),
         geometry_attribute_names_by_class={
-            "reach": (
-                "progression_geometry",
-            ),
+            "reach": ("progression_geometry",),
         },
     )
 
@@ -402,19 +398,14 @@ def test_change_review_export_service_marks_rejected_geometry_change() -> None:
     }
 
     assert feature.attributes["progression_geometry_changed"] is True
-    assert (
-        feature.attributes[
-            "progression_geometry_changed_without_permission"
-        ]
-        is True
-    )
+    assert feature.attributes["progression_geometry_changed_without_permission"] is True
 
-    assert feature.attributes["validation_findings"] == (
-        finding,
-    )
+    assert feature.attributes["validation_findings"] == (finding,)
 
 
-def test_change_review_export_service_prefers_provider_features_for_geometries() -> None:
+def test_change_review_export_service_prefers_provider_features_for_geometries() -> (
+    None
+):
     change = Change(
         table_name="reach",
         object_id="ch000000re000006",
@@ -478,9 +469,7 @@ def test_change_review_export_service_prefers_provider_features_for_geometries()
             },
         ),
         geometry_attribute_names_by_class={
-            "reach": (
-                "progression_geometry",
-            ),
+            "reach": ("progression_geometry",),
         },
     )
 

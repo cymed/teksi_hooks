@@ -18,19 +18,13 @@ class ReviewFeature:
 
     class_id: str = field(
         metadata={
-            "doc": (
-                "Canonical class identifier represented by this review "
-                "feature."
-            )
+            "doc": ("Canonical class identifier represented by this review feature.")
         },
     )
 
     object_id: str = field(
         metadata={
-            "doc": (
-                "Canonical object identifier represented by this review "
-                "feature."
-            )
+            "doc": ("Canonical object identifier represented by this review feature.")
         },
     )
 

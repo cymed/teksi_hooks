@@ -36,7 +36,7 @@ class ModelMappingParser:
         self,
         path: str | Path,
     ) -> ModelMapping:
-        with open(path, "r", encoding="utf-8") as file:
+        with open(path, encoding="utf-8") as file:
             data = yaml.safe_load(file)
 
         return self._parse_dict(
@@ -145,8 +145,7 @@ class ModelMappingParser:
 
         if not targets:
             raise ValueError(
-                f"Attribute mapping {attribute_name!r} must define "
-                "exactly one target."
+                f"Attribute mapping {attribute_name!r} must define exactly one target."
             )
 
         if len(targets) != 1:

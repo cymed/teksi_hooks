@@ -38,7 +38,7 @@ class RightsResolver:
 
     validation_resolver: ValidationResolver = field(
         default_factory=ValidationResolver,
-        )              
+    )
 
     def resolve(
         self,
@@ -61,8 +61,7 @@ class RightsResolver:
             subclass_rights=self.resolve_subclass_rights(
                 definition,
             ),
-            allow_transitive_transitions=
-                definition.allow_transitive_transitions,
+            allow_transitive_transitions=definition.allow_transitive_transitions,
         )
 
     def _resolve_class(
@@ -83,8 +82,7 @@ class RightsResolver:
             ),
             attributes=attributes,
             transition_rules=(
-                self.validation_resolver
-                .resolve_class_transition_rules(
+                self.validation_resolver.resolve_class_transition_rules(
                     attributes,
                 )
             ),
@@ -161,13 +159,10 @@ class RightsResolver:
         for rule in rules:
             if isinstance(rule, InheritRule):
                 try:
-                    inherited_rules = rule_sets[
-                        rule.source
-                    ]
+                    inherited_rules = rule_sets[rule.source]
                 except KeyError as exc:
                     raise KeyError(
-                        f"Unknown inherited rule set: "
-                        f"{rule.source!r}"
+                        f"Unknown inherited rule set: {rule.source!r}"
                     ) from exc
 
                 expanded.extend(
@@ -214,9 +209,7 @@ class RightsResolver:
                 AttributeDefinition(),
             )
 
-            resolved[
-                attribute_name
-            ] = self._resolve_attribute(
+            resolved[attribute_name] = self._resolve_attribute(
                 attribute_name=attribute_name,
                 attribute_definition=attribute_definition,
                 definition=definition,
@@ -230,21 +223,15 @@ class RightsResolver:
         attribute_definition: AttributeDefinition,
         definition: RightsDefinition,
     ) -> ResolvedAttributeDefinition:
-        update_privileges = (
-            attribute_definition.update_privileges
-        )
+        update_privileges = attribute_definition.update_privileges
 
         if not update_privileges:
-            for default in (
-                definition.defaults.attribute_defaults
-            ):
+            for default in definition.defaults.attribute_defaults:
                 if fnmatchcase(
                     attribute_name,
                     default.pattern,
                 ):
-                    update_privileges = (
-                        default.update_privileges
-                    )
+                    update_privileges = default.update_privileges
                     break
 
         validations = list(
@@ -335,26 +322,18 @@ class RightsResolver:
 
         return resolved
 
-
     def _derived_rights_for_class(
         self,
         class_definition: ClassDefinition,
         definition: RightsDefinition,
         visited: tuple[str, ...],
-    ) -> tuple[
-        DerivedRights,
-        ...
-    ]:
+    ) -> tuple[DerivedRights, ...]:
         if class_definition.id in visited:
             return ()
 
-        next_visited = visited + (
-            class_definition.id,
-        )
+        next_visited = visited + (class_definition.id,)
 
-        inherited: list[
-            DerivedRights
-        ] = []
+        inherited: list[DerivedRights] = []
 
         if class_definition.superclass_id:
             superclass = definition.classes.get(

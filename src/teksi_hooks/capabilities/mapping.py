@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Protocol
@@ -23,8 +22,8 @@ class ModelMappingCapability:
     The mapping itself is immutable and should already be parsed or resolved
     before this capability is created.
     """
-    mapping: ModelMapping
 
+    mapping: ModelMapping
 
     def class_definition(
         self,
@@ -47,9 +46,7 @@ class ModelMappingCapability:
         try:
             return self.mapping.classes[class_id]
         except KeyError as exc:
-            raise KeyError(
-                f"Unknown class: {class_id}"
-            ) from exc
+            raise KeyError(f"Unknown class: {class_id}") from exc
 
     def try_class_definition(
         self,
@@ -88,9 +85,7 @@ class ModelMappingCapability:
             return cls.attributes[attribute_name]
         except KeyError as exc:
             raise KeyError(
-                f"Unknown attribute "
-                f"{attribute_name!r} "
-                f"for class {class_id!r}"
+                f"Unknown attribute {attribute_name!r} for class {class_id!r}"
             ) from exc
 
     def try_attribute_definition(
@@ -145,11 +140,9 @@ class ModelMappingCapability:
         attribute_name: str,
         value: str,
     ) -> ValueMapping | None:
-
         """
         Return a value mapping if it exists, otherwise `None`.
         """
-
 
         attribute = self.try_attribute_definition(
             class_id,
@@ -173,44 +166,39 @@ class ImplicitModelMappingCapability(Protocol):
     def class_definition(
         self,
         class_id: str,
-    ) -> ClassMapping:
-        ...
+    ) -> ClassMapping: ...
 
     def try_class_definition(
         self,
         class_id: str,
-    ) -> ClassMapping | None:
-        ...
+    ) -> ClassMapping | None: ...
 
     def attribute_definition(
         self,
         class_id: str,
         attribute_name: str,
-    ) -> AttributeMapping:
-        ...
+    ) -> AttributeMapping: ...
 
     def try_attribute_definition(
         self,
         class_id: str,
         attribute_name: str,
-    ) -> AttributeMapping | None:
-        ...
+    ) -> AttributeMapping | None: ...
 
     def value_mapping(
         self,
         class_id: str,
         attribute_name: str,
         value: str,
-    ) -> ValueMapping:
-        ...
+    ) -> ValueMapping: ...
 
     def try_value_mapping(
         self,
         class_id: str,
         attribute_name: str,
         value: str,
-    ) -> ValueMapping | None:
-        ...
+    ) -> ValueMapping | None: ...
+
 
 @dataclass(slots=True, frozen=True)
 class EffectiveModelMappingCapability:

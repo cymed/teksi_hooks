@@ -131,9 +131,12 @@ def test_validation_resolver_groups_rules_by_attribute() -> None:
         "status",
     }
 
-    assert len(
-        transition_rules["status"],
-    ) == 1
+    assert (
+        len(
+            transition_rules["status"],
+        )
+        == 1
+    )
 
 
 def test_validation_resolver_ignores_attributes_without_transitions() -> None:

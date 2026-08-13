@@ -4,21 +4,17 @@ from dataclasses import dataclass, field
 from collections.abc import Mapping
 from typing import Any
 
-from .privilege import PrivilegeId,PrivilegeMetadata
+from .privilege import PrivilegeId, PrivilegeMetadata
 from .validation import AttributeValidation, TransitionValidation
 from .rulesets import CrudRules, ResolvedCrudRules, StateTransitionRule
 from .canonical_object import CanonicalObjectIdentity
 from pathlib import Path
 from .oid import Oid
-from ..exceptions import  Finding
-
-
+from ..exceptions import Finding
 
 
 @dataclass(slots=True)
 class RightsProfile:
-
-
     identifier: str = field(
         metadata={
             "doc": (
@@ -43,6 +39,7 @@ class RightsProfile:
             )
         },
     )
+
 
 @dataclass(slots=True, frozen=True)
 class PermissionFinding(
@@ -90,8 +87,7 @@ class PermissionFinding(
         default=None,
         metadata={
             "doc": (
-                "Provider organisation oid used during rights evaluation, "
-                "if relevant."
+                "Provider organisation oid used during rights evaluation, if relevant."
             )
         },
     )
@@ -108,30 +104,19 @@ class PermissionFinding(
 
     required_privilege: PrivilegeId | None = field(
         default=None,
-        metadata={
-            "doc": (
-                "Privilege required for the attempted operation, if known."
-            )
-        },
+        metadata={"doc": ("Privilege required for the attempted operation, if known.")},
     )
 
-    available_privileges: tuple[
-        PrivilegeId,
-        ...
-    ] = field(
+    available_privileges: tuple[PrivilegeId, ...] = field(
         default_factory=tuple,
         metadata={
             "doc": (
-                "Privileges available to the evaluated provider/data owner "
-                "context."
+                "Privileges available to the evaluated provider/data owner context."
             )
         },
     )
 
-    evaluation_path: tuple[
-        str,
-        ...
-    ] = field(
+    evaluation_path: tuple[str, ...] = field(
         default_factory=tuple,
         metadata={
             "doc": (
@@ -165,6 +150,7 @@ class PermissionFinding(
         },
     )
 
+
 @dataclass(slots=True, frozen=True)
 class ResolvedRights:
     """
@@ -179,10 +165,7 @@ class ResolvedRights:
         ResolvedClassDefinition,
     ] = field(
         metadata={
-            "doc": (
-                "Resolved class definitions keyed by canonical "
-                "class identifier."
-            )
+            "doc": ("Resolved class definitions keyed by canonical class identifier.")
         },
     )
 
@@ -192,8 +175,7 @@ class ResolvedRights:
     ] = field(
         metadata={
             "doc": (
-                "Rights derivation definitions keyed by canonical "
-                "class identifier."
+                "Rights derivation definitions keyed by canonical class identifier."
             )
         },
     )
@@ -204,14 +186,13 @@ class ResolvedRights:
     ] = field(
         metadata={
             "doc": (
-                "Subclass rights mappings keyed by canonical parent "
-                "class identifier."
+                "Subclass rights mappings keyed by canonical parent class identifier."
             )
         },
     )
 
-    allow_transitive_transitions : bool = field(
-        default= True,
+    allow_transitive_transitions: bool = field(
+        default=True,
         metadata={
             "doc": (
                 "Whether rights mappings allow for transitive "
@@ -219,6 +200,7 @@ class ResolvedRights:
             )
         },
     )
+
 
 @dataclass(slots=True)
 class RightsDefinition:
@@ -261,9 +243,7 @@ class RightsDefinition:
     classes: Mapping[str, ClassDefinition] = field(
         default_factory=dict,
         metadata={
-            "doc": (
-                "Parsed class definitions keyed by canonical class identifier."
-            )
+            "doc": ("Parsed class definitions keyed by canonical class identifier.")
         },
     )
 
@@ -290,6 +270,7 @@ class RightsDefinition:
         },
     )
 
+
 @dataclass(slots=True)
 class DefaultDefinitions:
     """
@@ -310,16 +291,17 @@ class DefaultDefinitions:
     )
 
     attribute_defaults: tuple[AttributeDefaultDefinition, ...] = field(
-            default_factory=tuple,
-            metadata={
-                "doc": (
-                    "Default attribute-level rights applied by attribute-name "
-                    "pattern. These defaults are resolved against concrete "
-                    "attributes by the resolver. Example: `ag64_*` may grant "
-                    "`DBW_WI`, while `ag96_*` may grant `DBW_GEP`."
-                )
-            },
-        )
+        default_factory=tuple,
+        metadata={
+            "doc": (
+                "Default attribute-level rights applied by attribute-name "
+                "pattern. These defaults are resolved against concrete "
+                "attributes by the resolver. Example: `ag64_*` may grant "
+                "`DBW_WI`, while `ag96_*` may grant `DBW_GEP`."
+            )
+        },
+    )
+
 
 @dataclass(slots=True)
 class ClassDefinition:
@@ -388,11 +370,10 @@ class ClassDefinition:
     attributes: dict[str, AttributeDefinition] = field(
         default_factory=dict,
         metadata={
-            "doc": (
-                "Attribute definitions keyed by canonical attribute identifier."
-            )
+            "doc": ("Attribute definitions keyed by canonical attribute identifier.")
         },
     )
+
 
 @dataclass(slots=True, frozen=True)
 class ResolvedClassDefinition:
@@ -408,19 +389,11 @@ class ResolvedClassDefinition:
     """
 
     id: str = field(
-        metadata={
-            "doc": (
-                "Canonical class identifier of the resolved class."
-            )
-        },
+        metadata={"doc": ("Canonical class identifier of the resolved class.")},
     )
 
     crud_rules: ResolvedCrudRules = field(
-        metadata={
-            "doc": (
-                "Fully resolved immutable CRUD rules for this class."
-            )
-        },
+        metadata={"doc": ("Fully resolved immutable CRUD rules for this class.")},
     )
 
     attributes: Mapping[str, ResolvedAttributeDefinition] = field(
@@ -432,7 +405,7 @@ class ResolvedClassDefinition:
         },
     )
 
-    transition_rules:  Mapping[str, StateTransitionRule] = field(
+    transition_rules: Mapping[str, StateTransitionRule] = field(
         metadata={
             "doc": (
                 "Resolved state transition rules keyed by canonical attribute "
@@ -441,9 +414,9 @@ class ResolvedClassDefinition:
         },
     )
 
-
     # add when needed for debugging
     # resolution_info: ResolutionInfo | None = None
+
 
 @dataclass(slots=True, frozen=True)
 class DerivedRights:
@@ -497,10 +470,7 @@ class DerivedRights:
 
     class_id: str = field(
         metadata={
-            "doc": (
-                "Canonical class identifier from which rights may be "
-                "derived."
-            )
+            "doc": ("Canonical class identifier from which rights may be derived.")
         },
     )
 
@@ -534,10 +504,7 @@ class CanonicalDerivedRights:
     relationship after join evaluation has been performed.
     """
 
-    local_objects: tuple[
-        CanonicalObjectIdentity,
-        ...
-    ] = field(
+    local_objects: tuple[CanonicalObjectIdentity, ...] = field(
         default_factory=tuple,
         metadata={
             "doc": (
@@ -547,18 +514,13 @@ class CanonicalDerivedRights:
         },
     )
 
-    remote_objects: tuple[
-        CanonicalObjectIdentity,
-        ...
-    ] = field(
+    remote_objects: tuple[CanonicalObjectIdentity, ...] = field(
         default_factory=tuple,
         metadata={
-            "doc": (
-                "Canonical remote objects from which rights may be "
-                "derived."
-            )
+            "doc": ("Canonical remote objects from which rights may be derived.")
         },
     )
+
 
 @dataclass(slots=True)
 class AttributeDefinition:
@@ -600,6 +562,7 @@ class AttributeDefinition:
         },
     )
 
+
 @dataclass(slots=True, frozen=True)
 class ResolvedAttributeDefinition:
     """
@@ -625,10 +588,7 @@ class ResolvedAttributeDefinition:
     validations: tuple[AttributeValidation, ...] = field(
         default_factory=tuple,
         metadata={
-            "doc": (
-                "Effective validation rules for this attribute after "
-                "resolution."
-            )
+            "doc": ("Effective validation rules for this attribute after resolution.")
         },
     )
 
@@ -636,11 +596,11 @@ class ResolvedAttributeDefinition:
         default_factory=tuple,
         metadata={
             "doc": (
-                "Effective transition validations for this attribute after "
-                "resolution."
+                "Effective transition validations for this attribute after resolution."
             )
         },
     )
+
 
 @dataclass(slots=True)
 class ResolutionInfo:
@@ -655,9 +615,7 @@ class ResolutionInfo:
     superclass_id: str | None = field(
         default=None,
         metadata={
-            "doc": (
-                "Identifier of the superclass used during resolution, if any."
-            )
+            "doc": ("Identifier of the superclass used during resolution, if any.")
         },
     )
 
@@ -674,20 +632,17 @@ class ResolutionInfo:
     inherited_attributes: frozenset[str] = field(
         default_factory=frozenset,
         metadata={
-            "doc": (
-                "Attribute identifiers inherited from superclass definitions."
-            )
+            "doc": ("Attribute identifiers inherited from superclass definitions.")
         },
     )
 
     inherited_rules: frozenset[str] = field(
         default_factory=frozenset,
         metadata={
-            "doc": (
-                "Rule-set identifiers inherited or expanded during resolution."
-            )
+            "doc": ("Rule-set identifiers inherited or expanded during resolution.")
         },
     )
+
 
 @dataclass(slots=True, frozen=True)
 class AttributeDefaultDefinition:
@@ -717,8 +672,7 @@ class AttributeDefaultDefinition:
         default_factory=frozenset,
         metadata={
             "doc": (
-                "Default update privileges applied to attributes matching "
-                "the pattern."
+                "Default update privileges applied to attributes matching the pattern."
             )
         },
     )

@@ -2,7 +2,8 @@ import re
 
 from abc import ABC
 from dataclasses import dataclass, field
-from typing import ClassVar, Pattern
+from typing import ClassVar
+from re import Pattern
 
 from ..exceptions import TeksiHookError
 
@@ -34,8 +35,7 @@ class Oid(ABC):
             self.value,
         ):
             raise TeksiHookError(
-                f"'{self.value}' is not a valid "
-                f"{self.__class__.__name__}."
+                f"'{self.value}' is not a valid {self.__class__.__name__}."
             )
 
     def __str__(

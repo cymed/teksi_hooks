@@ -13,49 +13,30 @@ class CanonicalObjectIdentity:
     """
 
     class_id: str = field(
-        metadata={
-            "doc": (
-                "Canonical class identifier."
-            )
-        },
+        metadata={"doc": ("Canonical class identifier.")},
     )
 
     attributes: Mapping[str, Any] = field(
-        metadata={
-            "doc": (
-                "Attributes uniquely identifying the object."
-            )
-        },
+        metadata={"doc": ("Attributes uniquely identifying the object.")},
     )
+
 
 @dataclass(slots=True, frozen=True)
 class CanonicalObject:
-
     identity: CanonicalObjectIdentity = field(
-        metadata={
-            "doc": (
-                "Canonical object identity."
-            )
-        },
+        metadata={"doc": ("Canonical object identity.")},
     )
 
     values: Mapping[str, Any] = field(
         default_factory=dict,
-        metadata={
-            "doc": (
-                "Canonical attribute values."
-            )
-        },
+        metadata={"doc": ("Canonical attribute values.")},
     )
 
     last_modification: datetime | None = field(
         default=None,
-        metadata={
-            "doc": (
-                "Last modification snapshot."
-            )
-        },
+        metadata={"doc": ("Last modification snapshot.")},
     )
+
 
 @dataclass(slots=True, frozen=True)
 class CanonicalIdentityMapping:
@@ -64,18 +45,10 @@ class CanonicalIdentityMapping:
     """
 
     source_attribute: str = field(
-        metadata={
-            "doc": (
-                "Source object identity."
-            )
-        },
+        metadata={"doc": ("Source object identity.")},
     )
     canonical_attribute: str = field(
-        metadata={
-            "doc": (
-                "Canonical object identity."
-            )
-        },
+        metadata={"doc": ("Canonical object identity.")},
     )
 
 
@@ -90,6 +63,7 @@ Examples:
     LanguageCode("de")
     LanguageCode("fr")
 """
+
 
 @dataclass(slots=True, frozen=True)
 class LocalizedMetadata:
@@ -148,12 +122,12 @@ class LocalizedMetadata:
         Defaults to technical name if no display name is found.
         """
 
-        name =  self.display_names.get(
+        name = self.display_names.get(
             language,
         )
 
         if not name:
-            name =  self.names.get(
+            name = self.names.get(
                 language,
             )
         return name
@@ -192,12 +166,9 @@ class CanonicalModelElementMetadata:
 
     localized: LocalizedMetadata = field(
         default_factory=LocalizedMetadata,
-        metadata={
-            "doc": (
-                "Localized technical names for this model element."
-            )
-        },
+        metadata={"doc": ("Localized technical names for this model element.")},
     )
+
 
 @dataclass(slots=True, frozen=True)
 class CanonicalClassMetadata(CanonicalModelElementMetadata):
@@ -265,11 +236,7 @@ class CanonicalModelMetadata:
         CanonicalClassMetadata,
     ] = field(
         default_factory=dict,
-        metadata={
-            "doc": (
-                "Class metadata keyed by canonical class_id."
-            )
-        },
+        metadata={"doc": ("Class metadata keyed by canonical class_id.")},
     )
 
     attributes: dict[
@@ -280,12 +247,7 @@ class CanonicalModelMetadata:
         CanonicalAttributeMetadata,
     ] = field(
         default_factory=dict,
-        metadata={
-            "doc": (
-                "Attribute metadata keyed by "
-                "(class_id, attribute_id)."
-            )
-        },
+        metadata={"doc": ("Attribute metadata keyed by (class_id, attribute_id).")},
     )
 
     values: dict[
@@ -298,9 +260,6 @@ class CanonicalModelMetadata:
     ] = field(
         default_factory=dict,
         metadata={
-            "doc": (
-                "Value metadata keyed by "
-                "(class_id, attribute_id, value_id)."
-            )
+            "doc": ("Value metadata keyed by (class_id, attribute_id, value_id).")
         },
     )

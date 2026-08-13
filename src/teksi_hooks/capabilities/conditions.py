@@ -1,12 +1,16 @@
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from collections.abc import Mapping
 from typing import Any
 
-from .sql import SqlCapability
-from ..models.conditions import Condition, AnyOfCondition, AllOfCondition, LocalCondition, RemoteCondition
+from ..models.conditions import (
+    Condition,
+    AnyOfCondition,
+    AllOfCondition,
+    LocalCondition,
+    RemoteCondition,
+)
 
 
 @dataclass(slots=True, frozen=True)
@@ -100,9 +104,7 @@ class ConditionsCapability:
                 context,
             )
 
-        raise TypeError(
-            f"Unsupported condition type: {type(condition)!r}"
-        )
+        raise TypeError(f"Unsupported condition type: {type(condition)!r}")
 
     def evaluate_any(
         self,
@@ -230,9 +232,7 @@ class ConditionsCapability:
                 )
 
             case _:
-                raise ValueError(
-                    f"Unsupported condition operator: {operator!r}"
-                )
+                raise ValueError(f"Unsupported condition operator: {operator!r}")
 
     def _as_collection(
         self,

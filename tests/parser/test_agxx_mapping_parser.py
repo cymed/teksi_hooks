@@ -12,11 +12,13 @@ def mapping():
         DATA_DIR / "agxx_mapping_minimal.yaml",
     )
 
+
 def test_agxx_mapping_parser_imports_classes(mapping) -> None:
     assert "GepKnoten" in mapping.classes
     assert "GepHaltung" in mapping.classes
     assert "Ueberlauf_Foerderaggregat" in mapping.classes
     assert "VersickerungsbereichAG" in mapping.classes
+
 
 def test_agxx_mapping_parser_imports_gepknoten_function(mapping) -> None:
     cls = mapping.classes["GepKnoten"]
@@ -29,6 +31,7 @@ def test_agxx_mapping_parser_imports_gepknoten_function(mapping) -> None:
     }
 
     assert cls.attributes == {}
+
 
 def test_agxx_mapping_parser_imports_gephaltung_function(mapping) -> None:
     cls = mapping.classes["GepHaltung"]
@@ -48,9 +51,7 @@ def test_agxx_mapping_parser_imports_ueberlauf_function(mapping) -> None:
 
     assert cls.function is not None
     assert cls.function.schema == "tww_app"
-    assert cls.function.name == (
-        "fct_agxx_ueberlauf_foerderaggregat_mapping_jsonb"
-    )
+    assert cls.function.name == ("fct_agxx_ueberlauf_foerderaggregat_mapping_jsonb")
     assert cls.function.parameters == {
         "row": "$row",
     }
@@ -69,9 +70,7 @@ def test_agxx_mapping_parser_imports_attribute_backed_class(mapping) -> None:
 def test_agxx_mapping_parser_imports_agxx_extension_attribute_mapping(
     mapping,
 ) -> None:
-    attribute = mapping.classes[
-        "VersickerungsbereichAG"
-    ].attributes["q_check"]
+    attribute = mapping.classes["VersickerungsbereichAG"].attributes["q_check"]
 
     assert attribute.canonical_class_id == "agxx_infiltration_zone"
     assert attribute.canonical_attr_id == "ag96_q_check"
@@ -82,9 +81,9 @@ def test_agxx_mapping_parser_imports_agxx_extension_attribute_mapping(
 def test_agxx_mapping_parser_imports_base_tww_attribute_mapping(
     mapping,
 ) -> None:
-    attribute = mapping.classes[
-        "VersickerungsbereichAG"
-    ].attributes["versickerungsmoeglichkeitag"]
+    attribute = mapping.classes["VersickerungsbereichAG"].attributes[
+        "versickerungsmoeglichkeitag"
+    ]
 
     assert attribute.canonical_class_id == "infiltration_zone"
     assert attribute.canonical_attr_id == "infiltration_capacity"

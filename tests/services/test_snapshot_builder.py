@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from teksi_hooks.models.canonical_object import (
     CanonicalObjectIdentity,
 )
@@ -43,14 +41,14 @@ def test_build_snapshot_from_single_effect() -> None:
         document,
     )
 
-    assert len(
-        snapshot.objects,
-    ) == 1
-
     assert (
-        snapshot.objects[0].identity
-        == identity
+        len(
+            snapshot.objects,
+        )
+        == 1
     )
+
+    assert snapshot.objects[0].identity == identity
 
 
 def test_build_snapshot_groups_effects_by_object() -> None:
@@ -88,13 +86,19 @@ def test_build_snapshot_groups_effects_by_object() -> None:
         document,
     )
 
-    assert len(
-        snapshot.objects,
-    ) == 1
+    assert (
+        len(
+            snapshot.objects,
+        )
+        == 1
+    )
 
-    assert len(
-        snapshot.effects,
-    ) == 2
+    assert (
+        len(
+            snapshot.effects,
+        )
+        == 2
+    )
 
 
 def test_build_snapshot_keeps_distinct_objects() -> None:
@@ -135,9 +139,12 @@ def test_build_snapshot_keeps_distinct_objects() -> None:
         document,
     )
 
-    assert len(
-        snapshot.objects,
-    ) == 2
+    assert (
+        len(
+            snapshot.objects,
+        )
+        == 2
+    )
 
 
 def test_build_snapshot_copies_metadata() -> None:
@@ -157,20 +164,11 @@ def test_build_snapshot_copies_metadata() -> None:
         document,
     )
 
-    assert (
-        snapshot.metadata.source_model
-        == "ag64"
-    )
+    assert snapshot.metadata.source_model == "ag64"
 
-    assert (
-        snapshot.metadata.source_class_id
-        == "GepKnoten"
-    )
+    assert snapshot.metadata.source_class_id == "GepKnoten"
 
-    assert (
-        snapshot.metadata.source_object_id
-        == "ch123456AG987654"
-    )
+    assert snapshot.metadata.source_object_id == "ch123456AG987654"
 
 
 def test_build_snapshot_initializes_without_last_modification() -> None:
@@ -201,11 +199,11 @@ def test_build_snapshot_initializes_without_last_modification() -> None:
         document,
     )
 
-    assert len(
-        snapshot.objects,
-    ) == 1
-
     assert (
-        snapshot.objects[0].last_modification
-        is None
+        len(
+            snapshot.objects,
+        )
+        == 1
     )
+
+    assert snapshot.objects[0].last_modification is None

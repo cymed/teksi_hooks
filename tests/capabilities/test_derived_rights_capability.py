@@ -12,23 +12,20 @@ def test_derived_rights_capability_returns_networkelement_definition(
         "wastewater_networkelement",
     )
 
-    assert len(
-        definitions,
-    ) == 1
+    assert (
+        len(
+            definitions,
+        )
+        == 1
+    )
 
     definition = definitions[0]
 
-    assert definition.class_id == (
-        "wastewater_structure"
-    )
+    assert definition.class_id == ("wastewater_structure")
 
-    assert definition.local_attribute == (
-        "fk_wastewater_structure"
-    )
+    assert definition.local_attribute == ("fk_wastewater_structure")
 
-    assert definition.remote_attribute == (
-        "obj_id"
-    )
+    assert definition.remote_attribute == ("obj_id")
 
 
 def test_derived_rights_capability_returns_reach_point_definitions(
@@ -42,9 +39,12 @@ def test_derived_rights_capability_returns_reach_point_definitions(
         "reach_point",
     )
 
-    assert len(
-        definitions,
-    ) == 2
+    assert (
+        len(
+            definitions,
+        )
+        == 2
+    )
 
     derived_targets = {
         (
@@ -77,9 +77,12 @@ def test_derived_rights_capability_returns_multiple_sources(
         "reach_point",
     )
 
-    assert len(
-        definitions,
-    ) > 1
+    assert (
+        len(
+            definitions,
+        )
+        > 1
+    )
 
 
 def test_derived_rights_capability_try_returns_none_for_unknown_class(
@@ -89,9 +92,12 @@ def test_derived_rights_capability_try_returns_none_for_unknown_class(
         rights=resolved_rights,
     )
 
-    assert capability.try_derived_rights(
-        "does_not_exist",
-    ) is None
+    assert (
+        capability.try_derived_rights(
+            "does_not_exist",
+        )
+        is None
+    )
 
 
 def test_derived_rights_capability_raises_for_unknown_class(
@@ -110,6 +116,4 @@ def test_derived_rights_capability_raises_for_unknown_class(
             exc,
         )
     else:
-        raise AssertionError(
-            "Expected KeyError"
-        )
+        raise AssertionError("Expected KeyError")

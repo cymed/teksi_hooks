@@ -32,9 +32,7 @@ def _make_evaluator(
             rights=resolved_rights,
         ),
         provider=ResolvedProviderCapability(
-            provider=resolved_providers[
-                Standardoid(provider_oid)
-            ],
+            provider=resolved_providers[Standardoid(provider_oid)],
         ),
         conditions=ConditionsCapability(),
         relation_lookup=relation_lookup,
@@ -249,14 +247,14 @@ def test_rights_evaluator_resolves_derived_rights(
         context,
     )
 
-    assert len(
-        derived.remote_objects,
-    ) == 1
-
     assert (
-        derived.remote_objects[0].class_id
-        == "wastewater_structure"
+        len(
+            derived.remote_objects,
+        )
+        == 1
     )
+
+    assert derived.remote_objects[0].class_id == "wastewater_structure"
 
 
 def test_rights_evaluator_inherits_rights_from_wastewater_structure(
@@ -318,16 +316,17 @@ def test_rights_evaluator_resolves_derived_rights_from_reach(
         context,
     )
 
-    assert len(
-        derived.remote_objects,
-    ) >= 1
+    assert (
+        len(
+            derived.remote_objects,
+        )
+        >= 1
+    )
 
-    assert {
-        obj.class_id
-        for obj in derived.remote_objects
-    } == {
+    assert {obj.class_id for obj in derived.remote_objects} == {
         "reach",
     }
+
 
 def test_resolved_rights_inherit_derived_rights_to_reach(
     resolved_rights,
@@ -339,6 +338,7 @@ def test_resolved_rights_inherit_derived_rights_to_reach(
         for relation in resolved_rights.derived_rights["reach"]
     )
 
+
 def test_rights_evaluator_inherits_rights_from_reach(
     resolved_rights,
     resolved_providers,
@@ -349,8 +349,6 @@ def test_rights_evaluator_inherits_rights_from_reach(
         resolved_providers,
         relation_lookup,
     )
-
-
 
     context = RightsEvaluationContext(
         dataowner_oid=Standardoid(
@@ -371,10 +369,7 @@ def test_rights_evaluator_inherits_rights_from_reach(
 
     assert derived_from_reach_point.remote_objects
 
-    assert {
-        obj.class_id
-        for obj in derived_from_reach_point.remote_objects
-    } == {
+    assert {obj.class_id for obj in derived_from_reach_point.remote_objects} == {
         "reach",
     }
 
@@ -386,10 +381,7 @@ def test_rights_evaluator_inherits_rights_from_reach(
 
     assert reach is not None
 
-    assert (
-        reach.values["fk_wastewater_structure"]
-        == "ch000000ws000001"
-    )
+    assert reach.values["fk_wastewater_structure"] == "ch000000ws000001"
 
     reach_context = RightsEvaluationContext(
         dataowner_oid=context.dataowner_oid,
@@ -410,17 +402,15 @@ def test_rights_evaluator_inherits_rights_from_reach(
 
     assert derived_from_reach.remote_objects
 
-    assert {
-        obj.class_id
-        for obj in derived_from_reach.remote_objects
-    } == {
+    assert {obj.class_id for obj in derived_from_reach.remote_objects} == {
         "wastewater_structure",
     }
-        
+
     assert evaluator.can_update(
         "reach_point",
         context,
     )
+
 
 def test_rights_evaluator_inherits_update_rights_from_subclass(
     resolved_rights,
@@ -430,9 +420,7 @@ def test_rights_evaluator_inherits_update_rights_from_subclass(
     resolved_with_subclass_rights = replace(
         resolved_rights,
         subclass_rights={
-            "maintenance_event": (
-                "maintenance",
-            ),
+            "maintenance_event": ("maintenance",),
         },
     )
 

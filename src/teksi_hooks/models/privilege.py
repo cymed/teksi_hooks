@@ -4,8 +4,8 @@ from collections.abc import Mapping
 from .canonical_object import LanguageCode
 
 
-
 PrivilegeId = str
+
 
 @dataclass(frozen=True, slots=True)
 class PrivilegeMetadata:
@@ -19,6 +19,7 @@ class PrivilegeMetadata:
             "fr": "Gestionnaire cadastral",
         }
     """
+
     labels: Mapping[
         LanguageCode,
         str,
@@ -37,24 +38,18 @@ class PrivilegeMetadata:
         self,
         language: LanguageCode,
     ) -> str | None:
-        return (
-            self.labels.get(
-                language,
-            )
-            or self.labels.get(
-                'de',
-            )
+        return self.labels.get(
+            language,
+        ) or self.labels.get(
+            "de",
         )
 
     def description(
         self,
         language: LanguageCode,
     ) -> str | None:
-        return (
-            self.descriptions.get(
-                language,
-            )
-            or self.descriptions.get(
-                'de',
-            )
+        return self.descriptions.get(
+            language,
+        ) or self.descriptions.get(
+            "de",
         )

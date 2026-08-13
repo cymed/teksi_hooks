@@ -32,10 +32,7 @@ def _identity_key(
 
 
 def _snapshot(
-    objects: tuple[
-        SnapshotObject,
-        ...
-    ],
+    objects: tuple[SnapshotObject, ...],
 ) -> DiffSnapshot:
     return DiffSnapshot(
         metadata=SnapshotMetadata(
@@ -58,9 +55,14 @@ def test_snapshot_validation_accepts_current_object() -> None:
         },
     )
 
-    last_modification=datetime(
-        2025,1,1,tzinfo=UTC,
-    ),
+    last_modification = (
+        datetime(
+            2025,
+            1,
+            1,
+            tzinfo=UTC,
+        ),
+    )
 
     snapshot = _snapshot(
         objects=(
@@ -104,7 +106,10 @@ def test_snapshot_validation_detects_modified_object() -> None:
             SnapshotObject(
                 identity=identity,
                 last_modification=datetime(
-                    2025,1,1,tzinfo=UTC,
+                    2025,
+                    1,
+                    1,
+                    tzinfo=UTC,
                 ),
             ),
         ),
@@ -115,7 +120,10 @@ def test_snapshot_validation_detects_modified_object() -> None:
             CanonicalObject(
                 identity=identity,
                 last_modification=datetime(
-                    2025,1,2,tzinfo=UTC,
+                    2025,
+                    1,
+                    2,
+                    tzinfo=UTC,
                 ),
             ),
         ),
@@ -129,16 +137,16 @@ def test_snapshot_validation_detects_modified_object() -> None:
         snapshot,
     )
 
-    assert len(
-        findings,
-    ) == 1
+    assert (
+        len(
+            findings,
+        )
+        == 1
+    )
 
     assert findings[0].identity == identity
 
-    assert (
-        findings[0].state
-        == SnapshotState.MODIFIED
-    )
+    assert findings[0].state == SnapshotState.MODIFIED
 
 
 def test_snapshot_validation_detects_deleted_object() -> None:
@@ -154,7 +162,10 @@ def test_snapshot_validation_detects_deleted_object() -> None:
             SnapshotObject(
                 identity=identity,
                 last_modification=datetime(
-                    2025,1,1,tzinfo=UTC,
+                    2025,
+                    1,
+                    1,
+                    tzinfo=UTC,
                 ),
             ),
         ),
@@ -170,16 +181,16 @@ def test_snapshot_validation_detects_deleted_object() -> None:
         snapshot,
     )
 
-    assert len(
-        findings,
-    ) == 1
+    assert (
+        len(
+            findings,
+        )
+        == 1
+    )
 
     assert findings[0].identity == identity
 
-    assert (
-        findings[0].state
-        == SnapshotState.DELETED
-    )
+    assert findings[0].state == SnapshotState.DELETED
 
 
 def test_snapshot_validation_handles_multiple_objects() -> None:
@@ -209,19 +220,28 @@ def test_snapshot_validation_handles_multiple_objects() -> None:
             SnapshotObject(
                 identity=current_identity,
                 last_modification=datetime(
-                    2025,1,1,tzinfo=UTC,
+                    2025,
+                    1,
+                    1,
+                    tzinfo=UTC,
                 ),
             ),
             SnapshotObject(
                 identity=modified_identity,
                 last_modification=datetime(
-                    2025,1,1,tzinfo=UTC,
+                    2025,
+                    1,
+                    1,
+                    tzinfo=UTC,
                 ),
             ),
             SnapshotObject(
                 identity=deleted_identity,
                 last_modification=datetime(
-                    2025,1,1,tzinfo=UTC,
+                    2025,
+                    1,
+                    1,
+                    tzinfo=UTC,
                 ),
             ),
         ),
@@ -232,13 +252,19 @@ def test_snapshot_validation_handles_multiple_objects() -> None:
             CanonicalObject(
                 identity=current_identity,
                 last_modification=datetime(
-                    2025,1,1,tzinfo=UTC,
+                    2025,
+                    1,
+                    1,
+                    tzinfo=UTC,
                 ),
             ),
             CanonicalObject(
                 identity=modified_identity,
                 last_modification=datetime(
-                    2025,1,2,tzinfo=UTC,
+                    2025,
+                    1,
+                    2,
+                    tzinfo=UTC,
                 ),
             ),
         ),
@@ -252,9 +278,12 @@ def test_snapshot_validation_handles_multiple_objects() -> None:
         snapshot,
     )
 
-    assert len(
-        findings,
-    ) == 2
+    assert (
+        len(
+            findings,
+        )
+        == 2
+    )
 
     states = {
         _identity_key(

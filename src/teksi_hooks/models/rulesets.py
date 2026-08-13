@@ -12,6 +12,7 @@ class Rule:
     They are evaluated by the rights engine against the current provider,
     object state, operation type and optional conditions.
     """
+
     pass
 
 
@@ -56,12 +57,10 @@ class OwnershipRule(Rule):
     should be evaluated against the submitted row.
     """
 
-
     attribute: str = field(
         metadata={
             "doc": (
-                "Attribute used to determine ownership. Typical example: "
-                "`fk_provider`."
+                "Attribute used to determine ownership. Typical example: `fk_provider`."
             )
         },
     )
@@ -97,11 +96,7 @@ class StateTransitionRule(Rule):
     """
 
     privileges: frozenset[PrivilegeId] = field(
-        metadata={
-            "doc": (
-                "Privileges that grant this specific transition."
-            )
-        },
+        metadata={"doc": ("Privileges that grant this specific transition.")},
     )
 
     from_value: str | None = field(
@@ -150,11 +145,7 @@ class CrudRules:
 
     create_rules: list[Rule] = field(
         default_factory=list,
-        metadata={
-            "doc": (
-                "Rules governing creation of new objects."
-            )
-        },
+        metadata={"doc": ("Rules governing creation of new objects.")},
     )
 
     read_rules: list[Rule] = field(
@@ -169,20 +160,12 @@ class CrudRules:
 
     update_rules: list[Rule] = field(
         default_factory=list,
-        metadata={
-            "doc": (
-                "Rules governing updates to existing objects."
-            )
-        },
+        metadata={"doc": ("Rules governing updates to existing objects.")},
     )
 
     delete_rules: list[Rule] = field(
         default_factory=list,
-        metadata={
-            "doc": (
-                "Rules governing deletion of existing objects."
-            )
-        },
+        metadata={"doc": ("Rules governing deletion of existing objects.")},
     )
 
 
@@ -197,33 +180,17 @@ class ResolvedCrudRules:
     """
 
     create_rules: tuple[Rule, ...] = field(
-        metadata={
-            "doc": (
-                "Resolved rules governing creation of new objects."
-            )
-        },
+        metadata={"doc": ("Resolved rules governing creation of new objects.")},
     )
 
     read_rules: tuple[Rule, ...] = field(
-        metadata={
-            "doc": (
-                "Resolved rules governing read access."
-            )
-        },
+        metadata={"doc": ("Resolved rules governing read access.")},
     )
 
     update_rules: tuple[Rule, ...] = field(
-        metadata={
-            "doc": (
-                "Resolved rules governing updates to existing objects."
-            )
-        },
+        metadata={"doc": ("Resolved rules governing updates to existing objects.")},
     )
 
     delete_rules: tuple[Rule, ...] = field(
-        metadata={
-            "doc": (
-                "Resolved rules governing deletion of existing objects."
-            )
-        },
+        metadata={"doc": ("Resolved rules governing deletion of existing objects.")},
     )

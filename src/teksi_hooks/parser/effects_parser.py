@@ -10,7 +10,6 @@ from ..models.effects import (
     EffectDocument,
     EffectSource,
     Effect,
-    EffectKind,
     UpdateAttributeEffect,
     EnforceExistsEffect,
     EnforceNotExistsEffect,
@@ -28,6 +27,7 @@ class EffectParser:
 
     Converts JSON effect documents into strongly typed effect models.
     """
+
     validator: EffectDocumentValidator = field(
         default_factory=EffectDocumentValidator,
     )
@@ -38,7 +38,7 @@ class EffectParser:
         self,
         path: str | Path,
     ) -> EffectDocument:
-        with open(path, "r", encoding="utf-8") as file:
+        with open(path, encoding="utf-8") as file:
             data = json.load(file)
 
         return self._parse_dict(
@@ -108,9 +108,7 @@ class EffectParser:
                 identity=self._parse_identity(
                     data,
                 ),
-                attribute_id=data[
-                    "attribute_id"
-                ],
+                attribute_id=data["attribute_id"],
                 value=data.get(
                     "value",
                 ),
@@ -130,6 +128,4 @@ class EffectParser:
                 ),
             )
 
-        raise ValueError(
-            f"Unsupported effect kind: {kind!r}"
-        )
+        raise ValueError(f"Unsupported effect kind: {kind!r}")

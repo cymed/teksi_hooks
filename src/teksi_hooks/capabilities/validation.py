@@ -1,12 +1,12 @@
 from dataclasses import dataclass, field
-from typing import Callable
+from collections.abc import Callable
 from datetime import datetime
 
 
 from ..models.validation import (
     ValidationContext,
     ValidationFinding,
-    AttributeValidation
+    AttributeValidation,
 )
 from ..exceptions import Severity
 
@@ -99,10 +99,7 @@ class ValidationResult:
         Return whether at least one finding with the given severity exists.
         """
 
-        return any(
-            finding.severity == severity
-            for finding in self._findings
-        )
+        return any(finding.severity == severity for finding in self._findings)
 
     @property
     def has_errors(
@@ -116,12 +113,12 @@ class ValidationResult:
             Severity.ERROR,
         )
 
+
 class ValidationRegistry:
     def validation(
         self,
         validation_id: str,
     ) -> Callable:
-
         if validation_id == "newer_than_existing":
             return self._validate_newer_than_existing
 
@@ -131,23 +128,15 @@ class ValidationRegistry:
         if validation_id == "equals_context_value":
             return self._equals_context_value
 
-        raise NotImplementedError(
-            f"Unknown validation: {validation_id}"
-        )
+        raise NotImplementedError(f"Unknown validation: {validation_id}")
 
     def _validate_newer_than_existing(
         self,
         *,
         validation: AttributeValidation,
         context: ValidationContext,
-    ) -> tuple[
-        ValidationFinding,
-        ...
-    ]:
-        if (
-            context.old_value is None
-            or context.new_value is None
-        ):
+    ) -> tuple[ValidationFinding, ...]:
+        if context.old_value is None or context.new_value is None:
             return ()
 
         old_dt = self._as_datetime(
@@ -165,10 +154,7 @@ class ValidationRegistry:
             ValidationFinding(
                 code=validation.id,
                 severity=validation.level,
-                message=(
-                    "New value must be newer than the "
-                    "existing value."
-                ),
+                message=("New value must be newer than the existing value."),
                 attribute_name=context.attribute_name,
             ),
         )
@@ -178,14 +164,8 @@ class ValidationRegistry:
         *,
         validation: AttributeValidation,
         context: ValidationContext,
-    ) -> tuple[
-        ValidationFinding,
-        ...
-    ]:
-        if (
-            context.old_value is None
-            or context.new_value is None
-        ):
+    ) -> tuple[ValidationFinding, ...]:
+        if context.old_value is None or context.new_value is None:
             return ()
 
         if context.new_value >= context.old_value:
@@ -195,10 +175,7 @@ class ValidationRegistry:
             ValidationFinding(
                 code=validation.id,
                 severity=validation.level,
-                message=(
-                    "New value must not be smaller than "
-                    "the existing value."
-                ),
+                message=("New value must not be smaller than the existing value."),
                 attribute_name=context.attribute_name,
             ),
         )
@@ -214,9 +191,7 @@ class ValidationRegistry:
                 ValidationFinding(
                     code=validation.id,
                     severity=validation.level,
-                    message=(
-                        "Validation requires a context value name."
-                    ),
+                    message=("Validation requires a context value name."),
                     attribute_name=context.attribute_name,
                 ),
             )
@@ -226,17 +201,12 @@ class ValidationRegistry:
                 ValidationFinding(
                     code=validation.id,
                     severity=validation.level,
-                    message=(
-                        f"Context value {validation.context_value!r} "
-                        f"is missing."
-                    ),
+                    message=(f"Context value {validation.context_value!r} is missing."),
                     attribute_name=context.attribute_name,
                 ),
             )
 
-        expected_value = context.context_values[
-            validation.context_value
-        ]
+        expected_value = context.context_values[validation.context_value]
 
         if str(context.new_value) == str(expected_value):
             return ()
@@ -252,7 +222,6 @@ class ValidationRegistry:
                 attribute_name=context.attribute_name,
             ),
         )
-
 
     def _as_datetime(
         self,

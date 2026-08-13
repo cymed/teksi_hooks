@@ -19,6 +19,7 @@ from ..exceptions import EffectValidationError, Severity
 
 DOCUMENT_MAX_VERSION = 1
 
+
 @dataclass(slots=True)
 class EffectDocumentValidator:
     """
@@ -35,39 +36,33 @@ class EffectDocumentValidator:
         findings: list[ValidationFinding] = []
 
         if document.version > DOCUMENT_MAX_VERSION:
-                findings.append(
-                    ValidationFinding(
+            findings.append(
+                ValidationFinding(
                     code="invalid_version",
                     severity=Severity.ERROR,
                     message=(
-                        f"Unsupported effect document version: "
-                        f"{document.version}"
+                        f"Unsupported effect document version: {document.version}"
                     ),
                 )
-                )
+            )
 
         for effect in document.effects:
             if not effect.identity.class_id:
                 findings.append(
                     ValidationFinding(
-                    code="missing_attribute",
-                    severity=Severity.ERROR,
-                    message=(
-                        "Effect identity is missing class_id."
-                    ),
-                )
+                        code="missing_attribute",
+                        severity=Severity.ERROR,
+                        message=("Effect identity is missing class_id."),
+                    )
                 )
 
             if not effect.identity.attributes:
                 findings.append(
                     ValidationFinding(
-                    code="missing_attribute",
-                    severity=Severity.ERROR,
-                    message=(
-                        "Effect identity is missing identity "
-                        "attributes."
-                    ),
-                )
+                        code="missing_attribute",
+                        severity=Severity.ERROR,
+                        message=("Effect identity is missing identity attributes."),
+                    )
                 )
 
             if isinstance(
@@ -77,13 +72,10 @@ class EffectDocumentValidator:
                 if not effect.attribute_id:
                     findings.append(
                         ValidationFinding(
-                        code="missing_attribute",
-                        severity=Severity.ERROR,
-                        message=(
-                            "Update effect missing "
-                            "attribute_id."
-                        ),
-                    )
+                            code="missing_attribute",
+                            severity=Severity.ERROR,
+                            message=("Update effect missing attribute_id."),
+                        )
                     )
 
             elif isinstance(
@@ -100,12 +92,8 @@ class EffectDocumentValidator:
                     ValidationFinding(
                         code="unsupported_effect",
                         severity=Severity.ERROR,
-                        message=(
-                            f"Unsupported effect type: "
-                            f"{type(effect).__name__}"
-                        ),
+                        message=(f"Unsupported effect type: {type(effect).__name__}"),
                     )
-
                 )
 
         findings.extend(
@@ -121,8 +109,10 @@ class EffectDocumentValidator:
         self,
         document: EffectDocument,
     ) -> tuple[ValidationFinding, ...]:
-        findings=self.validate(document)
-        EffectValidationError.raise_if_errors(findings,)
+        findings = self.validate(document)
+        EffectValidationError.raise_if_errors(
+            findings,
+        )
         return findings
 
     def _identity_key(
@@ -137,7 +127,7 @@ class EffectDocumentValidator:
                 ),
             ),
         )
-    
+
     def _validate_conflicting_effects(
         self,
         document: EffectDocument,

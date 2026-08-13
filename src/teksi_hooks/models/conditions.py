@@ -9,6 +9,7 @@ class Condition:
     applies. Concrete condition classes describe how values are read and
     compared during rule evaluation.
     """
+
     pass
 
 
@@ -21,11 +22,7 @@ class AnyOfCondition(Condition):
     """
 
     conditions: tuple[Condition, ...] = field(
-        metadata={
-            "doc": (
-                "Conditions of which at least one must evaluate to true."
-            )
-        },
+        metadata={"doc": ("Conditions of which at least one must evaluate to true.")},
     )
 
 
@@ -38,11 +35,7 @@ class AllOfCondition(Condition):
     """
 
     conditions: tuple[Condition, ...] = field(
-        metadata={
-            "doc": (
-                "Conditions that must all evaluate to true."
-            )
-        },
+        metadata={"doc": ("Conditions that must all evaluate to true.")},
     )
 
 
@@ -57,11 +50,7 @@ class LocalCondition(Condition):
     """
 
     attribute: str = field(
-        metadata={
-            "doc": (
-                "Name of the local attribute to evaluate."
-            )
-        },
+        metadata={"doc": ("Name of the local attribute to evaluate.")},
     )
 
     operator: str = field(
@@ -95,19 +84,11 @@ class RemoteCondition(Condition):
     """
 
     relation: str = field(
-        metadata={
-            "doc": (
-                "Name of the relation used to reach the related object."
-            )
-        },
+        metadata={"doc": ("Name of the relation used to reach the related object.")},
     )
 
     attribute: str = field(
-        metadata={
-            "doc": (
-                "Name of the attribute on the related object to evaluate."
-            )
-        },
+        metadata={"doc": ("Name of the attribute on the related object to evaluate.")},
     )
 
     operator: str = field(
@@ -123,8 +104,7 @@ class RemoteCondition(Condition):
         default=None,
         metadata={
             "doc": (
-                "Optional comparison value. Some operators may not require "
-                "a value."
+                "Optional comparison value. Some operators may not require a value."
             )
         },
     )

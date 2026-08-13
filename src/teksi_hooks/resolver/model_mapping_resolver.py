@@ -31,9 +31,7 @@ class ImplicitModelMappingResolver:
     def resolve(self) -> ModelMapping:
         classes: dict[str, ClassMapping] = {}
 
-        for ili_class_name, canonical_class_id in (
-            self.dictionary.table_mapping.items()
-        ):
+        for ili_class_name, canonical_class_id in self.dictionary.table_mapping.items():
             classes[ili_class_name] = ClassMapping(
                 canonical_class_id=canonical_class_id,
                 attributes=self._attributes_for_class(
@@ -59,7 +57,6 @@ class ImplicitModelMappingResolver:
             canonical_class_id,
             canonical_attr_id,
         ) in self.dictionary.attribute_mapping.items():
-
             if cls_name != ili_class_name:
                 continue
 

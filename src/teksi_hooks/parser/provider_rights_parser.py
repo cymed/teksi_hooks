@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Type
+from typing import Any
 
 import yaml
 
@@ -14,9 +14,10 @@ from ..models.provider import (
 )
 from ..exceptions import TeksiHookError
 
+
 @dataclass(slots=True)
 class ProviderRightsParser:
-    oid_type: Type[Oid]
+    oid_type: type[Oid]
 
     """
     Parser for provider privilege assignment YAML files.
@@ -33,17 +34,13 @@ class ProviderRightsParser:
             self.oid_type,
             Oid,
         ):
-            raise TeksiHookError(
-                "Provided oid_type must inherit from Oid."
-            )
-
-
+            raise TeksiHookError("Provided oid_type must inherit from Oid.")
 
     def parse_file(
         self,
         path: str | Path,
     ) -> tuple[Provider, ...]:
-        with open(path, "r", encoding="utf-8") as file:
+        with open(path, encoding="utf-8") as file:
             data = yaml.safe_load(file)
 
         return self._parse_dict(
@@ -82,9 +79,7 @@ class ProviderRightsParser:
                 raw["organisation_oid"],
             ),
             permissions=frozenset(
-                permission
-                for permission in permissions
-                if permission.privileges
+                permission for permission in permissions if permission.privileges
             ),
         )
 

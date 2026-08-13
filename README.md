@@ -190,4 +190,3 @@ The framework treats capabilities as opaque objects and does not know their impl
 - Framework does not know domain concepts
 - Applications define capabilities
 - Hooks define workflows
-

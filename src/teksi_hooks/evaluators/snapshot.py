@@ -27,18 +27,13 @@ class SnapshotValidationEvaluator:
     def validate(
         self,
         snapshot: DiffSnapshot,
-    ) -> tuple[
-        SnapshotValidationFinding,
-        ...
-    ]:
-        findings: list[
-            SnapshotValidationFinding
-        ] = []
+    ) -> tuple[SnapshotValidationFinding, ...]:
+        findings: list[SnapshotValidationFinding] = []
 
         for snapshot_object in snapshot.objects:
             if snapshot_object.last_modification is None:
                 raise ValueError("Snapshot object is missing last_modification.")
-            
+
             current = self.relation_lookup.current_object(
                 snapshot_object.identity,
             )
@@ -52,10 +47,7 @@ class SnapshotValidationEvaluator:
                 )
                 continue
 
-            if (
-                snapshot_object.last_modification
-                != current.last_modification
-            ):
+            if snapshot_object.last_modification != current.last_modification:
                 findings.append(
                     SnapshotValidationFinding(
                         identity=snapshot_object.identity,
@@ -66,4 +58,3 @@ class SnapshotValidationEvaluator:
         return tuple(
             findings,
         )
-

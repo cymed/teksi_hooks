@@ -153,14 +153,8 @@ class InMemoryCanonicalModelCapability(
         return {
             key: value
             for key, value in self.metadata.values.items()
-            if (
-                class_id is None
-                or key[0] == class_id
-            )
-            and (
-                attribute_id is None
-                or key[1] == attribute_id
-            )
+            if (class_id is None or key[0] == class_id)
+            and (attribute_id is None or key[1] == attribute_id)
         }
 
     def class_metadata(
@@ -197,6 +191,7 @@ class InMemoryCanonicalModelCapability(
             )
         )
 
+
 @dataclass(slots=True, frozen=True)
 class CanonicalGeometryCapability:
     """
@@ -227,17 +222,13 @@ class CanonicalGeometryCapability:
     def geometry_attribute_names(
         self,
         class_id: str,
-    ) -> tuple[
-        str,
-        ...
-    ]:
+    ) -> tuple[str, ...]:
         return tuple(
             attribute.attribute_id
             for (
                 attribute_class_id,
                 _,
-            ),
-            attribute in self.metadata.attributes.items()
+            ), attribute in self.metadata.attributes.items()
             if attribute_class_id == class_id
             and self._is_geometry_datatype(
                 attribute.field_datatype,
@@ -251,8 +242,4 @@ class CanonicalGeometryCapability:
         if field_datatype is None:
             return False
 
-        return (
-            field_datatype.strip().lower()
-            == "geometry"
-        )
-
+        return field_datatype.strip().lower() == "geometry"

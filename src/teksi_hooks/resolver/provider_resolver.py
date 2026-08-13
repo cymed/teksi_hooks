@@ -44,7 +44,6 @@ class ProviderResolver:
                 for dataowner_oid, privileges in permissions.items()
             },
         )
-    
 
     def resolve_all(
         self,

@@ -1,7 +1,6 @@
 import pytest
 from teksi_hooks.capabilities.rights import (
     RightsCapability,
-    DerivedRightsCapability,
 )
 from teksi_hooks.models.privilege import Privilege
 from teksi_hooks.resolver.rights_resolver import RightsResolver
@@ -66,17 +65,23 @@ def test_rights_capability_returns_crud_rules(
         rights=resolved_rights,
     )
 
-    assert len(
-        capability.create_rules(
-            "wastewater_structure",
+    assert (
+        len(
+            capability.create_rules(
+                "wastewater_structure",
+            )
         )
-    ) == 2
+        == 2
+    )
 
-    assert len(
-        capability.update_rules(
-            "wastewater_structure",
+    assert (
+        len(
+            capability.update_rules(
+                "wastewater_structure",
+            )
         )
-    ) == 2
+        == 2
+    )
 
 
 def test_rights_capability_try_class_definition_returns_none(
@@ -86,9 +91,12 @@ def test_rights_capability_try_class_definition_returns_none(
         rights=resolved_rights,
     )
 
-    assert capability.try_class_definition(
-        "does_not_exist",
-    ) is None
+    assert (
+        capability.try_class_definition(
+            "does_not_exist",
+        )
+        is None
+    )
 
 
 def test_rights_capability_try_attribute_definition_returns_none(
@@ -98,10 +106,14 @@ def test_rights_capability_try_attribute_definition_returns_none(
         rights=resolved_rights,
     )
 
-    assert capability.try_attribute_definition(
-        "wastewater_structure",
-        "does_not_exist",
-    ) is None
+    assert (
+        capability.try_attribute_definition(
+            "wastewater_structure",
+            "does_not_exist",
+        )
+        is None
+    )
+
 
 def test_rights_capability_returns_transition_rules(
     resolved_rights,
@@ -118,11 +130,9 @@ def test_rights_capability_returns_transition_rules(
     assert rules
 
     assert any(
-        rule.from_value == "other.planned"
-        and rule.to_value == "operational"
+        rule.from_value == "other.planned" and rule.to_value == "operational"
         for rule in rules
     )
-
 
 
 def test_rights_capability_rejects_unknown_transition_attribute(
@@ -140,9 +150,9 @@ def test_rights_capability_rejects_unknown_transition_attribute(
             "does_not_exist",
         )
 
+
 def test_rights_capability_try_transition_rules_returns_none(
-    rights_definition,
-    resolved_rights
+    rights_definition, resolved_rights
 ) -> None:
     RightsResolver().resolve(
         rights_definition,

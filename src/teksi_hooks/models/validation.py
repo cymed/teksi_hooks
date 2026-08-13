@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -11,9 +10,6 @@ from .rulesets import StateTransitionRule
 from ..exceptions import Severity, Finding
 
 
-
-from dataclasses import dataclass, field
-from typing import Any
 from collections.abc import Mapping
 
 
@@ -24,27 +20,15 @@ class ValidationContext:
     """
 
     attribute_name: str = field(
-        metadata={
-            "doc": (
-                "Canonical attribute identifier being validated."
-            )
-        },
+        metadata={"doc": ("Canonical attribute identifier being validated.")},
     )
 
     old_value: Any = field(
-        metadata={
-            "doc": (
-                "Existing attribute value before the change."
-            )
-        },
+        metadata={"doc": ("Existing attribute value before the change.")},
     )
 
     new_value: Any = field(
-        metadata={
-            "doc": (
-                "New attribute value after the change."
-            )
-        },
+        metadata={"doc": ("New attribute value after the change.")},
     )
 
     context_values: Mapping[
@@ -62,6 +46,8 @@ class ValidationContext:
 
 
 dataclass(slots=True, frozen=True)
+
+
 class AttributePermission:
     """
     Describes a privilege requirement for one concrete attribute.
@@ -72,25 +58,19 @@ class AttributePermission:
 
     table_name: str = field(
         metadata={
-            "doc": (
-                "Canonical table or class identifier containing the attribute."
-            )
+            "doc": ("Canonical table or class identifier containing the attribute.")
         },
     )
 
     attribute_name: str = field(
         metadata={
-            "doc": (
-                "Canonical attribute identifier for which the privilege applies."
-            )
+            "doc": ("Canonical attribute identifier for which the privilege applies.")
         },
     )
 
     privilege: PrivilegeId = field(
         metadata={
-            "doc": (
-                "ID of privilege required to modify or access the attribute."
-            )
+            "doc": ("ID of privilege required to modify or access the attribute.")
         },
     )
 
@@ -106,18 +86,13 @@ class AttributeChange:
     """
 
     attribute_name: str = field(
-        metadata={
-            "doc": (
-                "Name of the changed attribute."
-            )
-        },
+        metadata={"doc": ("Name of the changed attribute.")},
     )
 
     old_value: Any | None = field(
         metadata={
             "doc": (
-                "Previous value of the attribute. For inserts this is usually "
-                "`None`."
+                "Previous value of the attribute. For inserts this is usually `None`."
             )
         },
     )
@@ -144,33 +119,22 @@ class Change:
 
     table_name: str = field(
         metadata={
-            "doc": (
-                "Canonical table or class identifier affected by the change."
-            )
+            "doc": ("Canonical table or class identifier affected by the change.")
         },
     )
 
     object_id: str = field(
-        metadata={
-            "doc": (
-                "Object identifier of the changed row."
-            )
-        },
+        metadata={"doc": ("Object identifier of the changed row.")},
     )
 
     operation: ChangeOperation = field(
-        metadata={
-            "doc": (
-                "Type of row-level operation: insert, update or delete."
-            )
-        },
+        metadata={"doc": ("Type of row-level operation: insert, update or delete.")},
     )
 
     old_values: dict[str, Any] = field(
         metadata={
             "doc": (
-                "Attribute values before the change. For inserts this is "
-                "usually empty."
+                "Attribute values before the change. For inserts this is usually empty."
             )
         },
     )
@@ -178,8 +142,7 @@ class Change:
     new_values: dict[str, Any] = field(
         metadata={
             "doc": (
-                "Attribute values after the change. For deletes this is "
-                "usually empty."
+                "Attribute values after the change. For deletes this is usually empty."
             )
         },
     )
@@ -193,10 +156,7 @@ class Change:
         Attributes whose old and new values are equal are omitted.
         """
 
-        attribute_names = (
-            set(self.old_values)
-            | set(self.new_values)
-        )
+        attribute_names = set(self.old_values) | set(self.new_values)
 
         return frozenset(
             AttributeChange(
@@ -205,9 +165,9 @@ class Change:
                 new_value=self.new_values.get(attribute),
             )
             for attribute in attribute_names
-            if self.old_values.get(attribute)
-            != self.new_values.get(attribute)
+            if self.old_values.get(attribute) != self.new_values.get(attribute)
         )
+
 
 class ChangeOperation(StrEnum):
     """
@@ -237,20 +197,12 @@ class ChangeClassificationMetadata:
     """
 
     classification: ChangeClassification = field(
-        metadata={
-            "doc": (
-                "Review classification assigned to the change."
-            )
-        },
+        metadata={"doc": ("Review classification assigned to the change.")},
     )
 
     permitted: bool = field(
         default=True,
-        metadata={
-            "doc": (
-                "Whether the change is permitted by rights evaluation."
-            )
-        },
+        metadata={"doc": ("Whether the change is permitted by rights evaluation.")},
     )
 
     severity: Severity | None = field(
@@ -263,46 +215,27 @@ class ChangeClassificationMetadata:
         },
     )
 
-    permission_findings: tuple[
-        ValidationFinding,
-        ...
-    ] = field(
+    permission_findings: tuple[ValidationFinding, ...] = field(
         default_factory=tuple,
         metadata={
-            "doc": (
-                "Permission or rights findings associated with this change."
-            )
+            "doc": ("Permission or rights findings associated with this change.")
         },
     )
 
-    validation_findings: tuple[
-        ValidationFinding,
-        ...
-    ] = field(
+    validation_findings: tuple[ValidationFinding, ...] = field(
         default_factory=tuple,
-        metadata={
-            "doc": (
-                "Validation findings associated with this change."
-            )
-        },
+        metadata={"doc": ("Validation findings associated with this change.")},
     )
 
     classified_at: datetime = field(
         default_factory=datetime.utcnow,
-        metadata={
-            "doc": (
-                "UTC timestamp at which the change was classified."
-            )
-        },
+        metadata={"doc": ("UTC timestamp at which the change was classified.")},
     )
 
     @property
     def findings(
         self,
-    ) -> tuple[
-        ValidationFinding,
-        ...
-    ]:
+    ) -> tuple[ValidationFinding, ...]:
         """
         Combined findings for compatibility and simple consumers.
         """
@@ -312,6 +245,7 @@ class ChangeClassificationMetadata:
             *self.validation_findings,
         )
 
+
 @dataclass(slots=True)
 class ClassifiedChange:
     """
@@ -319,19 +253,11 @@ class ClassifiedChange:
     """
 
     change: Change = field(
-        metadata={
-            "doc": (
-                "The row-level canonical change."
-            )
-        },
+        metadata={"doc": ("The row-level canonical change.")},
     )
 
     metadata: ChangeClassificationMetadata = field(
-        metadata={
-            "doc": (
-                "Classification metadata for the change."
-            )
-        },
+        metadata={"doc": ("Classification metadata for the change.")},
     )
 
 
@@ -344,48 +270,24 @@ class ClassifiedChanges:
     incrementally with findings, review metadata or export artifacts.
     """
 
-    created_objects: list[
-        ClassifiedChange
-    ] = field(
+    created_objects: list[ClassifiedChange] = field(
         default_factory=list,
-        metadata={
-            "doc": (
-                "Permitted insert changes."
-            )
-        },
+        metadata={"doc": ("Permitted insert changes.")},
     )
 
-    altered_objects: list[
-        ClassifiedChange
-    ] = field(
+    altered_objects: list[ClassifiedChange] = field(
         default_factory=list,
-        metadata={
-            "doc": (
-                "Permitted update changes."
-            )
-        },
+        metadata={"doc": ("Permitted update changes.")},
     )
 
-    deleted_objects: list[
-        ClassifiedChange
-    ] = field(
+    deleted_objects: list[ClassifiedChange] = field(
         default_factory=list,
-        metadata={
-            "doc": (
-                "Permitted delete changes."
-            )
-        },
+        metadata={"doc": ("Permitted delete changes.")},
     )
 
-    unpermitted_changes: list[
-        ClassifiedChange
-    ] = field(
+    unpermitted_changes: list[ClassifiedChange] = field(
         default_factory=list,
-        metadata={
-            "doc": (
-                "Changes rejected by rights evaluation or validation."
-            )
-        },
+        metadata={"doc": ("Changes rejected by rights evaluation or validation.")},
     )
 
     metadata: dict[
@@ -404,10 +306,7 @@ class ClassifiedChanges:
 
     def all_changes(
         self,
-    ) -> tuple[
-        ClassifiedChange,
-        ...
-    ]:
+    ) -> tuple[ClassifiedChange, ...]:
         """
         Return all classified changes in review order.
         """
@@ -427,9 +326,7 @@ class ClassifiedChanges:
         Add a classified change to the matching group.
         """
 
-        classification = (
-            classified_change.metadata.classification
-        )
+        classification = classified_change.metadata.classification
 
         if classification == ChangeClassification.CREATED_OBJECT:
             self.created_objects.append(
@@ -455,9 +352,8 @@ class ClassifiedChanges:
             )
             return
 
-        raise ValueError(
-            f"Unsupported change classification: {classification}"
-        )
+        raise ValueError(f"Unsupported change classification: {classification}")
+
 
 @dataclass(slots=True, frozen=True)
 class ValidationFinding(Finding):
@@ -466,11 +362,7 @@ class ValidationFinding(Finding):
     """
 
     code: str = field(
-        metadata={
-            "doc": (
-                "Stable machine-readable validation identifier."
-            )
-        },
+        metadata={"doc": ("Stable machine-readable validation identifier.")},
     )
 
     attribute_name: str | None = field(
@@ -496,26 +388,21 @@ class AttributeValidation:
     id: str = field(
         metadata={
             "doc": (
-                "Identifier of the validation rule, for example "
-                "`newer_than_existing`."
+                "Identifier of the validation rule, for example `newer_than_existing`."
             )
         },
     )
 
     level: Severity = field(
-        metadata={
-            "doc": (
-                "Severity emitted when this validation produces a finding."
-            )
-        },
+        metadata={"doc": ("Severity emitted when this validation produces a finding.")},
     )
 
-    operations: list[ChangeOperation]  = field(
+    operations: list[ChangeOperation] = field(
         default_factory=lambda: (
             ChangeOperation.INSERT,
             ChangeOperation.UPDATE,
             ChangeOperation.DELETE,
-            ),
+        ),
         metadata={
             "doc": (
                 "List of ChangeOperations on which the AttributeValidation "
@@ -524,7 +411,7 @@ class AttributeValidation:
         },
     )
 
-    context_value: str  = field(
+    context_value: str = field(
         default=None,
         metadata={
             "doc": (
@@ -546,15 +433,11 @@ class TransitionValidation:
     """
 
     ruleset: frozenset[StateTransitionRule] = field(
-        metadata={
-            "doc": (
-                "Allowed state transition rules for the attribute."
-            )
-        },
+        metadata={"doc": ("Allowed state transition rules for the attribute.")},
     )
 
     allow_transitive: bool = field(
-        default= True,
+        default=True,
         metadata={
             "doc": (
                 "Whether transitive transitions are allowed. If true, a "

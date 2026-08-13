@@ -1,8 +1,6 @@
 from typing import Protocol
 from collections.abc import Iterable
 
-from ..models.mapping import RelationContext
-
 
 class RelationContextProvider(Protocol):
     """
@@ -15,5 +13,4 @@ class RelationContextProvider(Protocol):
 
     def relation_contexts(
         self,
-    ) -> Iterable:
-        ...
+    ) -> Iterable: ...
