@@ -1,31 +1,37 @@
+# teksi_hooks
 
-A lightweight capability-based hook framework for the TEKSI ecosystem.
+A lightweight capability-based framework for implementing TEKSI workflows.
 
 ## Overview
 
-teksi_hooks provides a generic mechanism for loading and executing Python hooks at runtime.
+`teksi_hooks` provides reusable building blocks for rights evaluation, validation,
+configuration parsing, hook execution and capability-based dependency injection.
 
-Hooks are regular Python files that implement a small contract consisting of:
+The framework is intentionally domain-agnostic and does not depend on QGIS,
+PostgreSQL, INTERLIS, wastewater models or any specific application.
 
-- Hook metadata
-- Required capabilities
-- A single execution method
-
-Applications provide capabilities through a `HookContext`, allowing hooks to access services without creating dependencies on specific implementations.
+Applications compose the framework by providing capabilities and concrete
+implementations for deployment-specific concerns.
 
 ## Features
 
-- Dynamic hook loading
-- Contract validation
+- Dynamic hook loading and execution
 - Capability-based dependency injection
-- Isolated hook execution
-- Extensible architecture
-- GPL2 compatible
+- Rights and permission modelling
+- Validation framework with findings and severity levels
+- Configuration-driven workflows
+- Parser and resolver infrastructure
+- Extensible identifier types (`Oid`)
+- Domain-independent architecture
 - No dependency on QGIS
 - No dependency on PostgreSQL
-- No dependency on TEKSI domain models
+- No dependency on specific TEKSI business models
 
-## Example Hook
+## Core Concepts
+
+### Hooks
+
+Hooks implement workflows and extension points.
 
 ```python
 from teksi_hooks.hook import (
@@ -40,7 +46,9 @@ class Hook(HookBase):
     required_capabilities = frozenset()
 
     @property
-    def metadata(self) -> HookMetadata:
+    def metadata(
+        self,
+    ) -> HookMetadata:
         return HookMetadata(
             name="Example Hook",
             description="Example hook implementation.",
@@ -51,9 +59,69 @@ class Hook(HookBase):
         context: HookContext,
     ) -> None:
         context.logger.info(
-            "Hello from a hook."
+            "Hello from a hook.",
         )
 ```
+
+### Capabilities
+
+Capabilities provide application-specific services.
+
+The framework depends on contracts rather than implementations.
+
+```python
+context = HookContext(
+    parameters={},
+    logger=logger,
+    capabilities={
+        SqlCapability: SqlCapability(
+            connection,
+        ),
+    },
+)
+```
+
+Access inside a hook:
+
+```python
+sql = context.capability(
+    SqlCapability,
+)
+```
+
+### Rights Definitions
+
+Rights, privileges and validation rules can be defined declaratively.
+
+```yaml
+privileges:
+  DBW_WI:
+    labels:
+      de: Datenbewirtschafter Werkinformation
+
+classes:
+  - id: wastewater_structure
+
+    create_rules:
+      - privileges:
+          - DBW_WI
+```
+
+The parser produces typed model definitions which are subsequently resolved
+and evaluated by framework services.
+
+### Findings
+
+Validation and evaluation produce structured findings.
+
+```python
+Finding(
+    severity=Severity.ERROR,
+    message="Invalid transition.",
+)
+```
+
+Findings can be aggregated and raised through framework exceptions.
 
 ## Hook Execution
 
@@ -64,9 +132,7 @@ from teksi_hooks.hook import (
 )
 
 context = HookContext(
-    parameters={
-        "name": "TEKSI",
-    },
+    parameters={},
     logger=logger,
     capabilities={},
 )
@@ -78,115 +144,96 @@ HookHandler(
 )
 ```
 
-## Capabilities
-
-Capabilities provide services to hooks.
-
-Example:
-```python
-context = HookContext(
-    parameters={},
-    logger=logger,
-    capabilities={
-        SqlCapability: SqlCapability(connection),
-    },
-)
-```
-
-Access inside a hook
-
-```python
-sql = context.capability(
-    SqlCapability,
-)
-
-```
 ## Architecture
 
 ```text
 Application
-      │
-      ▼
- HookHandler
-      │
-      ▼
-   Hook
-      │
-      ▼
- HookContext
-      │
-      ▼
+     │
+     ▼
 Capabilities
+     │
+     ▼
+Services / Evaluators
+     │
+     ▼
+Resolvers
+     │
+     ▼
+Models
+     │
+     ▼
+Hooks
 ```
 
-### Components
+## Package Structure
 
-#### Application
+```text
+teksi_hooks/
+├── capabilities/
+├── evaluators/
+├── models/
+├── parser/
+├── resolver/
+├── services/
+├── exceptions.py
+└── hook.py
+```
 
-The hosting application is responsible for:
+### Models
 
-- Creating and configuring capabilities
-- Constructing the `HookContext`
-- Providing runtime parameters
-- Executing hooks through `HookHandler`
+Typed domain contracts and value objects.
 
-The framework intentionally does not depend on any specific application, plugin, database schema, or business domain.
+Examples:
 
-#### HookHandler
+- Oid
+- RightsDefinition
+- ClassDefinition
+- Finding
+- Validation rules
 
-`HookHandler` is responsible for:
+### Parsers
 
-- Loading hook modules
-- Validating hook contracts
-- Verifying required capabilities
-- Executing hooks
-- Managing hook lifecycle and cleanup
+Convert external configuration formats into typed model definitions.
 
-#### Hook
+Examples:
 
-A hook encapsulates a workflow or extension point.
+- RightsParser
+- ProviderRightsParser
+- WildcardRightsParser
 
-Hooks:
+### Resolvers
 
-- Declare metadata
-- Declare required capabilities
-- Implement business logic in `run_hook()`
+Resolve inheritance, defaults and cross-references.
 
-Hooks should contain workflow logic but should not be responsible for creating services or managing application infrastructure.
+### Evaluators
 
-#### HookContext
+Apply runtime evaluation logic.
 
-`HookContext` transports runtime information to hooks.
+Examples:
 
-It contains:
+- Rights evaluation
+- Validation evaluation
+- Transition evaluation
 
-- Parameters provided by the application
-- A logger instance
-- Registered capabilities
+### Services
 
-The context acts as the boundary between the framework and the hosting application.
+Provide reusable orchestration and application services.
 
-#### Capabilities
+### Capabilities
 
-Capabilities provide services to hooks.
-
-Examples include:
-
-- Database access
-- INTERLIS import/export services
-- Mail services
-- Diff services
-- Application-specific functionality
-
-The framework treats capabilities as opaque objects and does not know their implementation details.
-
----
+Define extension points supplied by the hosting application.
 
 ## Design Principles
 
 - Explicit over implicit
+- Configuration over hard-coding
 - No global state
-- Service-oriented design
-- Framework does not know domain concepts
-- Applications define capabilities
-- Hooks define workflows
+- Capability-based dependency injection
+- Strongly typed contracts
+- Separation of parsing, resolution and evaluation
+- Domain-independent framework core
+- Application-defined integrations
+
+## License
+
+GPL-2.0-or-later

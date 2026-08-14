@@ -10,5 +10,9 @@ Contents
    :maxdepth: 2
 
    architecture
+   rights
+   oid
+   exceptions
+   capabilities
    usage
    api/index
