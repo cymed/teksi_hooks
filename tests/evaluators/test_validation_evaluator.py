@@ -372,7 +372,7 @@ def test_validation_evaluator_validates_change(
         effects=(
             UpdateAttributeEffect(
                 identity=current.identity,
-                tww_attribute_id="status_survey_year",
+                attribute_id="status_survey_year",
                 value=2020,
             ),
         ),
@@ -418,7 +418,7 @@ def test_validation_evaluator_accepts_valid_change(
         effects=(
             UpdateAttributeEffect(
                 identity=current.identity,
-                tww_attribute_id="status_survey_year",
+                attribute_id="status_survey_year",
                 value=2024,
             ),
         ),

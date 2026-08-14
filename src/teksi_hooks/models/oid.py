@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from typing import ClassVar
 from re import Pattern
 
-from ..exceptions import TeksiHookError
+from ..exceptions import ValidationError, Finding, Severity
 
 
 @dataclass(slots=True, frozen=True)
@@ -34,9 +34,17 @@ class Oid(ABC):
         if not self._pattern.fullmatch(
             self.value,
         ):
-            raise TeksiHookError(
-                f"'{self.value}' is not a valid {self.__class__.__name__}."
-            )
+            raise ValidationError(
+                    (
+                        Finding(
+                            severity=Severity.ERROR,
+                            message=(
+                                f"'{self.value}' is not a valid "
+                                f"{self.__class__.__name__}."
+                            ),
+                        ),
+                    ),
+                )
 
     def __str__(
         self,

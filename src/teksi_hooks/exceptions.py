@@ -29,6 +29,17 @@ class TeksiHookError(TeksiHookException):
         self,
         findings: tuple[Finding, ...],
     ):
+        if isinstance(
+            findings,
+            str,
+        ):
+            findings = (
+                Finding(
+                    severity=Severity.ERROR,
+                    message=findings,
+                ),
+            )
+
         self.findings = findings
 
         super().__init__("\n".join(finding.message for finding in findings))

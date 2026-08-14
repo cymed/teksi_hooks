@@ -33,7 +33,7 @@ def test_parse_update_attribute_effect() -> None:
                   "fk_wastewater_node": "ch123456AG987654"
                 }
               },
-              "tww_attribute_id": "ag64_function",
+              "attribute_id": "ag64_function",
               "value": 1234
             }
           ]
@@ -61,7 +61,7 @@ def test_parse_update_attribute_effect() -> None:
             },
         )
     )
-    assert effect.tww_attribute_id == "ag64_function"
+    assert effect.attribute_id == "ag64_function"
     assert effect.value == 1234
 
 
@@ -233,7 +233,7 @@ def test_parse_multiple_effects() -> None:
                   "fk_wastewater_node": "ch123456AG876543"
                 }
               },
-              "tww_attribute_id": "ag64_function",
+              "attribute_id": "ag64_function",
               "value": 1234
             }
           ]
@@ -295,7 +295,7 @@ def test_reject_contradicting_effects() -> None:
                       "fk_wastewater_node": "ch123456AG987654"
                     }
                   },
-                  "tww_attribute_id": "ag64_function",
+                  "attribute_id": "ag64_function",
                   "value": 1234
                 }
               ]

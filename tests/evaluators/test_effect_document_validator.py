@@ -29,7 +29,7 @@ def test_validator_accepts_valid_document() -> None:
                             "fk_wastewater_node": "ch123456AG987654",
                         },
                     ),
-                    tww_attribute_id="ag64_function",
+                    attribute_id="ag64_function",
                     value=1234,
                 ),
             ),
@@ -75,7 +75,7 @@ def test_validator_rejects_missing_identity_attributes() -> None:
                         class_id="agxx_wastewater_node",
                         attributes={},
                     ),
-                    tww_attribute_id="ag64_function",
+                    attribute_id="ag64_function",
                     value=1234,
                 ),
             ),
@@ -105,7 +105,7 @@ def test_validator_rejects_missing_attribute_id() -> None:
                             "fk_wastewater_node": "ch123456AG987654",
                         },
                     ),
-                    tww_attribute_id="",
+                    attribute_id="",
                     value=1234,
                 ),
             ),
@@ -114,7 +114,7 @@ def test_validator_rejects_missing_attribute_id() -> None:
 
     assert len(findings) == 1
 
-    assert "Update effect missing tww_attribute_id." in findings[0].message
+    assert "Update effect missing attribute_id." in findings[0].message
 
 
 def test_validator_rejects_missing_identity_class() -> None:
@@ -135,7 +135,7 @@ def test_validator_rejects_missing_identity_class() -> None:
                             "fk_wastewater_node": "ch123456AG987654",
                         },
                     ),
-                    tww_attribute_id="ag64_function",
+                    attribute_id="ag64_function",
                     value=1234,
                 ),
             ),

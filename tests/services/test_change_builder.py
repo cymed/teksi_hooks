@@ -45,7 +45,7 @@ def test_change_builder_builds_insert() -> None:
                     "obj_id": "ch987654WS123456",
                 },
             ),
-            tww_attribute_id="status",
+            attribute_id="status",
             value="operational",
         ),
         UpdateAttributeEffect(
@@ -55,7 +55,7 @@ def test_change_builder_builds_insert() -> None:
                     "obj_id": "ch987654WS123456",
                 },
             ),
-            tww_attribute_id="fk_provider",
+            attribute_id="fk_provider",
             value="ch000000geping01",
         ),
         UpdateAttributeEffect(
@@ -65,7 +65,7 @@ def test_change_builder_builds_insert() -> None:
                     "obj_id": "ch987654WS123456",
                 },
             ),
-            tww_attribute_id="fk_dataowner",
+            attribute_id="fk_dataowner",
             value="ch000000awgde001",
         ),
     )
@@ -96,17 +96,17 @@ def test_change_builder_builds_update(
         effects=(
             UpdateAttributeEffect(
                 identity=wastewater_structure.identity,
-                tww_attribute_id="status",
+                attribute_id="status",
                 value="operational",
             ),
             UpdateAttributeEffect(
                 identity=wastewater_structure.identity,
-                tww_attribute_id="remark",
+                attribute_id="remark",
                 value="Survey completed",
             ),
             UpdateAttributeEffect(
                 identity=wastewater_structure.identity,
-                tww_attribute_id="status_survey_year",
+                attribute_id="status_survey_year",
                 value=2024,
             ),
         ),
@@ -148,7 +148,7 @@ def test_change_builder_preserves_unchanged_attributes(
         effects=(
             UpdateAttributeEffect(
                 identity=wastewater_structure.identity,
-                tww_attribute_id="status",
+                attribute_id="status",
                 value="operational",
             ),
         ),
@@ -180,7 +180,7 @@ def test_change_builder_changed_attributes_contain_expected_values(
         effects=(
             UpdateAttributeEffect(
                 identity=wastewater_structure.identity,
-                tww_attribute_id="status",
+                attribute_id="status",
                 value="operational",
             ),
         ),

@@ -31,7 +31,7 @@ def test_build_snapshot_from_single_effect() -> None:
         effects=(
             UpdateAttributeEffect(
                 identity=identity,
-                tww_attribute_id="status",
+                attribute_id="status",
                 value=1234,
             ),
         ),
@@ -71,12 +71,12 @@ def test_build_snapshot_groups_effects_by_object() -> None:
         effects=(
             UpdateAttributeEffect(
                 identity=identity,
-                tww_attribute_id="status",
+                attribute_id="status",
                 value=1,
             ),
             UpdateAttributeEffect(
                 identity=identity,
-                tww_attribute_id="remark",
+                attribute_id="remark",
                 value="test",
             ),
         ),
@@ -119,7 +119,7 @@ def test_build_snapshot_keeps_distinct_objects() -> None:
                         "obj_id": "object_1",
                     },
                 ),
-                tww_attribute_id="status",
+                attribute_id="status",
                 value=1,
             ),
             UpdateAttributeEffect(
@@ -129,7 +129,7 @@ def test_build_snapshot_keeps_distinct_objects() -> None:
                         "obj_id": "object_2",
                     },
                 ),
-                tww_attribute_id="status",
+                attribute_id="status",
                 value=1,
             ),
         ),
@@ -189,7 +189,7 @@ def test_build_snapshot_initializes_without_last_modification() -> None:
                         "obj_id": "ch000000ws000001",
                     },
                 ),
-                tww_attribute_id="status",
+                attribute_id="status",
                 value="active",
             ),
         ),
