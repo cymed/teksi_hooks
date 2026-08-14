@@ -46,7 +46,6 @@ defaults:
       update: [DBW_WI]
     ag96_*:
       update: [DBW_GEP]
-      update: [DBW_GEP]
 
 
 classes:

@@ -31,10 +31,9 @@ def test_rights_parser_imports_default_create_rules() -> None:
 
     definition = parser.parse_text(
         """
-        settings:
-          defaults:
-            create_rules:
-              - privileges: [DBW_GEP]
+        defaults:
+          create_rules:
+            - privileges: [DBW_GEP]
 
         classes:
           - id: maintenance_event
