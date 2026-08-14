@@ -215,9 +215,12 @@ def generate(
     *,
     language: str,
 ) -> None:
-    if str(
-        SRC_ROOT,
-    ) not in sys.path:
+    if (
+        str(
+            SRC_ROOT,
+        )
+        not in sys.path
+    ):
         sys.path.insert(
             0,
             str(SRC_ROOT),
@@ -281,9 +284,7 @@ def generate(
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description=(
-            "Generate dataclass API documentation from field metadata."
-        ),
+        description=("Generate dataclass API documentation from field metadata."),
     )
 
     parser.add_argument(
