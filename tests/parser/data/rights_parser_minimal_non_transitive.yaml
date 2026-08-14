@@ -17,7 +17,7 @@ privileges:
 
 settings:
   allow_transitive_transitions: false
-  
+
 defaults:
   read_rules:
       - privileges: all
@@ -31,14 +31,14 @@ defaults:
         - id: equals_context_value
           context_value: provider_oid
           level: error
-          operations: 
+          operations:
             - insert
     fk_dataowner:
       rules:
         - id: equals_context_value
           context_value: dataowner_oid
           level: error
-          operations: 
+          operations:
             - insert
 
   attribute_defaults:
