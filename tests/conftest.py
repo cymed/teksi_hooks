@@ -58,7 +58,7 @@ def rights_definition_non_transitive() -> RightsDefinition:
 
 @pytest.fixture
 def providers() -> tuple[Provider, ...]:
-    return ProviderRightsParser().parse_file(
+    return ProviderRightsParser(oid_type=Standardoid).parse_file(
         DATA_DIR / "provider_rights_minimal.yaml",
     )
 

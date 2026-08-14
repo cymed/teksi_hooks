@@ -398,32 +398,25 @@ class RightsParser:
 
     def _parse_privileges(
         self,
-        raw_privileges: list[dict[str, Any]],
+        raw_privileges: dict[str, Any],
     ) -> dict[
         PrivilegeId,
         PrivilegeMetadata,
     ]:
-        privileges: dict[
-            PrivilegeId,
-            PrivilegeMetadata,
-        ] = {}
-
-        for raw in raw_privileges:
-            privilege = PrivilegeMetadata(
-                id=raw["id"],
-                labels=raw.get(
+        return {
+            privilege_id: PrivilegeMetadata(
+                labels=definition.get(
                     "labels",
                     {},
                 ),
-                descriptions=raw.get(
+                descriptions=definition.get(
                     "descriptions",
                     {},
                 ),
             )
-
-            privileges[privilege.id] = privilege
-
-        return privileges
+            for privilege_id, definition
+            in raw_privileges.items()
+        }
 
     def _parse_condition(
         self,
