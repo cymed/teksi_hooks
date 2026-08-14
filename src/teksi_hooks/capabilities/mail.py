@@ -5,6 +5,7 @@ from email.message import EmailMessage
 from ..models.mail import Mail, SmtpConfiguration
 from ..exceptions import TeksiHookError
 
+
 class MailCapability(Protocol):
     """
     Capability for sending email messages.
@@ -13,8 +14,7 @@ class MailCapability(Protocol):
     def send(
         self,
         mail: Mail,
-    ) -> None:
-        ...
+    ) -> None: ...
 
 
 class SmtpMailCapability(
@@ -56,11 +56,7 @@ class SmtpMailCapability(
             mail.body,
         )
 
-        recipients = (
-            list(mail.recipients)
-            + list(mail.cc)
-            + list(mail.bcc)
-        )
+        recipients = list(mail.recipients) + list(mail.cc) + list(mail.bcc)
 
         try:
             with smtplib.SMTP(
