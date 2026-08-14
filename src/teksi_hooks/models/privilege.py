@@ -7,6 +7,7 @@ from .canonical_object import LanguageCode
 PrivilegeId = str
 ALL_PRIVILEGES: PrivilegeId = "__all__"
 
+
 @dataclass(frozen=True, slots=True)
 class PrivilegeMetadata:
     """

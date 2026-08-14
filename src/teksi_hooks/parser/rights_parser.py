@@ -128,7 +128,6 @@ class RightsParser:
         self,
         raw: dict[str, Any],
     ) -> DefaultDefinitions:
-
         return DefaultDefinitions(
             crud_rules=CrudRules(
                 create_rules=self._parse_rules(
@@ -167,10 +166,7 @@ class RightsParser:
     def _parse_attribute_defaults(
         self,
         raw: dict[str, Any],
-    ) -> tuple[
-        AttributeDefaultDefinition,
-        ...
-    ]:
+    ) -> tuple[AttributeDefaultDefinition, ...]:
         return tuple(
             self._parse_attribute_default(
                 pattern,
@@ -189,8 +185,7 @@ class RightsParser:
             dict,
         ):
             raise TypeError(
-                f"Expected mapping for wildcard default {pattern!r}, "
-                f"got {type(raw)!r}"
+                f"Expected mapping for wildcard default {pattern!r}, got {type(raw)!r}"
             )
 
         return AttributeDefaultDefinition(
@@ -202,7 +197,6 @@ class RightsParser:
                 ),
             ),
         )
-
 
     def _parse_classes(
         self,
@@ -447,9 +441,7 @@ class RightsParser:
             str,
         ):
             if raw != "all":
-                raise ValueError(
-                    f"Unknown privilege selector: {raw!r}"
-                )
+                raise ValueError(f"Unknown privilege selector: {raw!r}")
 
             return frozenset(
                 {
@@ -458,7 +450,6 @@ class RightsParser:
             )
 
         return frozenset(raw)
-
 
     def _parse_privileges(
         self,
