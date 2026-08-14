@@ -22,7 +22,7 @@ from pathlib import Path
 from types import ModuleType
 from typing import Any
 
-from teksi_hooks.docs import render_dataclass_api
+from . import render_dataclass_api
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
