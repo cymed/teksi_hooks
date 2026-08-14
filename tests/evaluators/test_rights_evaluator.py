@@ -20,6 +20,26 @@ from teksi_hooks.models.rulesets import (
 from teksi_hooks.models.validation import ChangeOperation
 
 
+def _context(
+    *,
+    provider_oid: str = "ch000000geping01",
+    dataowner_oid: str = "ch000000awgde001",
+    operation: ChangeOperation = ChangeOperation.UPDATE,
+    old_values=None,
+    new_values=None,
+):
+    return RightsEvaluationContext(
+        dataowner_oid=Standardoid(
+            dataowner_oid,
+        ),
+        provider_oid=Standardoid(
+            provider_oid,
+        ),
+        operation=operation,
+        old_values=old_values or {},
+        new_values=new_values or {},
+    )
+
 def _make_evaluator(
     resolved_rights,
     resolved_providers,
@@ -56,11 +76,9 @@ def test_rights_evaluator_allows_attribute_update_with_required_privilege(
     )
 
     assert evaluator.can_update_attribute(
-        dataowner_oid=Standardoid(
-            "ch000000awgde001",
-        ),
         class_id="wastewater_structure",
         attribute_name="status",
+        context=_context(),
     )
 
 
@@ -77,11 +95,9 @@ def test_rights_evaluator_rejects_attribute_update_without_required_privilege(
     )
 
     assert not evaluator.can_update_attribute(
-        dataowner_oid=Standardoid(
-            "ch000000awgde001",
-        ),
         class_id="wastewater_structure",
         attribute_name="gross_costs",
+        context=_context(),
     )
 
 
