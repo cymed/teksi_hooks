@@ -9,7 +9,7 @@ from teksi_hooks.models.rights import (
     ResolvedClassDefinition,
 )
 from teksi_hooks.parser.provider_rights_parser import ProviderRightsParser
-from teksi_hooks.parser.rights_parser import RightsParser, WildcardRightsParser
+from teksi_hooks.parser.rights_parser import RightsParser
 from teksi_hooks.parser.model_mapping_parser import ModelMappingParser
 
 from teksi_hooks.models.provider import Provider, ResolvedProvider
@@ -34,12 +34,6 @@ from teksi_hooks.evaluators.rights import RightsEvaluator
 
 DATA_DIR = Path(__file__).parent / "parser/data"
 
-
-@pytest.fixture
-def wildcard_rights_definition() -> RightsDefinition:
-    return WildcardRightsParser().parse_file(
-        DATA_DIR / "provider_privilege_agxx.yaml",
-    )
 
 
 @pytest.fixture

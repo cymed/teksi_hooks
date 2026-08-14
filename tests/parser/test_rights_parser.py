@@ -224,15 +224,15 @@ def test_rights_parser_imports_ownership_update_rules(rights_definition) -> None
 
 
 def test_wildcard_rights_parser_imports_defaults_and_classes(
-    wildcard_rights_definition,
+    rights_definition,
 ) -> None:
-    assert "agxx_wastewater_networkelement" in wildcard_rights_definition.classes
+    assert "agxx_wastewater_networkelement" in rights_definition.classes
 
-    assert len(wildcard_rights_definition.defaults.attribute_defaults) == 2
+    assert len(rights_definition.defaults.attribute_defaults) == 2
 
     defaults_by_pattern = {
         default.pattern: default
-        for default in wildcard_rights_definition.defaults.attribute_defaults
+        for default in rights_definition.defaults.attribute_defaults
     }
 
     assert defaults_by_pattern["ag64_*"].update_privileges == frozenset(
