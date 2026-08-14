@@ -7,7 +7,7 @@ from collections.abc import Iterable
 
 # Base exception for all TEKSI Hook errors
 class TeksiHookException(Exception):
-    """Base class for all exceptions raised by TWW.
+    """Base class for all exceptions raised by TEKSI Hooks.
 
     Version Added:
         1.0.0

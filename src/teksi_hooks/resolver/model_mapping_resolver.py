@@ -18,7 +18,7 @@ class ImplicitModelMappingResolver:
     Builds a canonical ModelMapping from dictionary metadata.
 
     The dictionary tables already contain authoritative mappings between
-    INTERLIS identifiers and canonical TWW identifiers. This resolver converts
+    INTERLIS identifiers and canonical TEKSI identifiers. This resolver converts
     those metadata records into a runtime ModelMapping that can be consumed
     through ModelMappingCapability.
 

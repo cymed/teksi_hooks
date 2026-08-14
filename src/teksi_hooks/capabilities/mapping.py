@@ -16,7 +16,7 @@ class ModelMappingCapability:
     Runtime lookup capability for a `ModelMapping`.
 
     A model mapping describes how a source model maps to the canonical
-    internal TWW model. This capability provides convenient accessors for
+    internal model. This capability provides convenient accessors for
     class, attribute and value mappings.
 
     The mapping itself is immutable and should already be parsed or resolved

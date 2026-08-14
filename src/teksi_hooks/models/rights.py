@@ -319,7 +319,7 @@ class ClassDefinition:
     id: str = field(
         metadata={
             "doc": (
-                "Canonical class identifier. Usually corresponds to a TWW "
+                "Canonical class identifier. Usually corresponds to a TEKSI "
                 "semantic class or table identifier."
             )
         },

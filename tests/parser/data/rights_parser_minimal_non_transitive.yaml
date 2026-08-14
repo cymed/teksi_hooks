@@ -17,7 +17,10 @@ privileges:
 
 settings:
   allow_transitive_transitions: false
+  
 defaults:
+  read_rules:
+      - privileges: all
   validation_rules:
     last_modification:
       rules:
@@ -28,15 +31,22 @@ defaults:
         - id: equals_context_value
           context_value: provider_oid
           level: error
-          operations:
+          operations: 
             - insert
     fk_dataowner:
       rules:
         - id: equals_context_value
           context_value: dataowner_oid
           level: error
-          operations:
+          operations: 
             - insert
+
+  attribute_defaults:
+    ag64_*:
+      update: [DBW_WI]
+    ag96_*:
+      update: [DBW_GEP]
+      update: [DBW_GEP]
 
 
 classes:

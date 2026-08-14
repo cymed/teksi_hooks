@@ -157,7 +157,7 @@ class RightsParser:
             ),
             attribute_defaults=self._parse_attribute_defaults(
                 raw.get(
-                    "wildcard_attributes",
+                    "attribute_defaults",
                     {},
                 ),
             ),

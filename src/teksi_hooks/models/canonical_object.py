@@ -148,8 +148,8 @@ class CanonicalModelElementMetadata:
     source_id: int = field(
         metadata={
             "doc": (
-                "Numeric source identifier from the corresponding "
-                "tww_sys dictionary table. The meaning is scoped by the "
+                "Numeric source identifier, i.e. from the corresponding "
+                "sys dictionary table. The meaning is scoped by the "
                 "concrete metadata level."
             )
         },
@@ -173,26 +173,26 @@ class CanonicalModelElementMetadata:
 @dataclass(slots=True, frozen=True)
 class CanonicalClassMetadata(CanonicalModelElementMetadata):
     """
-    Canonical metadata for a TEKSI Wastewater class/table.
+    Canonical metadata for a TEKSI class/table.
 
     source_id:
-        tww_sys.dictionary_od_table.id
+        table.id
 
     identifier:
-        tww_sys.dictionary_od_table.tablename
+        txx_sys.dictionary_od_table.tablename
     """
 
 
 @dataclass(slots=True, frozen=True)
 class CanonicalAttributeMetadata(CanonicalModelElementMetadata):
     """
-    Canonical metadata for a TEKSI Wastewater attribute/field.
+    Canonical metadata for a TEKSI attribute/field.
 
     source_id:
-        tww_sys.dictionary_od_field.attribute_id
+        txx_sys.dictionary_od_field.attribute_id
 
     identifier:
-        tww_sys.dictionary_od_field.field_name
+        txx_sys.dictionary_od_field.field_name
     """
 
     field_datatype: str | None = field(
@@ -201,7 +201,7 @@ class CanonicalAttributeMetadata(CanonicalModelElementMetadata):
             "doc": (
                 "Source field datatype from canonical metadata. For TEKSI "
                 "Wastewater dictionary metadata this corresponds to "
-                "tww_sys.dictionary_od_field.field_datatype. Geometry "
+                "txx_sys.dictionary_od_field.field_datatype. Geometry "
                 "attributes are identified with field_datatype='geometry'."
             )
         },
@@ -211,20 +211,20 @@ class CanonicalAttributeMetadata(CanonicalModelElementMetadata):
 @dataclass(slots=True, frozen=True)
 class CanonicalValueMetadata(CanonicalModelElementMetadata):
     """
-    Canonical metadata for a TEKSI Wastewater value-list value.
+    Canonical metadata for a TEKSI value-list value.
 
     source_id:
-        tww_sys.dictionary_od_values.value_id
+        txx_sys.dictionary_od_values.value_id
 
     identifier:
-        tww_sys.dictionary_od_values.value_name
+        txx_sys.dictionary_od_values.value_name
     """
 
 
 @dataclass(slots=True, frozen=True)
 class CanonicalModelMetadata:
     """
-    Aggregate canonical metadata for TEKSI Wastewater classes, attributes and
+    Aggregate canonical metadata for TEKSI classes, attributes and
     values.
 
     This is intentionally a data-only model. Lookup behavior belongs to

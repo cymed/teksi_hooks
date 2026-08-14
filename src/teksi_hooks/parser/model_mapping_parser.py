@@ -17,7 +17,7 @@ from ..models.mapping import (
 @dataclass(slots=True)
 class ModelMappingParser:
     """
-    Parser for source-model to canonical TWW mapping YAML files.
+    Parser for source-model to canonical mapping YAML files.
 
     The parser supports two class-level mapping modes:
 
@@ -26,7 +26,7 @@ class ModelMappingParser:
        database function.
 
     2. Attribute-backed class mapping
-       Individual source attributes are mapped directly to canonical TWW
+       Individual source attributes are mapped directly to canonical TEKSI
        class and attribute identifiers.
 
     A class mapping must not define both `function` and `attributes`.

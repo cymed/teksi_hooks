@@ -81,7 +81,7 @@ class FunctionMapping:
     schema: str = field(
         metadata={
             "doc": (
-                "Database schema containing the mapping function. Example: `tww_app`."
+                "Database schema containing the mapping function. Example: `txx_app`."
             )
         },
     )
