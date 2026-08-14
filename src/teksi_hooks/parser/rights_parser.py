@@ -84,7 +84,7 @@ class RightsParser:
             {},
         )
 
-        defaults_settings = settings.get(
+        defaults_settings = data.get(
             "defaults",
             {},
         )
