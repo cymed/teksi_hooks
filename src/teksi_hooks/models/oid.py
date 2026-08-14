@@ -35,16 +35,15 @@ class Oid(ABC):
             self.value,
         ):
             raise ValidationError(
-                    (
-                        Finding(
-                            severity=Severity.ERROR,
-                            message=(
-                                f"'{self.value}' is not a valid "
-                                f"{self.__class__.__name__}."
-                            ),
+                (
+                    Finding(
+                        severity=Severity.ERROR,
+                        message=(
+                            f"'{self.value}' is not a valid {self.__class__.__name__}."
                         ),
                     ),
-                )
+                ),
+            )
 
     def __str__(
         self,
