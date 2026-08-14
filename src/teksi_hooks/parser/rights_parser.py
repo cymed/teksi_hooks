@@ -414,8 +414,7 @@ class RightsParser:
                     {},
                 ),
             )
-            for privilege_id, definition
-            in raw_privileges.items()
+            for privilege_id, definition in raw_privileges.items()
         }
 
     def _parse_condition(
