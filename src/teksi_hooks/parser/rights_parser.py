@@ -16,6 +16,7 @@ from ..models.conditions import (
 from ..models.privilege import (
     PrivilegeId,
     PrivilegeMetadata,
+    ALL_PRIVILEGES,
 )
 from ..models.rights import (
     AttributeDefinition,
@@ -127,6 +128,7 @@ class RightsParser:
         self,
         raw: dict[str, Any],
     ) -> DefaultDefinitions:
+
         return DefaultDefinitions(
             crud_rules=CrudRules(
                 create_rules=self._parse_rules(
@@ -154,7 +156,53 @@ class RightsParser:
                     ),
                 ),
             ),
+            attribute_defaults=self._parse_attribute_defaults(
+                raw.get(
+                    "wildcard_attributes",
+                    {},
+                ),
+            ),
         )
+
+    def _parse_attribute_defaults(
+        self,
+        raw: dict[str, Any],
+    ) -> tuple[
+        AttributeDefaultDefinition,
+        ...
+    ]:
+        return tuple(
+            self._parse_attribute_default(
+                pattern,
+                definition,
+            )
+            for pattern, definition in raw.items()
+        )
+
+    def _parse_attribute_default(
+        self,
+        pattern: str,
+        raw: dict[str, Any],
+    ) -> AttributeDefaultDefinition:
+        if not isinstance(
+            raw,
+            dict,
+        ):
+            raise TypeError(
+                f"Expected mapping for wildcard default {pattern!r}, "
+                f"got {type(raw)!r}"
+            )
+
+        return AttributeDefaultDefinition(
+            pattern=pattern,
+            update_privileges=self._parse_privilege_ids(
+                raw.get(
+                    "update",
+                    [],
+                ),
+            ),
+        )
+
 
     def _parse_classes(
         self,
@@ -392,9 +440,25 @@ class RightsParser:
 
     def _parse_privilege_ids(
         self,
-        raw: list[str],
+        raw: str | list[str],
     ) -> frozenset:
+        if isinstance(
+            raw,
+            str,
+        ):
+            if raw != "all":
+                raise ValueError(
+                    f"Unknown privilege selector: {raw!r}"
+                )
+
+            return frozenset(
+                {
+                    ALL_PRIVILEGES,
+                },
+            )
+
         return frozenset(raw)
+
 
     def _parse_privileges(
         self,
@@ -600,106 +664,3 @@ class RightsParser:
                 )
 
         return merged
-
-
-@dataclass(slots=True)
-class WildcardRightsParser:
-    """
-    Parser for wildcard privilege YAML definitions.
-
-    Wildcard privilege files use a compact structure where attribute privileges
-    are defined by wildcard defaults, for example:
-
-        ag64_*:
-          update: [DBW_WI]
-
-    The parser does not expand these patterns. Expansion belongs to the
-    resolver because only the resolver knows the concrete class attributes.
-    """
-
-    def parse_file(
-        self,
-        path: str | Path,
-    ) -> RightsDefinition:
-        with open(path, encoding="utf-8") as file:
-            data = yaml.safe_load(file)
-
-        return self._parse_dict(
-            data or {},
-        )
-
-    def _parse_dict(
-        self,
-        data: dict[str, Any],
-    ) -> RightsDefinition:
-        class_definitions = self._parse_classes(
-            data.get(
-                "classes",
-                [],
-            ),
-        )
-
-        return RightsDefinition(
-            defaults=self._parse_defaults(
-                data.get(
-                    "defaults",
-                    {},
-                ),
-            ),
-            classes={
-                class_definition.id: class_definition
-                for class_definition in class_definitions
-            },
-        )
-
-    def _parse_defaults(
-        self,
-        raw: dict[str, Any],
-    ) -> DefaultDefinitions:
-        return DefaultDefinitions(
-            crud_rules=CrudRules(),
-            attribute_defaults=tuple(
-                self._parse_attribute_default(
-                    pattern,
-                    definition,
-                )
-                for pattern, definition in raw.items()
-            ),
-        )
-
-    def _parse_attribute_default(
-        self,
-        pattern: str,
-        raw: dict[str, Any],
-    ) -> AttributeDefaultDefinition:
-        if not isinstance(raw, dict):
-            raise TypeError(
-                f"Expected mapping for wildcard default {pattern!r}, got {type(raw)!r}"
-            )
-
-        return AttributeDefaultDefinition(
-            pattern=pattern,
-            update_privileges=self._parse_privilege_ids(
-                raw.get(
-                    "update",
-                    [],
-                ),
-            ),
-        )
-
-    def _parse_classes(
-        self,
-        raw_classes: list[dict[str, Any]],
-    ) -> list:
-        return [
-            ClassDefinition(
-                id=raw["id"],
-            )
-            for raw in raw_classes
-        ]
-
-    def _parse_privilege_ids(
-        self,
-        raw: list[str],
-    ) -> frozenset[PrivilegeId]:
-        return frozenset(raw)

@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from collections.abc import Mapping
 from typing import Any
 
-from ..models.oid import Standardoid
+from ..models.oid import Oid
 
 from ..capabilities.conditions import (
     ConditionsCapability,
@@ -24,6 +24,7 @@ from ..models.rulesets import (
     PrivilegeRule,
     OwnershipRule,
 )
+from ..models.privilege import PrivilegeId, ALL_PRIVILEGES
 from ..models.validation import ChangeOperation
 
 
@@ -36,8 +37,8 @@ class RightsEvaluationContext:
     provider, data owner, operation type and old/new row values.
     """
 
-    dataowner_oid: Standardoid
-    provider_oid: Standardoid
+    dataowner_oid: Oid
+    provider_oid: Oid
 
     operation: ChangeOperation
 
@@ -86,9 +87,9 @@ class RightsEvaluator:
 
     def can_update_attribute(
         self,
-        dataowner_oid: Standardoid,
         class_id: str,
         attribute_name: str,
+        context: RightsEvaluationContext,
     ) -> bool:
         """
         Check whether the provider has the required attribute-level update
@@ -101,12 +102,9 @@ class RightsEvaluator:
             attribute_name,
         )
 
-        return any(
-            self.provider.has_privilege(
-                dataowner_oid,
-                privilege,
-            )
-            for privilege in required_privileges
+        return self._has_privilege(
+            required_privileges,
+            context,
         )
 
     def can_create(
@@ -444,4 +442,20 @@ class RightsEvaluator:
             remote_objects=tuple(
                 remote_objects,
             ),
+        )
+
+    def _has_privilege(
+        self,
+        required: frozenset[PrivilegeId],
+        context: RightsEvaluationContext,
+    ) -> bool:
+        if ALL_PRIVILEGES in required:
+            return True
+
+        return any(
+            self.provider.has_privilege(
+                context.dataowner_oid,
+                privilege,
+            )
+            for privilege in required
         )
