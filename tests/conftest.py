@@ -35,7 +35,6 @@ from teksi_hooks.evaluators.rights import RightsEvaluator
 DATA_DIR = Path(__file__).parent / "parser/data"
 
 
-
 @pytest.fixture
 def rights_definition() -> RightsDefinition:
     return RightsParser().parse_file(
