@@ -40,6 +40,7 @@ def _context(
         new_values=new_values or {},
     )
 
+
 def _make_evaluator(
     resolved_rights,
     resolved_providers,
