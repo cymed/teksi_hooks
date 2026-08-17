@@ -93,7 +93,6 @@ class CanonicalModelCapability(Protocol):
         Return metadata for one value.
         """
 
-
     def _identity_key(
         self,
         identity: CanonicalObjectIdentity,
@@ -106,6 +105,7 @@ class CanonicalModelCapability(Protocol):
                 )
             ),
         )
+
 
 @dataclass(slots=True, frozen=True)
 class InMemoryCanonicalModelCapability(
@@ -205,8 +205,6 @@ class InMemoryCanonicalModelCapability(
         )
 
 
-
-
 @dataclass(slots=True, frozen=True)
 class CanonicalGeometryCapability:
     """
@@ -272,7 +270,4 @@ class CanonicalGeometryCapability:
         if field_datatype is None:
             return False
 
-        return (
-            field_datatype.strip().lower()
-            == "geometry"
-        )
+        return field_datatype.strip().lower() == "geometry"
