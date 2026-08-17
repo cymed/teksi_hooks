@@ -56,6 +56,20 @@ class TeksiHookError(TeksiHookException):
         if errors:
             raise cls(errors)
 
+    @classmethod
+    def from_message(
+        cls,
+        message: str,
+    ) -> "TeksiHookError":
+        return cls(
+            (
+                Finding(
+                    severity=Severity.ERROR,
+                    message=message,
+                ),
+            ),
+        )
+
 
 class ValidationError(
     TeksiHookError,

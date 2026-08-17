@@ -20,6 +20,19 @@ class CanonicalObjectIdentity:
         metadata={"doc": ("Attributes uniquely identifying the object.")},
     )
 
+    def key(self) -> tuple:
+        """
+        Return the a tuple of class ID and attribute mapping items.
+        """
+        return (
+            self.class_id,
+            tuple(
+                sorted(
+                    self.attributes.items(),
+                )
+            ),
+        )
+
 
 @dataclass(slots=True, frozen=True)
 class CanonicalObject:

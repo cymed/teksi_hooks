@@ -9,6 +9,9 @@ from ..models.canonical_object import (
 from ..models.effects import (
     Effect,
     UpdateAttributeEffect,
+    EnforceExistsEffect,
+    EnforceNotExistsEffect,
+
 )
 from ..models.validation import (
     Change,
@@ -70,20 +73,25 @@ class ChangeBuilder:
 
     def _apply_effect(
         self,
-        values: dict[
-            str,
-            Any,
-        ],
+        values: dict[str, Any],
         effect: Effect,
     ) -> None:
-        if isinstance(
-            effect,
-            UpdateAttributeEffect,
-        ):
-            values[effect.attribute_id] = effect.value
-            return
+        match effect:
+            case UpdateAttributeEffect():
+                values[
+                    effect.attribute_id
+                ] = effect.value
 
-        raise NotImplementedError(f"Unsupported effect type: {type(effect).__name__}")
+            case EnforceExistsEffect():
+                return
+
+            case EnforceNotExistsEffect():
+                return
+
+            case _:
+                raise TypeError(
+                    f"Unsupported effect type: {type(effect)!r}"
+                )
 
     def _object_id(
         self,
