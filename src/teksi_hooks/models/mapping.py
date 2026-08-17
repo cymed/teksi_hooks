@@ -1,4 +1,4 @@
-# models/dict_mapping.py
+# models/mapping.py
 
 from dataclasses import dataclass, field
 from collections.abc import Mapping

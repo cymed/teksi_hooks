@@ -94,6 +94,19 @@ class CanonicalModelCapability(Protocol):
         """
 
 
+    def _identity_key(
+        self,
+        identity: CanonicalObjectIdentity,
+    ) -> tuple:
+        return (
+            identity.class_id,
+            tuple(
+                sorted(
+                    identity.attributes.items(),
+                )
+            ),
+        )
+
 @dataclass(slots=True, frozen=True)
 class InMemoryCanonicalModelCapability(
     CanonicalModelCapability,
@@ -192,10 +205,15 @@ class InMemoryCanonicalModelCapability(
         )
 
 
+
+
 @dataclass(slots=True, frozen=True)
 class CanonicalGeometryCapability:
     """
     Metadata-driven helper for identifying canonical geometry attributes.
+
+    Geometry identification is derived solely from canonical attribute
+    metadata rather than naming conventions.
     """
 
     metadata: CanonicalModelMetadata
@@ -205,6 +223,10 @@ class CanonicalGeometryCapability:
         class_id: str,
         attribute_id: str,
     ) -> bool:
+        """
+        Return whether a canonical attribute represents geometry.
+        """
+
         attribute = self.metadata.attributes.get(
             (
                 class_id,
@@ -223,8 +245,12 @@ class CanonicalGeometryCapability:
         self,
         class_id: str,
     ) -> tuple[str, ...]:
+        """
+        Return canonical geometry attribute identifiers for a class.
+        """
+
         return tuple(
-            attribute.attribute_id
+            attribute.identifier
             for (
                 attribute_class_id,
                 _,
@@ -239,7 +265,14 @@ class CanonicalGeometryCapability:
         self,
         field_datatype: str | None,
     ) -> bool:
+        """
+        Return whether a metadata datatype represents geometry.
+        """
+
         if field_datatype is None:
             return False
 
-        return field_datatype.strip().lower() == "geometry"
+        return (
+            field_datatype.strip().lower()
+            == "geometry"
+        )

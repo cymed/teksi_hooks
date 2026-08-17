@@ -11,7 +11,7 @@ from ..models.validation import (
 from ..models.review import ReviewFeature
 
 
-class ChangeFeatureProvider(Protocol):
+class ChangeObjectProvider(Protocol):
     """
     Provides canonical attribute and geometry values for changes.
 

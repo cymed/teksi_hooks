@@ -16,7 +16,7 @@ from ..models.review import (
 )
 
 from ..capabilities.review import (
-    ChangeFeatureProvider,
+    ChangeObjectProvider,
 )
 
 
@@ -43,7 +43,7 @@ class ChangeReviewExportService:
     geometry_attribute_names_by_class.
     """
 
-    feature_provider: ChangeFeatureProvider
+    object_provider: ChangeObjectProvider
 
     geometry_attribute_names_by_class: Mapping[
         str,
@@ -101,11 +101,11 @@ class ChangeReviewExportService:
     ) -> ReviewFeature:
         change = classified_change.change
 
-        old_feature = self.feature_provider.old_feature(
+        old_feature = self.object_provider.old_feature(
             change,
         )
 
-        new_feature = self.feature_provider.new_feature(
+        new_feature = self.object_provider.new_feature(
             change,
         )
 
