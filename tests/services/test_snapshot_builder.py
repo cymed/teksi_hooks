@@ -11,6 +11,7 @@ from teksi_hooks.services.diff_snapshot_builder import (
 )
 from teksi_hooks.capabilities.relation_lookup import RelationLookupCapability
 
+
 def test_build_snapshot_from_single_effect() -> None:
     builder = DiffSnapshotBuilder(relation_lookup=RelationLookupCapability)
 
