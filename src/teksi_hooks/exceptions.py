@@ -60,7 +60,7 @@ class TeksiHookError(TeksiHookException):
     def from_message(
         cls,
         message: str,
-    ) -> "TeksiHookError":
+    ) -> TeksiHookError:
         return cls(
             (
                 Finding(

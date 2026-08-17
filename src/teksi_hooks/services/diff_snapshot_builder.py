@@ -7,16 +7,17 @@ from ..models.diff_snapshot import (
     SnapshotMetadata,
     SnapshotObject,
 )
-from ..models.canonical_object import CanonicalObjectIdentity
 from ..models.effects import EffectDocument
 from ..capabilities.relation_lookup import RelationLookupCapability
 from ..exceptions import SnapshotValidationError
+
 
 @dataclass(slots=True)
 class DiffSnapshotBuilder:
     """
     Builds diff snapshots from effect documents.
     """
+
     relation_lookup: RelationLookupCapability
 
     def build(

@@ -11,7 +11,6 @@ from ..models.effects import (
     UpdateAttributeEffect,
     EnforceExistsEffect,
     EnforceNotExistsEffect,
-
 )
 from ..models.validation import (
     Change,
@@ -78,9 +77,7 @@ class ChangeBuilder:
     ) -> None:
         match effect:
             case UpdateAttributeEffect():
-                values[
-                    effect.attribute_id
-                ] = effect.value
+                values[effect.attribute_id] = effect.value
 
             case EnforceExistsEffect():
                 return
@@ -89,9 +86,7 @@ class ChangeBuilder:
                 return
 
             case _:
-                raise TypeError(
-                    f"Unsupported effect type: {type(effect)!r}"
-                )
+                raise TypeError(f"Unsupported effect type: {type(effect)!r}")
 
     def _object_id(
         self,
