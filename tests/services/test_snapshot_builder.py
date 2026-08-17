@@ -9,10 +9,10 @@ from teksi_hooks.models.effects import (
 from teksi_hooks.services.diff_snapshot_builder import (
     DiffSnapshotBuilder,
 )
-
+from teksi_hooks.capabilities.relation_lookup import RelationLookupCapability
 
 def test_build_snapshot_from_single_effect() -> None:
-    builder = DiffSnapshotBuilder()
+    builder = DiffSnapshotBuilder(relation_lookup=RelationLookupCapability)
 
     identity = CanonicalObjectIdentity(
         class_id="wastewater_structure",
@@ -52,7 +52,7 @@ def test_build_snapshot_from_single_effect() -> None:
 
 
 def test_build_snapshot_groups_effects_by_object() -> None:
-    builder = DiffSnapshotBuilder()
+    builder = DiffSnapshotBuilder(relation_lookup=RelationLookupCapability)
 
     identity = CanonicalObjectIdentity(
         class_id="wastewater_structure",
@@ -102,7 +102,7 @@ def test_build_snapshot_groups_effects_by_object() -> None:
 
 
 def test_build_snapshot_keeps_distinct_objects() -> None:
-    builder = DiffSnapshotBuilder()
+    builder = DiffSnapshotBuilder(relation_lookup=RelationLookupCapability)
 
     document = EffectDocument(
         version=1,
@@ -148,7 +148,7 @@ def test_build_snapshot_keeps_distinct_objects() -> None:
 
 
 def test_build_snapshot_copies_metadata() -> None:
-    builder = DiffSnapshotBuilder()
+    builder = DiffSnapshotBuilder(relation_lookup=RelationLookupCapability)
 
     document = EffectDocument(
         version=1,
@@ -172,7 +172,7 @@ def test_build_snapshot_copies_metadata() -> None:
 
 
 def test_build_snapshot_initializes_without_last_modification() -> None:
-    builder = DiffSnapshotBuilder()
+    builder = DiffSnapshotBuilder(relation_lookup=RelationLookupCapability)
 
     document = EffectDocument(
         version=1,

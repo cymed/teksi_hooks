@@ -3,8 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 
-from teksi_hooks.models.review import (
-    ReviewFeature,
+from teksi_hooks.models.canonical_object import (
+    CanonicalObject,
 )
 from teksi_hooks.models.validation import (
     Change,
@@ -21,13 +21,13 @@ from teksi_hooks.services.change_review_export import (
 
 
 @dataclass(slots=True)
-class FakeChangeFeatureProvider:
+class FakeChangeObjectProvider:
     old_features: dict[
         tuple[
             str,
             str,
         ],
-        ReviewFeature,
+        CanonicalObject,
     ]
 
     new_features: dict[
@@ -35,13 +35,13 @@ class FakeChangeFeatureProvider:
             str,
             str,
         ],
-        ReviewFeature,
+        CanonicalObject,
     ]
 
     def old_feature(
         self,
         change: Change,
-    ) -> ReviewFeature | None:
+    ) -> CanonicalObject | None:
         return self.old_features.get(
             (
                 change.table_name,
@@ -52,7 +52,7 @@ class FakeChangeFeatureProvider:
     def new_feature(
         self,
         change: Change,
-    ) -> ReviewFeature | None:
+    ) -> CanonicalObject | None:
         return self.new_features.get(
             (
                 change.table_name,
@@ -88,10 +88,6 @@ def test_change_review_export_service_groups_features_by_class() -> None:
     )
 
     service = ChangeReviewExportService(
-        feature_provider=FakeChangeFeatureProvider(
-            old_features={},
-            new_features={},
-        ),
         geometry_attribute_names_by_class={},
     )
 
@@ -161,10 +157,6 @@ def test_change_review_export_service_created_feature_uses_import_values() -> No
     )
 
     service = ChangeReviewExportService(
-        feature_provider=FakeChangeFeatureProvider(
-            old_features={},
-            new_features={},
-        ),
         geometry_attribute_names_by_class={},
     )
 
@@ -214,10 +206,6 @@ def test_change_review_export_service_deleted_feature_uses_old_values() -> None:
     )
 
     service = ChangeReviewExportService(
-        feature_provider=FakeChangeFeatureProvider(
-            old_features={},
-            new_features={},
-        ),
         geometry_attribute_names_by_class={},
     )
 
@@ -270,10 +258,6 @@ def test_change_review_export_service_uses_metadata_driven_geometry_attributes()
     )
 
     service = ChangeReviewExportService(
-        feature_provider=FakeChangeFeatureProvider(
-            old_features={},
-            new_features={},
-        ),
         geometry_attribute_names_by_class={
             "reach": ("progression_geometry",),
         },
@@ -324,10 +308,6 @@ def test_change_review_export_service_ignores_geometry_like_names_not_in_metadat
     )
 
     service = ChangeReviewExportService(
-        feature_provider=FakeChangeFeatureProvider(
-            old_features={},
-            new_features={},
-        ),
         geometry_attribute_names_by_class={
             "reach": (),
         },
@@ -378,10 +358,6 @@ def test_change_review_export_service_marks_rejected_geometry_change() -> None:
     )
 
     service = ChangeReviewExportService(
-        feature_provider=FakeChangeFeatureProvider(
-            old_features={},
-            new_features={},
-        ),
         geometry_attribute_names_by_class={
             "reach": ("progression_geometry",),
         },
@@ -419,7 +395,7 @@ def test_change_review_export_service_prefers_provider_features_for_geometries()
         },
     )
 
-    old_feature = ReviewFeature(
+    old_object = CanonicalObject(
         class_id="reach",
         object_id="ch000000re000006",
         attributes={
@@ -430,7 +406,7 @@ def test_change_review_export_service_prefers_provider_features_for_geometries()
         },
     )
 
-    new_feature = ReviewFeature(
+    new_object = CanonicalObject(
         class_id="reach",
         object_id="ch000000re000006",
         attributes={
@@ -454,18 +430,18 @@ def test_change_review_export_service_prefers_provider_features_for_geometries()
     )
 
     service = ChangeReviewExportService(
-        feature_provider=FakeChangeFeatureProvider(
-            old_features={
+        object_provider=FakeChangeObjectProvider(
+            old_objects={
                 (
                     "reach",
                     "ch000000re000006",
-                ): old_feature,
+                ): old_object,
             },
-            new_features={
+            new_objects={
                 (
                     "reach",
                     "ch000000re000006",
-                ): new_feature,
+                ): new_object,
             },
         ),
         geometry_attribute_names_by_class={
