@@ -1,7 +1,7 @@
-
 from shapely import wkt
 from shapely import set_srid
 from shapely import to_wkb
+
 
 def ewkb_from_wkt(
     value: str,

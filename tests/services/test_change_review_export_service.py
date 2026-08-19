@@ -27,6 +27,7 @@ from teksi_hooks.services.change_review_export import (
 
 from ..helpers import ewkb_from_wkt
 
+
 @dataclass(slots=True)
 class FakeChangeObjectProvider(
     ChangeObjectProvider,
@@ -243,7 +244,9 @@ def test_change_review_export_service_deleted_feature_uses_old_values() -> None:
     }
 
 
-def test_change_review_export_service_uses_metadata_driven_geometry_attributes() -> None:
+def test_change_review_export_service_uses_metadata_driven_geometry_attributes() -> (
+    None
+):
     change = Change(
         table_name="reach",
         object_id="ch000000re000003",
@@ -274,9 +277,7 @@ def test_change_review_export_service_uses_metadata_driven_geometry_attributes()
     service = ChangeReviewExportService(
         object_provider=FakeChangeObjectProvider(),
         geometry_attribute_names_by_class={
-            "reach": (
-                "progression_geometry",
-            ),
+            "reach": ("progression_geometry",),
         },
     )
 
@@ -292,12 +293,13 @@ def test_change_review_export_service_uses_metadata_driven_geometry_attributes()
 
     assert feature.attributes["progression_geometry_changed"] is True
     assert (
-        feature.attributes["progression_geometry_changed_without_permission"]
-        is False
+        feature.attributes["progression_geometry_changed_without_permission"] is False
     )
 
 
-def test_change_review_export_service_ignores_geometry_like_names_not_in_metadata() -> None:
+def test_change_review_export_service_ignores_geometry_like_names_not_in_metadata() -> (
+    None
+):
     change = Change(
         table_name="reach",
         object_id="ch000000re000004",
@@ -368,9 +370,7 @@ def test_change_review_export_service_marks_rejected_geometry_change() -> None:
                 metadata=ChangeClassificationMetadata(
                     classification=ChangeClassification.UNPERMITTED_CHANGE,
                     permitted=True,
-                    validation_findings=(
-                        finding,
-                    ),
+                    validation_findings=(finding,),
                 ),
             )
         ],
@@ -379,9 +379,7 @@ def test_change_review_export_service_marks_rejected_geometry_change() -> None:
     service = ChangeReviewExportService(
         object_provider=FakeChangeObjectProvider(),
         geometry_attribute_names_by_class={
-            "reach": (
-                "progression_geometry",
-            ),
+            "reach": ("progression_geometry",),
         },
     )
 
@@ -396,14 +394,9 @@ def test_change_review_export_service_marks_rejected_geometry_change() -> None:
     }
 
     assert feature.attributes["progression_geometry_changed"] is True
-    assert (
-        feature.attributes["progression_geometry_changed_without_permission"]
-        is True
-    )
+    assert feature.attributes["progression_geometry_changed_without_permission"] is True
 
-    assert feature.attributes["validation_findings"] == (
-        finding,
-    )
+    assert feature.attributes["validation_findings"] == (finding,)
 
 
 def test_change_review_export_service_prefers_provider_objects_for_geometries() -> None:
@@ -474,9 +467,7 @@ def test_change_review_export_service_prefers_provider_objects_for_geometries() 
             },
         ),
         geometry_attribute_names_by_class={
-            "reach": (
-                "progression_geometry",
-            ),
+            "reach": ("progression_geometry",),
         },
     )
 
@@ -490,7 +481,10 @@ def test_change_review_export_service_prefers_provider_objects_for_geometries() 
         "progression_geometry": ewkb_from_wkt("LINESTRING(20 20, 21 21)"),
     }
 
-def test_change_review_export_service_falls_back_to_change_values_when_provider_returns_none() -> None:
+
+def test_change_review_export_service_falls_back_to_change_values_when_provider_returns_none() -> (
+    None
+):
     change = Change(
         table_name="reach",
         object_id="ch000000re000007",
@@ -519,9 +513,7 @@ def test_change_review_export_service_falls_back_to_change_values_when_provider_
     service = ChangeReviewExportService(
         object_provider=FakeChangeObjectProvider(),
         geometry_attribute_names_by_class={
-            "reach": (
-                "progression_geometry",
-            ),
+            "reach": ("progression_geometry",),
         },
     )
 
@@ -535,7 +527,10 @@ def test_change_review_export_service_falls_back_to_change_values_when_provider_
         "progression_geometry": ewkb_from_wkt("LINESTRING(0 0, 2 2)"),
     }
 
-def test_change_review_export_service_deleted_feature_uses_provider_old_geometry() -> None:
+
+def test_change_review_export_service_deleted_feature_uses_provider_old_geometry() -> (
+    None
+):
     change = Change(
         table_name="reach",
         object_id="ch000000re000008",
@@ -581,9 +576,7 @@ def test_change_review_export_service_deleted_feature_uses_provider_old_geometry
             },
         ),
         geometry_attribute_names_by_class={
-            "reach": (
-                "progression_geometry",
-            ),
+            "reach": ("progression_geometry",),
         },
     )
 

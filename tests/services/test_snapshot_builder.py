@@ -58,10 +58,11 @@ def _lookup(
                 values={
                     "obj_id": identity.attributes.get("obj_id"),
                 },
-                last_modification=last_modification
+                last_modification=last_modification,
             ),
         ),
     )
+
 
 def test_build_snapshot_from_single_effect() -> None:
     identity = CanonicalObjectIdentity(
@@ -159,8 +160,6 @@ def test_build_snapshot_groups_effects_by_object() -> None:
     )
 
 
-
-
 def test_build_snapshot_keeps_distinct_objects() -> None:
     identity_1 = CanonicalObjectIdentity(
         class_id="wastewater_structure",
@@ -219,10 +218,7 @@ def test_build_snapshot_keeps_distinct_objects() -> None:
         == 2
     )
 
-    assert {
-        snapshot_object.identity.key()
-        for snapshot_object in snapshot.objects
-    } == {
+    assert {snapshot_object.identity.key() for snapshot_object in snapshot.objects} == {
         identity_1.key(),
         identity_2.key(),
     }
