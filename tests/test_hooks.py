@@ -3,9 +3,7 @@ import logging
 import pytest
 
 from teksi_hooks.hook import (
-    HookBase,
     HookContext,
-    HookHandler,
     HookMetadata,
 )
 
@@ -25,9 +23,12 @@ def test_hook_context_returns_capability() -> None:
         },
     )
 
-    assert context.capability(
-        ExampleCapability,
-    ) is capability
+    assert (
+        context.capability(
+            ExampleCapability,
+        )
+        is capability
+    )
 
 
 def test_hook_context_raises_key_error_for_missing_capability() -> None:
