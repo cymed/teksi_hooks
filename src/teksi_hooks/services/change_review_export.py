@@ -378,9 +378,7 @@ class ChangeReviewExportService:
                 geometry_attribute_name in changed_geometry_names
             )
 
-            attributes[
-                f"{geometry_attribute_name}_changed_without_permission"
-            ] = (
+            attributes[f"{geometry_attribute_name}_changed_without_permission"] = (
                 geometry_attribute_name in changed_geometry_names
                 and bool(
                     attributes["permission_findings"]
