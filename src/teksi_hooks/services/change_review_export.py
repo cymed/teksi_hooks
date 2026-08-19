@@ -1,22 +1,23 @@
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any
-from collections.abc import Mapping, Sequence
 
+from ..capabilities.review import (
+    ChangeObjectProvider,
+)
+from ..models.canonical_object import (
+    CanonicalObject,
+)
+from ..models.review import (
+    ReviewFeature,
+)
 from ..models.validation import (
     Change,
     ChangeOperation,
     ClassifiedChange,
     ClassifiedChanges,
-)
-
-from ..models.review import (
-    ReviewFeature,
-)
-
-from ..capabilities.review import (
-    ChangeObjectProvider,
 )
 
 
@@ -27,17 +28,9 @@ class ChangeReviewExportService:
 
     This service is hook-side and storage-format independent.
 
-    It does not:
-
-    - write GeoPackages;
-    - write PostgreSQL rows;
-    - access QGIS;
-    - access DatabaseUtils;
-    - infer geometry attributes from names.
-
     It converts ClassifiedChanges into ReviewFeature objects grouped by
-    canonical class. Plugin-side services can then persist those features into
-    a storage backend.
+    canonical class. Plugin-side services can then persist those features
+    into a storage backend.
 
     Geometry attributes are metadata-driven through
     geometry_attribute_names_by_class.
@@ -47,7 +40,7 @@ class ChangeReviewExportService:
 
     geometry_attribute_names_by_class: Mapping[
         str,
-        Sequence[str,],
+        Sequence[str],
     ] = field(
         default_factory=dict,
     )
@@ -57,7 +50,7 @@ class ChangeReviewExportService:
         classified: ClassifiedChanges,
     ) -> dict[
         str,
-        list[ReviewFeature,],
+        list[ReviewFeature],
     ]:
         """
         Build review features grouped by canonical class.
@@ -65,7 +58,7 @@ class ChangeReviewExportService:
 
         features_by_class: dict[
             str,
-            list[ReviewFeature,],
+            list[ReviewFeature],
         ] = {}
 
         for classified_change in self._classified_changes(
@@ -101,11 +94,11 @@ class ChangeReviewExportService:
     ) -> ReviewFeature:
         change = classified_change.change
 
-        old_feature = self.object_provider.old_feature(
+        old_object = self.object_provider.old_object(
             change,
         )
 
-        new_feature = self.object_provider.new_feature(
+        new_object = self.object_provider.new_object(
             change,
         )
 
@@ -115,8 +108,8 @@ class ChangeReviewExportService:
 
         geometries = self._review_geometries(
             change=change,
-            old_feature=old_feature,
-            new_feature=new_feature,
+            old_object=old_object,
+            new_object=new_object,
         )
 
         self._add_geometry_changed_flags(
@@ -283,8 +276,8 @@ class ChangeReviewExportService:
         self,
         *,
         change: Change,
-        old_feature: ReviewFeature | None,
-        new_feature: ReviewFeature | None,
+        old_object: CanonicalObject | None,
+        new_object: CanonicalObject | None,
     ) -> dict[
         str,
         Any,
@@ -294,7 +287,7 @@ class ChangeReviewExportService:
         ):
             return self._new_geometries(
                 change=change,
-                new_feature=new_feature,
+                new_object=new_object,
             )
 
         if self._is_deleted(
@@ -302,7 +295,7 @@ class ChangeReviewExportService:
         ):
             return self._old_geometries(
                 change=change,
-                old_feature=old_feature,
+                old_object=old_object,
             )
 
         geometries = {}
@@ -310,14 +303,14 @@ class ChangeReviewExportService:
         geometries.update(
             self._old_geometries(
                 change=change,
-                old_feature=old_feature,
+                old_object=old_object,
             )
         )
 
         geometries.update(
             self._new_geometries(
                 change=change,
-                new_feature=new_feature,
+                new_object=new_object,
             )
         )
 
@@ -327,14 +320,15 @@ class ChangeReviewExportService:
         self,
         *,
         change: Change,
-        old_feature: ReviewFeature | None,
+        old_object: CanonicalObject | None,
     ) -> dict[
         str,
         Any,
     ]:
-        if old_feature is not None:
-            return dict(
-                old_feature.geometries,
+        if old_object is not None:
+            return self._geometry_values_from_mapping(
+                class_id=change.table_name,
+                values=old_object.values,
             )
 
         return self._geometry_values_from_mapping(
@@ -346,14 +340,15 @@ class ChangeReviewExportService:
         self,
         *,
         change: Change,
-        new_feature: ReviewFeature | None,
+        new_object: CanonicalObject | None,
     ) -> dict[
         str,
         Any,
     ]:
-        if new_feature is not None:
-            return dict(
-                new_feature.geometries,
+        if new_object is not None:
+            return self._geometry_values_from_mapping(
+                class_id=change.table_name,
+                values=new_object.values,
             )
 
         return self._geometry_values_from_mapping(
@@ -383,7 +378,9 @@ class ChangeReviewExportService:
                 geometry_attribute_name in changed_geometry_names
             )
 
-            attributes[f"{geometry_attribute_name}_changed_without_permission"] = (
+            attributes[
+                f"{geometry_attribute_name}_changed_without_permission"
+            ] = (
                 geometry_attribute_name in changed_geometry_names
                 and bool(
                     attributes["permission_findings"]
