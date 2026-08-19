@@ -2,6 +2,9 @@ from pathlib import Path
 from collections.abc import Mapping
 import pytest
 
+from shapely import wkt
+from shapely import set_srid
+from shapely import to_wkb
 
 from teksi_hooks.models.oid import Standardoid
 from teksi_hooks.models.rights import (
@@ -117,3 +120,24 @@ def evaluator(
 @pytest.fixture
 def registry() -> ValidationRegistry:
     return ValidationRegistry()
+
+
+def ewkb_from_wkt(
+    value: str,
+    *,
+    srid: int = 2056,
+) -> bytes:
+    geometry = wkt.loads(
+        value,
+    )
+
+    geometry = set_srid(
+        geometry,
+        srid,
+    )
+
+    return to_wkb(
+        geometry,
+        hex=False,
+        include_srid=True,
+    )

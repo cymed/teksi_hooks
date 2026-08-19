@@ -1,5 +1,7 @@
+import pytest
 from teksi_hooks.models.canonical_object import (
     CanonicalObjectIdentity,
+    CanonicalObject,
 )
 from teksi_hooks.models.effects import (
     EffectDocument,
@@ -9,19 +11,70 @@ from teksi_hooks.models.effects import (
 from teksi_hooks.services.diff_snapshot_builder import (
     DiffSnapshotBuilder,
 )
-from teksi_hooks.capabilities.relation_lookup import RelationLookupCapability
+from teksi_hooks.capabilities.relation_lookup import InMemoryRelationLookupCapability
+from teksi_hooks.exceptions import SnapshotValidationError
 
+from datetime import UTC, datetime
+
+DEFAULT_LAST_MODIFICATION = datetime(
+    2026,
+    1,
+    1,
+    tzinfo=UTC,
+)
+
+
+def _object(
+    *,
+    identity: CanonicalObjectIdentity,
+    last_modification: datetime | None = DEFAULT_LAST_MODIFICATION,
+) -> CanonicalObject:
+    return CanonicalObject(
+        identity=identity,
+        values=dict(
+            identity.attributes,
+        ),
+        last_modification=last_modification,
+    )
+
+
+def _lookup_obj(
+    *objects: CanonicalObject,
+) -> InMemoryRelationLookupCapability:
+    return InMemoryRelationLookupCapability(
+        objects=objects,
+    )
+
+
+def _lookup(
+    *,
+    identity: CanonicalObjectIdentity,
+    last_modification: datetime | None = DEFAULT_LAST_MODIFICATION,
+) -> InMemoryRelationLookupCapability:
+    return InMemoryRelationLookupCapability(
+        objects=(
+            CanonicalObject(
+                identity=identity,
+                values={
+                    "obj_id": identity.attributes.get("obj_id"),
+                },
+                last_modification=last_modification
+            ),
+        ),
+    )
 
 def test_build_snapshot_from_single_effect() -> None:
-    builder = DiffSnapshotBuilder(relation_lookup=RelationLookupCapability)
-
     identity = CanonicalObjectIdentity(
         class_id="wastewater_structure",
         attributes={
             "obj_id": "ch000000ws000001",
         },
     )
-
+    builder = DiffSnapshotBuilder(
+        relation_lookup=_lookup(
+            identity=identity,
+        ),
+    )
     document = EffectDocument(
         version=1,
         source=EffectSource(
@@ -53,13 +106,17 @@ def test_build_snapshot_from_single_effect() -> None:
 
 
 def test_build_snapshot_groups_effects_by_object() -> None:
-    builder = DiffSnapshotBuilder(relation_lookup=RelationLookupCapability)
-
     identity = CanonicalObjectIdentity(
         class_id="wastewater_structure",
         attributes={
             "obj_id": "ch000000ws000001",
         },
+    )
+
+    builder = DiffSnapshotBuilder(
+        relation_lookup=_lookup(
+            identity=identity,
+        ),
     )
 
     document = EffectDocument(
@@ -102,8 +159,33 @@ def test_build_snapshot_groups_effects_by_object() -> None:
     )
 
 
+
+
 def test_build_snapshot_keeps_distinct_objects() -> None:
-    builder = DiffSnapshotBuilder(relation_lookup=RelationLookupCapability)
+    identity_1 = CanonicalObjectIdentity(
+        class_id="wastewater_structure",
+        attributes={
+            "obj_id": "object_1",
+        },
+    )
+
+    identity_2 = CanonicalObjectIdentity(
+        class_id="wastewater_structure",
+        attributes={
+            "obj_id": "object_2",
+        },
+    )
+
+    builder = DiffSnapshotBuilder(
+        relation_lookup=_lookup_obj(
+            _object(
+                identity=identity_1,
+            ),
+            _object(
+                identity=identity_2,
+            ),
+        ),
+    )
 
     document = EffectDocument(
         version=1,
@@ -114,22 +196,12 @@ def test_build_snapshot_keeps_distinct_objects() -> None:
         ),
         effects=(
             UpdateAttributeEffect(
-                identity=CanonicalObjectIdentity(
-                    class_id="wastewater_structure",
-                    attributes={
-                        "obj_id": "object_1",
-                    },
-                ),
+                identity=identity_1,
                 attribute_id="status",
                 value=1,
             ),
             UpdateAttributeEffect(
-                identity=CanonicalObjectIdentity(
-                    class_id="wastewater_structure",
-                    attributes={
-                        "obj_id": "object_2",
-                    },
-                ),
+                identity=identity_2,
                 attribute_id="status",
                 value=1,
             ),
@@ -147,9 +219,19 @@ def test_build_snapshot_keeps_distinct_objects() -> None:
         == 2
     )
 
+    assert {
+        snapshot_object.identity.key()
+        for snapshot_object in snapshot.objects
+    } == {
+        identity_1.key(),
+        identity_2.key(),
+    }
+
 
 def test_build_snapshot_copies_metadata() -> None:
-    builder = DiffSnapshotBuilder(relation_lookup=RelationLookupCapability)
+    builder = DiffSnapshotBuilder(
+        relation_lookup=_lookup_obj(),
+    )
 
     document = EffectDocument(
         version=1,
@@ -166,14 +248,36 @@ def test_build_snapshot_copies_metadata() -> None:
     )
 
     assert snapshot.metadata.source_model == "ag64"
-
     assert snapshot.metadata.source_class_id == "GepKnoten"
-
     assert snapshot.metadata.source_object_id == "ch123456AG987654"
 
 
-def test_build_snapshot_initializes_without_last_modification() -> None:
-    builder = DiffSnapshotBuilder(relation_lookup=RelationLookupCapability)
+def test_build_snapshot_copies_current_last_modification() -> None:
+    identity = CanonicalObjectIdentity(
+        class_id="wastewater_structure",
+        attributes={
+            "obj_id": "ch000000ws000001",
+        },
+    )
+
+    last_modification = datetime(
+        2026,
+        2,
+        3,
+        4,
+        5,
+        6,
+        tzinfo=UTC,
+    )
+
+    builder = DiffSnapshotBuilder(
+        relation_lookup=_lookup_obj(
+            _object(
+                identity=identity,
+                last_modification=last_modification,
+            ),
+        ),
+    )
 
     document = EffectDocument(
         version=1,
@@ -184,12 +288,7 @@ def test_build_snapshot_initializes_without_last_modification() -> None:
         ),
         effects=(
             UpdateAttributeEffect(
-                identity=CanonicalObjectIdentity(
-                    class_id="wastewater_structure",
-                    attributes={
-                        "obj_id": "ch000000ws000001",
-                    },
-                ),
+                identity=identity,
                 attribute_id="status",
                 value="active",
             ),
@@ -207,4 +306,45 @@ def test_build_snapshot_initializes_without_last_modification() -> None:
         == 1
     )
 
-    assert snapshot.objects[0].last_modification is None
+    assert snapshot.objects[0].last_modification == last_modification
+
+
+def test_build_snapshot_rejects_current_object_without_last_modification() -> None:
+    identity = CanonicalObjectIdentity(
+        class_id="wastewater_structure",
+        attributes={
+            "obj_id": "ch000000ws000001",
+        },
+    )
+
+    builder = DiffSnapshotBuilder(
+        relation_lookup=_lookup_obj(
+            _object(
+                identity=identity,
+                last_modification=None,
+            ),
+        ),
+    )
+
+    document = EffectDocument(
+        version=1,
+        source=EffectSource(
+            model="ag64",
+            class_id="GepKnoten",
+            object_id="ch123456AG987654",
+        ),
+        effects=(
+            UpdateAttributeEffect(
+                identity=identity,
+                attribute_id="status",
+                value="active",
+            ),
+        ),
+    )
+
+    with pytest.raises(
+        SnapshotValidationError,
+    ):
+        builder.build(
+            document,
+        )
