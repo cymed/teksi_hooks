@@ -11,12 +11,8 @@ FINDING_MESSAGE_TEMPLATES: Mapping[
     str,
     str,
 ] = {
-    "missing_context_value": (
-        "Required context value '{context_value}' is missing."
-    ),
-    "permission_denied": (
-        "The requested change is not permitted."
-    ),
+    "missing_context_value": ("Required context value '{context_value}' is missing."),
+    "permission_denied": ("The requested change is not permitted."),
     "unsupported_change_operation": (
         "The change operation '{operation}' is not supported."
     ),
@@ -32,9 +28,7 @@ FINDING_MESSAGE_TEMPLATES: Mapping[
     "missing_effect_attribute": (
         "The update effect is missing its canonical attribute identifier."
     ),
-    "unsupported_effect_type": (
-        "The effect type '{effect_type}' is not supported."
-    ),
+    "unsupported_effect_type": ("The effect type '{effect_type}' is not supported."),
     "contradicting_existence_effects": (
         "An object cannot simultaneously be required to exist "
         "and required not to exist."
@@ -46,6 +40,7 @@ FINDING_MESSAGE_TEMPLATES: Mapping[
         "Transition from '{old_value}' to '{new_value}' is not allowed."
     ),
 }
+
 
 class FindingTranslator(Protocol):
     """
@@ -62,6 +57,7 @@ class FindingTranslator(Protocol):
         """
         Return the presentation message for a finding.
         """
+
 
 @dataclass(slots=True, frozen=True)
 class DefaultFindingTranslator:
