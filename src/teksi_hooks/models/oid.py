@@ -34,7 +34,7 @@ class Oid(ABC):
         if not self._pattern.fullmatch(
             self.value,
         ):
-            raise ValidationError(
+            raise ValidationError.from_message(
                 (
                     Finding(
                         severity=Severity.ERROR,
