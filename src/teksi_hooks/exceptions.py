@@ -85,12 +85,12 @@ class TeksiHookError(TeksiHookException):
             ) from error
 
         return cls(
-            (
+            findings=(
                 Finding(
                     severity=resolved_severity,
                     message=message,
                 ),
-            )
+            ),
         )
 
 
