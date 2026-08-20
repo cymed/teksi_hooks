@@ -5,7 +5,7 @@ from dataclasses import dataclass, field
 from typing import ClassVar
 from re import Pattern
 
-from ..exceptions import ValidationError, Finding, Severity
+from ..exceptions import ValidationError
 
 
 @dataclass(slots=True, frozen=True)
