@@ -381,13 +381,17 @@ class HookHandler:
         """
 
         if not self.file.exists():
-            raise TeksiHookError.from_message(f"Hook file '{self.file}' does not exist.")
+            raise TeksiHookError.from_message(
+                f"Hook file '{self.file}' does not exist."
+            )
 
         if not self.file.is_file():
             raise TeksiHookError.from_message(f"Hook file '{self.file}' is not a file.")
 
         if self.file.suffix.lower() != ".py":
-            raise TeksiHookError.from_message(f"Unsupported hook file type '{self.file.suffix}'.")
+            raise TeksiHookError.from_message(
+                f"Unsupported hook file type '{self.file.suffix}'."
+            )
 
         if self.base_path is not None:
             try:
@@ -468,13 +472,17 @@ class HookHandler:
             metadata,
             HookMetadata,
         ):
-            raise TeksiHookError.from_message("metadata must return a HookMetadata instance.")
+            raise TeksiHookError.from_message(
+                "metadata must return a HookMetadata instance."
+            )
 
         if not metadata.name.strip():
             raise TeksiHookError.from_message("Hook metadata name must not be empty.")
 
         if not metadata.description.strip():
-            raise TeksiHookError.from_message("Hook metadata description must not be empty.")
+            raise TeksiHookError.from_message(
+                "Hook metadata description must not be empty."
+            )
 
     def _validate_required_capabilities(
         self,
@@ -489,7 +497,9 @@ class HookHandler:
             capabilities,
             frozenset,
         ):
-            raise TeksiHookError.from_message("required_capabilities must be a frozenset.")
+            raise TeksiHookError.from_message(
+                "required_capabilities must be a frozenset."
+            )
 
         for capability in capabilities:
             if not isinstance(

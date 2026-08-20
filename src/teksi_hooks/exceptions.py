@@ -72,15 +72,12 @@ class TeksiHookError(TeksiHookException):
         try:
             if severity is None:
                 resolved_severity = Severity.ERROR
-            elif isinstance(severity,Severity):
+            elif isinstance(severity, Severity):
                 resolved_severity = severity
             elif isinstance(severity, str):
-                resolved_severity=Severity(severity.lower())
+                resolved_severity = Severity(severity.lower())
         except ValueError as error:
-            allowed_severities = ", ".join(
-                member.value
-                for member in Severity
-            )
+            allowed_severities = ", ".join(member.value for member in Severity)
 
             raise ValueError(
                 f"Invalid severity {severity!r} for message {message!r}. "

@@ -168,7 +168,7 @@ class Change:
             for attribute in attribute_names
             if self.old_values.get(attribute) != self.new_values.get(attribute)
         )
-    
+
     @property
     def identity(
         self,
@@ -179,6 +179,7 @@ class Change:
                 "obj_id": self.object_id,
             },
         )
+
 
 class ChangeOperation(StrEnum):
     """

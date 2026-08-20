@@ -4,6 +4,7 @@ from typing import Protocol
 
 from ..exceptions import Finding
 
+
 class FindingTranslator(Protocol):
     """
     Translate findings for presentation.
