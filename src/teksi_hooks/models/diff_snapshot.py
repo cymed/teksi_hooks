@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import StrEnum
+from typing import Any, Mapping
 
 from .effects import Effect
 from .canonical_object import CanonicalObjectIdentity
@@ -49,8 +50,7 @@ class SnapshotObject:
         metadata={"doc": ("Canonical identity of the referenced object.")},
     )
 
-    last_modification: datetime | None = field(
-        default=None,
+    last_modification: datetime = field(
         metadata={
             "doc": (
                 "Object last_modification value recorded when the "
@@ -58,6 +58,7 @@ class SnapshotObject:
             )
         },
     )
+
 
 
 @dataclass(slots=True, frozen=True)
