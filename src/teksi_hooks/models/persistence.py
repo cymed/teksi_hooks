@@ -1,4 +1,3 @@
-
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -27,11 +26,7 @@ class ChangePersistenceResult:
     )
 
     identity: CanonicalObjectIdentity = field(
-        metadata={
-            "doc": (
-                "Canonical identity of the persisted object."
-            )
-        },
+        metadata={"doc": ("Canonical identity of the persisted object.")},
     )
 
     affected_rows: int = field(
@@ -58,11 +53,7 @@ class PersistenceResult:
         ...,
     ] = field(
         default_factory=tuple,
-        metadata={
-            "doc": (
-                "Results for the canonical changes successfully persisted."
-            )
-        },
+        metadata={"doc": ("Results for the canonical changes successfully persisted.")},
     )
 
     @property
@@ -73,7 +64,4 @@ class PersistenceResult:
         Return the total number of affected physical rows.
         """
 
-        return sum(
-            result.affected_rows
-            for result in self.change_results
-        )
+        return sum(result.affected_rows for result in self.change_results)
