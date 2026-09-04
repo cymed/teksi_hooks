@@ -20,15 +20,37 @@ class ValidationContext:
     Runtime context supplied to validation implementations.
     """
 
-    attribute_name: str = field(
+    class_id: str = field(
+        metadata={
+            "doc": (
+                "Canonical class identifier being validated."
+            )
+        },
+    )
+
+    identity: CanonicalObjectIdentity | None = field(
+        default=None,
+        metadata={
+            "doc": (
+                "Canonical identity of the object being validated. "
+                "This may be None for an inserted object whose complete "
+                "canonical identity has not yet been derived."
+            )
+        },
+    )
+
+    attribute_name: str | None = field(
+        default=None,
         metadata={"doc": ("Canonical attribute identifier being validated.")},
     )
 
     old_value: Any = field(
+        default=None,
         metadata={"doc": ("Existing attribute value before the change.")},
     )
 
     new_value: Any = field(
+        default=None,
         metadata={"doc": ("New attribute value after the change.")},
     )
 
@@ -47,8 +69,6 @@ class ValidationContext:
 
 
 dataclass(slots=True, frozen=True)
-
-
 class AttributePermission:
     """
     Describes a privilege requirement for one concrete attribute.
@@ -433,6 +453,77 @@ class AttributeValidation:
         },
     )
 
+    
+    parameters: Mapping[
+        str,
+        Any,
+    ] = field(
+    default_factory=dict,
+        metadata={
+            "doc": (
+                "Validation-specific configuration values interpreted by the "
+                "selected validation implementation. Generic validation "
+                "orchestration must not assign semantics to these entries."
+            )
+        },
+    )
+
+@dataclass(slots=True, frozen=True)
+class ObjectValidation:
+    """
+    Describes a validation rule attached to a canonical object.
+
+    The rule identifier selects the validation implementation, while the
+    severity controls the finding emitted by a failed validation.
+    """
+
+    id: str = field(
+        metadata={
+            "doc": (
+                "Identifier of the object-level validation implementation, "
+                "for example 'is_unique'."
+            )
+        },
+    )
+
+    level: Severity = field(
+        metadata={
+            "doc": (
+                "Severity emitted when the validation produces a finding."
+            )
+        },
+    )
+
+    operations: tuple[
+        ChangeOperation,
+        ...,
+    ] = field(
+        default_factory=lambda: (
+            ChangeOperation.INSERT,
+            ChangeOperation.UPDATE,
+        ),
+        metadata={
+            "doc": (
+                "Change operations for which this object validation is "
+                "executed. Defaults to inserts and updates."
+            )
+        },
+    )
+
+    parameters: Mapping[
+        str,
+        Any,
+    ] = field(
+    default_factory=dict,
+        metadata={
+            "doc": (
+                "Validation-specific configuration values interpreted by the "
+                "selected validation implementation. Generic validation "
+                "orchestration must not assign semantics to these entries."
+            )
+        },
+    )
+
 
 @dataclass(slots=True, frozen=True)
 class TransitionValidation:
@@ -458,3 +549,229 @@ class TransitionValidation:
             )
         },
     )
+
+from __future__ import annotations
+
+from collections.abc import Mapping
+from dataclasses import dataclass, field
+
+
+@dataclass(
+    slots=True,
+    frozen=True,
+)
+class ClassValidationDefinition:
+    """
+    Validation configuration declared for one canonical class.
+
+    Class-specific mandatory attributes extend the defaults. Attribute and
+    object validation entries with the same key replace their corresponding
+    default entries.
+    """
+
+    class_id: str = field(
+        metadata={
+            "doc": (
+                "Canonical identifier of the configured class."
+            )
+        },
+    )
+
+    mandatory_attributes: frozenset[
+        str
+    ] = field(
+        default_factory=frozenset,
+        metadata={
+            "doc": (
+                "Class-specific canonical attributes that require a value. "
+                "These attributes extend the default mandatory attributes."
+            )
+        },
+    )
+
+    attribute_validations: Mapping[
+        str,
+        tuple[
+            AttributeValidation,
+            ...,
+        ],
+    ] = field(
+        default_factory=dict,
+        metadata={
+            "doc": (
+                "Class-specific attribute validation rules keyed by "
+                "canonical attribute identifier."
+            )
+        },
+    )
+
+    object_validations: Mapping[
+        str,
+        tuple[
+            ObjectValidation,
+            ...,
+        ],
+    ] = field(
+        default_factory=dict,
+        metadata={
+            "doc": (
+                "Class-specific object validation groups keyed by "
+                "configuration identifier."
+            )
+        },
+    )
+
+
+@dataclass(
+    slots=True,
+    frozen=True,
+)
+class ValidationDefinition:
+    """
+    Parsed canonical validation configuration.
+
+    Default definitions apply to every configured class unless replaced or
+    extended by a class-specific definition.
+    """
+
+    mandatory_attributes: frozenset[
+        str
+    ] = field(
+        default_factory=frozenset,
+        metadata={
+            "doc": (
+                "Canonical attributes considered mandatory by default."
+            )
+        },
+    )
+
+    attribute_validations: Mapping[
+        str,
+        tuple[
+            AttributeValidation,
+            ...,
+        ],
+    ] = field(
+        default_factory=dict,
+        metadata={
+            "doc": (
+                "Default attribute validation rules keyed by canonical "
+                "attribute identifier."
+            )
+        },
+    )
+
+    object_validations: Mapping[
+        str,
+        tuple[
+            ObjectValidation,
+            ...,
+        ],
+    ] = field(
+        default_factory=dict,
+        metadata={
+            "doc": (
+                "Default object validation groups keyed by configuration "
+                "identifier."
+            )
+        },
+    )
+
+    classes: Mapping[
+        str,
+        ClassValidationDefinition,
+    ] = field(
+        default_factory=dict,
+        metadata={
+            "doc": (
+                "Class-specific validation definitions keyed by canonical "
+                "class identifier."
+            )
+        },
+    )
+
+    def mandatory_for_class(
+        self,
+        class_id: str,
+    ) -> frozenset[
+        str
+    ]:
+        """
+        Return effective mandatory attributes for one canonical class.
+        """
+
+        class_definition = self.classes.get(
+            class_id,
+        )
+
+        if class_definition is None:
+            return self.mandatory_attributes
+
+        return (
+            self.mandatory_attributes
+            | class_definition.mandatory_attributes
+        )
+
+    def attribute_validations_for_class(
+        self,
+        class_id: str,
+    ) -> dict[
+        str,
+        tuple[
+            AttributeValidation,
+            ...,
+        ],
+    ]:
+        """
+        Return effective attribute validations for one canonical class.
+
+        Class-specific entries replace default entries with the same
+        attribute identifier.
+        """
+
+        validations = dict(
+            self.attribute_validations,
+        )
+
+        class_definition = self.classes.get(
+            class_id,
+        )
+
+        if class_definition is not None:
+            validations.update(
+                class_definition.attribute_validations,
+            )
+
+        return validations
+
+    def object_validations_for_class(
+        self,
+        class_id: str,
+    ) -> dict[
+        str,
+        tuple[
+            ObjectValidation,
+            ...,
+        ],
+    ]:
+        """
+        Return effective object validations for one canonical class.
+
+        Class-specific groups replace default groups with the same
+        configuration identifier.
+        """
+
+        validations = dict(
+            self.object_validations,
+        )
+
+        class_definition = self.classes.get(
+            class_id,
+        )
+
+        if class_definition is not None:
+            validations.update(
+                class_definition.object_validations,
+            )
+
+        return validations

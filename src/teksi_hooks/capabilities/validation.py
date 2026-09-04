@@ -1,14 +1,22 @@
+from __future__ import annotations
 from dataclasses import dataclass, field
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from datetime import datetime
+from typing import Any, Protocol
 
 
 from ..models.validation import (
     ValidationContext,
     ValidationFinding,
     AttributeValidation,
+    ObjectValidation,
 )
 from ..exceptions import Severity
+
+
+from teksi_hooks.models.canonical_object import (
+    CanonicalObjectIdentity,
+)
 
 
 @dataclass(slots=True)
@@ -128,6 +136,9 @@ class ValidationRegistry:
         if validation_id == "equals_context_value":
             return self._equals_context_value
 
+        if validation_id == "is_unique":
+            return self._is_unique
+
         raise NotImplementedError(f"Unknown validation: {validation_id}")
 
     def _validate_newer_than_existing(
@@ -183,8 +194,8 @@ class ValidationRegistry:
     def _equals_context_value(
         self,
         *,
-        validation,
-        context,
+        validation: AttributeValidation,
+        context: ValidationContext,
     ) -> tuple:
         if validation.context_value is None:
             return (
@@ -222,6 +233,14 @@ class ValidationRegistry:
                 attribute_name=context.attribute_name,
             ),
         )
+
+    def _is_unique(
+        self,
+        *,
+        validation: ObjectValidation,
+        context: ValidationContext,
+    ):
+        pass
 
     def _as_datetime(
         self,

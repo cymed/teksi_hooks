@@ -37,6 +37,7 @@ from ..models.rulesets import (
 
 from ..models.validation import (
     AttributeValidation,
+    ObjectValidation,
     TransitionValidation,
     ChangeOperation,
 )
