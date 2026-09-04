@@ -14,14 +14,14 @@ defaults:
         - id: equals_context_value
           context_value: provider_oid
           level: error
-          operations: 
+          operations:
             - insert
     fk_dataowner:
       rules:
         - id: equals_context_value
           context_value: dataowner_oid
           level: error
-          operations: 
+          operations:
             - insert
   object_validation_rules:
     unique_identifier_combo:
@@ -45,9 +45,9 @@ classes:
   - id: reach_alternative
 
   - id: reach_text
-  
+
   - id: reach_point
-    
+
   - id: hydr_geometry
 
   - id: hydr_geom_relation
@@ -55,13 +55,13 @@ classes:
   - id: pipe_profile
 
   - id: profile_geometry
-    
+
   # ---------------------------------------------------------
   # Abwasserbauwerke
   # ---------------------------------------------------------
 
   - id: wastewater_structure
-    
+
   - id: drainless_toilet
 
   - id: discharge_point
@@ -79,10 +79,10 @@ classes:
   - id: mechanical_pretreatment
 
   - id: retention_body
-  
-  - id: wastewater_structure_symbol 
 
-  - id: wastewater_structure_text 
+  - id: wastewater_structure_symbol
+
+  - id: wastewater_structure_text
 
 
   # ---------------------------------------------------------
@@ -124,12 +124,12 @@ classes:
 
 
   - id: leapingweir
-    
+
   - id: prank_weir
 
   - id: pump
 
-  - id: throttle_shut_off_unit 
+  - id: throttle_shut_off_unit
 
   - id: hq_relation
 
@@ -166,7 +166,7 @@ classes:
 
   - id: measure
 
-    
+
   - id: maintenance_event
     object_validation_rules:
       unique_identifier_combo:
@@ -178,7 +178,7 @@ classes:
                 - fk_dataowner
                 - time_point
             level: error
- 
+
   - id: maintenance
 
   # ---------------------------------------------------------

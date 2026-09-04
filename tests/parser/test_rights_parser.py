@@ -5,7 +5,6 @@ from teksi_hooks.models.rulesets import (
 )
 from teksi_hooks.models.conditions import LocalCondition
 from teksi_hooks.parser.rights_parser import RightsParser
-from teksi_hooks.exceptions import Severity
 
 
 def test_rights_parser_imports_minimal_yaml(rights_definition) -> None:
@@ -16,6 +15,7 @@ def test_rights_parser_imports_minimal_yaml(rights_definition) -> None:
     assert "wastewater_node" in rights_definition.classes
     assert "maintenance" in rights_definition.classes
     assert "pipe_profile" in rights_definition.classes
+
 
 def test_rights_parser_imports_default_create_rules() -> None:
     parser = RightsParser()

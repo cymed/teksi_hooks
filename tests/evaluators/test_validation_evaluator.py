@@ -30,6 +30,7 @@ from teksi_hooks.services.change_builder import (
 
 from teksi_hooks.exceptions import Severity
 
+
 def test_validation_evaluator_uses_registry(
     resolved_rights,
 ) -> None:
@@ -71,23 +72,18 @@ def test_validation_evaluator_uses_registry(
 
     validator.assert_called_once()
 
-    validation_context = (
-        validator.call_args.kwargs[
-            "context"
-        ]
-    )
+    validation_context = validator.call_args.kwargs["context"]
 
-    assert validation_context.class_id == (
-        "wastewater_structure"
-    )
+    assert validation_context.class_id == ("wastewater_structure")
 
-    assert validation_context.attribute_name == (
-        "status_survey_year"
-    )
+    assert validation_context.attribute_name == ("status_survey_year")
 
-    assert len(
-        findings,
-    ) == 1
+    assert (
+        len(
+            findings,
+        )
+        == 1
+    )
 
 
 def test_validation_evaluator_accepts_allowed_transition(
@@ -171,9 +167,12 @@ def test_validation_evaluator_rejects_invalid_transition(
         new_value="invalid_state",
     )
 
-    assert len(
-        findings,
-    ) == 1
+    assert (
+        len(
+            findings,
+        )
+        == 1
+    )
 
     assert findings[0].code == "invalid_transition"
     assert findings[0].attribute_name == "status"
@@ -224,9 +223,12 @@ def test_validation_evaluator_uses_transitive_transition_flag(
         new_value="operational",
     )
 
-    assert len(
-        findings,
-    ) == 1
+    assert (
+        len(
+            findings,
+        )
+        == 1
+    )
 
     assert findings[0].code == "invalid_transition"
     assert findings[0].attribute_name == "status"
@@ -286,9 +288,12 @@ def test_validation_evaluator_rejects_older_than_existing(
         ),
     )
 
-    assert len(
-        findings,
-    ) == 1
+    assert (
+        len(
+            findings,
+        )
+        == 1
+    )
 
     assert findings[0].code == "newer_than_existing"
 
@@ -336,9 +341,12 @@ def test_validation_evaluator_rejects_decreasing_value(
         ),
     )
 
-    assert len(
-        findings,
-    ) == 1
+    assert (
+        len(
+            findings,
+        )
+        == 1
+    )
 
     assert findings[0].code == "cannot_decrease"
 
@@ -373,9 +381,12 @@ def test_validation_evaluator_executes_cannot_decrease(
         operation=ChangeOperation.UPDATE,
     )
 
-    assert len(
-        findings,
-    ) == 1
+    assert (
+        len(
+            findings,
+        )
+        == 1
+    )
 
     assert findings[0].code == "cannot_decrease"
     assert findings[0].attribute_name == "status_survey_year"
@@ -419,9 +430,12 @@ def test_validation_evaluator_validates_change(
         change=change,
     )
 
-    assert len(
-        findings,
-    ) == 1
+    assert (
+        len(
+            findings,
+        )
+        == 1
+    )
 
     finding = findings[0]
 
@@ -491,10 +505,7 @@ def test_validation_evaluator_rejects_insert_context_value_mismatch(
         },
     )
 
-    assert {
-        attribute.attribute_name
-        for attribute in change.changed_attributes
-    } == {
+    assert {attribute.attribute_name for attribute in change.changed_attributes} == {
         "fk_provider",
         "fk_dataowner",
     }
@@ -517,9 +528,12 @@ def test_validation_evaluator_rejects_insert_context_value_mismatch(
         },
     )
 
-    assert len(
-        findings,
-    ) == 1
+    assert (
+        len(
+            findings,
+        )
+        == 1
+    )
 
     assert findings[0].code == "equals_context_value"
     assert findings[0].severity == Severity.ERROR

@@ -41,9 +41,7 @@ def test_validation_parser_parses_validation_definition(
             AttributeValidation(
                 id="equals_context_value",
                 level=Severity.ERROR,
-                operations=(
-                    ChangeOperation.INSERT,
-                ),
+                operations=(ChangeOperation.INSERT,),
                 context_value="provider_oid",
                 parameters={},
             ),
@@ -52,9 +50,7 @@ def test_validation_parser_parses_validation_definition(
             AttributeValidation(
                 id="equals_context_value",
                 level=Severity.ERROR,
-                operations=(
-                    ChangeOperation.INSERT,
-                ),
+                operations=(ChangeOperation.INSERT,),
                 context_value="dataowner_oid",
                 parameters={},
             ),
@@ -80,9 +76,7 @@ def test_validation_parser_parses_validation_definition(
         ),
     }
 
-    maintenance_event = validation_definition.classes[
-        "maintenance_event"
-    ]
+    maintenance_event = validation_definition.classes["maintenance_event"]
 
     assert maintenance_event.class_id == "maintenance_event"
     assert maintenance_event.mandatory_attributes == frozenset()

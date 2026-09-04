@@ -1,5 +1,4 @@
 from pathlib import Path
-from collections.abc import Mapping
 import pytest
 
 from shapely import wkt
@@ -47,11 +46,13 @@ def rights_definition() -> RightsDefinition:
         DATA_DIR / "rights_parser_minimal.yaml",
     )
 
+
 @pytest.fixture
 def validation_definition() -> ValidationDefinition:
     return ValidationParser().parse_file(
         DATA_DIR / "validation.yaml",
     )
+
 
 @pytest.fixture
 def rights_definition_non_transitive() -> RightsDefinition:
@@ -79,7 +80,7 @@ def resolved_providers(
 @pytest.fixture
 def resolved_rights(
     rights_definition: RightsDefinition,
-    validation_definition:ValidationDefinition,
+    validation_definition: ValidationDefinition,
 ) -> ResolvedRights:
     return RightsResolver().resolve(
         rights_definition,

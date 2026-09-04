@@ -125,9 +125,7 @@ class ValidationParser:
                         "validation_rules",
                         {},
                     ),
-                    location=(
-                        "defaults.validation_rules"
-                    ),
+                    location=("defaults.validation_rules"),
                 )
             ),
             object_validations=(
@@ -136,19 +134,14 @@ class ValidationParser:
                         "object_validation_rules",
                         {},
                     ),
-                    location=(
-                        "defaults.object_validation_rules"
-                    ),
+                    location=("defaults.object_validation_rules"),
                 )
             ),
             classes={
-                class_definition.class_id: (
-                    class_definition
-                )
+                class_definition.class_id: (class_definition)
                 for class_definition in classes
             },
         )
-
 
     def _parse_class(
         self,
@@ -169,13 +162,14 @@ class ValidationParser:
             "id",
         )
 
-        if not isinstance(
-            class_id,
-            str,
-        ) or not class_id:
-            raise ValueError(
-                f"{location}.id must be a non-empty string."
+        if (
+            not isinstance(
+                class_id,
+                str,
             )
+            or not class_id
+        ):
+            raise ValueError(f"{location}.id must be a non-empty string.")
 
         return ClassValidationDefinition(
             class_id=class_id,
@@ -185,9 +179,7 @@ class ValidationParser:
                         "mandatory",
                         (),
                     ),
-                    location=(
-                        f"{location}.mandatory"
-                    ),
+                    location=(f"{location}.mandatory"),
                 )
             ),
             attribute_validations=(
@@ -196,9 +188,7 @@ class ValidationParser:
                         "validation_rules",
                         {},
                     ),
-                    location=(
-                        f"{location}.validation_rules"
-                    ),
+                    location=(f"{location}.validation_rules"),
                 )
             ),
             object_validations=(
@@ -207,10 +197,7 @@ class ValidationParser:
                         "object_validation_rules",
                         {},
                     ),
-                    location=(
-                        f"{location}."
-                        "object_validation_rules"
-                    ),
+                    location=(f"{location}.object_validation_rules"),
                 )
             ),
         )
