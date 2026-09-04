@@ -76,9 +76,7 @@ class RightsResolver:
                 class_id: self._resolve_class(
                     class_definition=class_definition,
                     definition=definition,
-                    validation_definition=(
-                        effective_validation_definition
-                    ),
+                    validation_definition=(effective_validation_definition),
                 )
                 for (
                     class_id,
@@ -91,9 +89,7 @@ class RightsResolver:
             subclass_rights=self.resolve_subclass_rights(
                 definition,
             ),
-            allow_transitive_transitions=(
-                definition.allow_transitive_transitions
-            ),
+            allow_transitive_transitions=(definition.allow_transitive_transitions),
         )
 
     def _resolve_class(
@@ -107,11 +103,9 @@ class RightsResolver:
         Resolve one class from rights and validation configuration.
         """
 
-        attribute_validations = (
-            self._attribute_validations_for_class(
-                class_id=class_definition.id,
-                validation_definition=validation_definition,
-            )
+        attribute_validations = self._attribute_validations_for_class(
+            class_id=class_definition.id,
+            validation_definition=validation_definition,
         )
 
         attributes = self._resolve_attributes(
@@ -128,8 +122,7 @@ class RightsResolver:
             ),
             attributes=attributes,
             transition_rules=(
-                self.validation_resolver
-                .resolve_class_transition_rules(
+                self.validation_resolver.resolve_class_transition_rules(
                     attributes,
                 )
             ),
@@ -205,12 +198,8 @@ class RightsResolver:
 
     def _rules_or_default(
         self,
-        rules: list[
-            Rule,
-        ],
-        default_rules: list[
-            Rule,
-        ],
+        rules: list[Rule,],
+        default_rules: list[Rule,],
     ) -> tuple[
         Rule,
         ...,
@@ -249,9 +238,7 @@ class RightsResolver:
         Expand direct references to another CRUD rule set.
         """
 
-        expanded: list[
-            Rule
-        ] = []
+        expanded: list[Rule] = []
 
         for rule in rules:
             if isinstance(
@@ -259,19 +246,15 @@ class RightsResolver:
                 InheritRule,
             ):
                 try:
-                    inherited_rules = rule_sets[
-                        rule.source
-                    ]
+                    inherited_rules = rule_sets[rule.source]
                 except KeyError as exception:
                     raise KeyError(
-                        "Unknown inherited rule set: "
-                        f"{rule.source!r}"
+                        f"Unknown inherited rule set: {rule.source!r}"
                     ) from exception
 
                 expanded.extend(
                     inherited_rule
-                    for inherited_rule
-                    in inherited_rules
+                    for inherited_rule in inherited_rules
                     if not isinstance(
                         inherited_rule,
                         InheritRule,
@@ -323,16 +306,12 @@ class RightsResolver:
         )
 
         for attribute_name in attribute_names:
-            attribute_definition = (
-                class_definition.attributes.get(
-                    attribute_name,
-                    AttributeDefinition(),
-                )
+            attribute_definition = class_definition.attributes.get(
+                attribute_name,
+                AttributeDefinition(),
             )
 
-            resolved[
-                attribute_name
-            ] = self._resolve_attribute(
+            resolved[attribute_name] = self._resolve_attribute(
                 attribute_name=attribute_name,
                 attribute_definition=attribute_definition,
                 definition=definition,
@@ -361,21 +340,15 @@ class RightsResolver:
         Resolve rights, validations and transitions for one attribute.
         """
 
-        update_privileges = (
-            attribute_definition.update_privileges
-        )
+        update_privileges = attribute_definition.update_privileges
 
         if not update_privileges:
-            for default in (
-                definition.defaults.attribute_defaults
-            ):
+            for default in definition.defaults.attribute_defaults:
                 if fnmatchcase(
                     attribute_name,
                     default.pattern,
                 ):
-                    update_privileges = (
-                        default.update_privileges
-                    )
+                    update_privileges = default.update_privileges
                     break
 
         validations = list(
@@ -420,10 +393,8 @@ class RightsResolver:
             validation_definition.attribute_validations,
         )
 
-        class_validation_definition = (
-            validation_definition.classes.get(
-                class_id,
-            )
+        class_validation_definition = validation_definition.classes.get(
+            class_id,
         )
 
         if class_validation_definition is not None:
@@ -438,9 +409,7 @@ class RightsResolver:
         *,
         class_id: str,
         validation_definition: ValidationDefinition,
-    ) -> frozenset[
-        str
-    ]:
+    ) -> frozenset[str]:
         """
         Return effective mandatory attributes for one class.
 
@@ -451,10 +420,8 @@ class RightsResolver:
             validation_definition.mandatory_attributes,
         )
 
-        class_validation_definition = (
-            validation_definition.classes.get(
-                class_id,
-            )
+        class_validation_definition = validation_definition.classes.get(
+            class_id,
         )
 
         if class_validation_definition is not None:
@@ -487,10 +454,8 @@ class RightsResolver:
             validation_definition.object_validations,
         )
 
-        class_validation_definition = (
-            validation_definition.classes.get(
-                class_id,
-            )
+        class_validation_definition = validation_definition.classes.get(
+            class_id,
         )
 
         if class_validation_definition is not None:
@@ -500,8 +465,7 @@ class RightsResolver:
 
         return tuple(
             validation
-            for validations
-            in validation_groups.values()
+            for validations in validation_groups.values()
             for validation in validations
         )
 
@@ -524,9 +488,7 @@ class RightsResolver:
 
         subclasses: dict[
             str,
-            list[
-                str,
-            ],
+            list[str,],
         ] = {}
 
         for child in definition.classes.values():
@@ -579,18 +541,14 @@ class RightsResolver:
             class_id,
             class_definition,
         ) in definition.classes.items():
-            derived_rights = (
-                self._derived_rights_for_class(
-                    class_definition=class_definition,
-                    definition=definition,
-                    visited=(),
-                )
+            derived_rights = self._derived_rights_for_class(
+                class_definition=class_definition,
+                definition=definition,
+                visited=(),
             )
 
             if derived_rights:
-                resolved[
-                    class_id
-                ] = derived_rights
+                resolved[class_id] = derived_rights
 
         return resolved
 
@@ -614,13 +572,9 @@ class RightsResolver:
         if class_definition.id in visited:
             return ()
 
-        next_visited = visited + (
-            class_definition.id,
-        )
+        next_visited = visited + (class_definition.id,)
 
-        inherited: list[
-            DerivedRights
-        ] = []
+        inherited: list[DerivedRights] = []
 
         if class_definition.superclass_id:
             superclass = definition.classes.get(

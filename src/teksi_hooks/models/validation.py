@@ -21,11 +21,7 @@ class ValidationContext:
     """
 
     class_id: str = field(
-        metadata={
-            "doc": (
-                "Canonical class identifier being validated."
-            )
-        },
+        metadata={"doc": ("Canonical class identifier being validated.")},
     )
 
     identity: CanonicalObjectIdentity | None = field(
@@ -69,6 +65,8 @@ class ValidationContext:
 
 
 dataclass(slots=True, frozen=True)
+
+
 class AttributePermission:
     """
     Describes a privilege requirement for one concrete attribute.
@@ -453,12 +451,11 @@ class AttributeValidation:
         },
     )
 
-    
     parameters: Mapping[
         str,
         Any,
     ] = field(
-    default_factory=dict,
+        default_factory=dict,
         metadata={
             "doc": (
                 "Validation-specific configuration values interpreted by the "
@@ -467,6 +464,7 @@ class AttributeValidation:
             )
         },
     )
+
 
 @dataclass(slots=True, frozen=True)
 class ObjectValidation:
@@ -487,11 +485,7 @@ class ObjectValidation:
     )
 
     level: Severity = field(
-        metadata={
-            "doc": (
-                "Severity emitted when the validation produces a finding."
-            )
-        },
+        metadata={"doc": ("Severity emitted when the validation produces a finding.")},
     )
 
     operations: tuple[
@@ -514,7 +508,7 @@ class ObjectValidation:
         str,
         Any,
     ] = field(
-    default_factory=dict,
+        default_factory=dict,
         metadata={
             "doc": (
                 "Validation-specific configuration values interpreted by the "
@@ -550,9 +544,9 @@ class TransitionValidation:
         },
     )
 
+
 from __future__ import annotations
 
-from collections.abc import Mapping
 from dataclasses import dataclass, field
 
 
@@ -570,16 +564,10 @@ class ClassValidationDefinition:
     """
 
     class_id: str = field(
-        metadata={
-            "doc": (
-                "Canonical identifier of the configured class."
-            )
-        },
+        metadata={"doc": ("Canonical identifier of the configured class.")},
     )
 
-    mandatory_attributes: frozenset[
-        str
-    ] = field(
+    mandatory_attributes: frozenset[str] = field(
         default_factory=frozenset,
         metadata={
             "doc": (
@@ -634,15 +622,9 @@ class ValidationDefinition:
     extended by a class-specific definition.
     """
 
-    mandatory_attributes: frozenset[
-        str
-    ] = field(
+    mandatory_attributes: frozenset[str] = field(
         default_factory=frozenset,
-        metadata={
-            "doc": (
-                "Canonical attributes considered mandatory by default."
-            )
-        },
+        metadata={"doc": ("Canonical attributes considered mandatory by default.")},
     )
 
     attribute_validations: Mapping[
@@ -671,8 +653,7 @@ class ValidationDefinition:
         default_factory=dict,
         metadata={
             "doc": (
-                "Default object validation groups keyed by configuration "
-                "identifier."
+                "Default object validation groups keyed by configuration identifier."
             )
         },
     )
@@ -693,9 +674,7 @@ class ValidationDefinition:
     def mandatory_for_class(
         self,
         class_id: str,
-    ) -> frozenset[
-        str
-    ]:
+    ) -> frozenset[str]:
         """
         Return effective mandatory attributes for one canonical class.
         """
@@ -707,10 +686,7 @@ class ValidationDefinition:
         if class_definition is None:
             return self.mandatory_attributes
 
-        return (
-            self.mandatory_attributes
-            | class_definition.mandatory_attributes
-        )
+        return self.mandatory_attributes | class_definition.mandatory_attributes
 
     def attribute_validations_for_class(
         self,

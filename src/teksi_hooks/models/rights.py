@@ -303,10 +303,7 @@ class DefaultDefinitions:
     )
     attribute_validation_rules: Mapping[
         str,
-        tuple[
-            AttributeValidation,
-            ...
-        ],
+        tuple[AttributeValidation, ...],
     ] = field(
         default_factory=dict,
         metadata={
@@ -444,22 +441,14 @@ class ResolvedClassDefinition:
         },
     )
 
-    object_validations: tuple[
-        ObjectValidation,
-        ...
-    ] = field(
+    object_validations: tuple[ObjectValidation, ...] = field(
         default_factory=tuple,
-            metadata={
-            "doc": (
-                "Resolved object-level validation rules for this "
-                "canonical class."
-            )
+        metadata={
+            "doc": ("Resolved object-level validation rules for this canonical class.")
         },
     )
 
-    mandatory_attributes: frozenset[
-        str
-    ] = field(
+    mandatory_attributes: frozenset[str] = field(
         default_factory=frozenset,
         metadata={
             "doc": (

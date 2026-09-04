@@ -1,8 +1,7 @@
 from __future__ import annotations
 from dataclasses import dataclass, field
-from collections.abc import Callable, Mapping
+from collections.abc import Callable
 from datetime import datetime
-from typing import Any, Protocol
 
 
 from ..models.validation import (
@@ -12,11 +11,6 @@ from ..models.validation import (
     ObjectValidation,
 )
 from ..exceptions import Severity
-
-
-from teksi_hooks.models.canonical_object import (
-    CanonicalObjectIdentity,
-)
 
 
 @dataclass(slots=True)

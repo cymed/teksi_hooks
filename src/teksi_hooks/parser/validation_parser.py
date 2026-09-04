@@ -133,9 +133,7 @@ class ValidationParser:
                         "attributes",
                         {},
                     ),
-                    location=(
-                        "defaults.validation_rules.attributes"
-                    ),
+                    location=("defaults.validation_rules.attributes"),
                 )
             ),
             object_validations=(
@@ -144,20 +142,15 @@ class ValidationParser:
                         "objects",
                         {},
                     ),
-                    location=(
-                        "defaults.validation_rules.objects"
-                    ),
+                    location=("defaults.validation_rules.objects"),
                 )
             ),
             classes={
-                class_definition.class_id: (
-                    class_definition
-                )
+                class_definition.class_id: (class_definition)
                 for class_definition in classes
             },
         )
 
-    
     def _parse_classes(
         self,
         raw_classes: Any,
@@ -182,23 +175,20 @@ class ValidationParser:
                 ),
                 index=index,
             )
-            for index, raw_class
-            in enumerate(
+            for index, raw_class in enumerate(
                 classes,
             )
         )
 
-        class_ids = [
-            class_definition.class_id
-            for class_definition in parsed_classes
-        ]
+        class_ids = [class_definition.class_id for class_definition in parsed_classes]
 
         duplicate_class_ids = {
             class_id
             for class_id in class_ids
             if class_ids.count(
                 class_id,
-            ) > 1
+            )
+            > 1
         }
 
         if duplicate_class_ids:
@@ -229,13 +219,14 @@ class ValidationParser:
             "id",
         )
 
-        if not isinstance(
-            class_id,
-            str,
-        ) or not class_id:
-            raise ValueError(
-                f"{location}.id must be a non-empty string."
+        if (
+            not isinstance(
+                class_id,
+                str,
             )
+            or not class_id
+        ):
+            raise ValueError(f"{location}.id must be a non-empty string.")
 
         validation_rules = self._mapping(
             raw.get(
@@ -253,9 +244,7 @@ class ValidationParser:
                         "mandatory",
                         (),
                     ),
-                    location=(
-                        f"{location}.mandatory"
-                    ),
+                    location=(f"{location}.mandatory"),
                 )
             ),
             attribute_validations=(
@@ -264,10 +253,7 @@ class ValidationParser:
                         "attributes",
                         {},
                     ),
-                    location=(
-                        f"{location}."
-                        "validation_rules.attributes"
-                    ),
+                    location=(f"{location}.validation_rules.attributes"),
                 )
             ),
             object_validations=(
@@ -276,10 +262,7 @@ class ValidationParser:
                         "objects",
                         {},
                     ),
-                    location=(
-                        f"{location}."
-                        "validation_rules.objects"
-                    ),
+                    location=(f"{location}.validation_rules.objects"),
                 )
             ),
         )
@@ -289,9 +272,7 @@ class ValidationParser:
         raw: Any,
         *,
         location: str,
-    ) -> frozenset[
-        str
-    ]:
+    ) -> frozenset[str]:
         """
         Parse mandatory canonical attribute identifiers.
         """
@@ -306,14 +287,14 @@ class ValidationParser:
         for index, value in enumerate(
             values,
         ):
-            if not isinstance(
-                value,
-                str,
-            ) or not value:
-                raise TypeError(
-                    f"{location}[{index}] must be a "
-                    "non-empty string."
+            if (
+                not isinstance(
+                    value,
+                    str,
                 )
+                or not value
+            ):
+                raise TypeError(f"{location}[{index}] must be a non-empty string.")
 
             mandatory_attributes.append(
                 value,
@@ -349,17 +330,12 @@ class ValidationParser:
                 self._parse_attribute_validations(
                     self._group_rules(
                         raw_group,
-                        location=(
-                            f"{location}.{attribute_id}"
-                        ),
+                        location=(f"{location}.{attribute_id}"),
                     ),
-                    location=(
-                        f"{location}.{attribute_id}.rules"
-                    ),
+                    location=(f"{location}.{attribute_id}.rules"),
                 )
             )
-            for attribute_id, raw_group
-            in groups.items()
+            for attribute_id, raw_group in groups.items()
         }
 
     def _parse_object_validation_groups(
@@ -388,17 +364,12 @@ class ValidationParser:
                 self._parse_object_validations(
                     self._group_rules(
                         raw_group,
-                        location=(
-                            f"{location}.{group_id}"
-                        ),
+                        location=(f"{location}.{group_id}"),
                     ),
-                    location=(
-                        f"{location}.{group_id}.rules"
-                    ),
+                    location=(f"{location}.{group_id}.rules"),
                 )
             )
-            for group_id, raw_group
-            in groups.items()
+            for group_id, raw_group in groups.items()
         }
 
     def _group_rules(
@@ -406,9 +377,7 @@ class ValidationParser:
         raw_group: Any,
         *,
         location: str,
-    ) -> Sequence[
-        Any,
-    ]:
+    ) -> Sequence[Any,]:
         """
         Return the raw rules contained in one validation group.
         """
@@ -428,9 +397,7 @@ class ValidationParser:
 
     def _parse_attribute_validations(
         self,
-        raw_validations: Sequence[
-            Any,
-        ],
+        raw_validations: Sequence[Any,],
         *,
         location: str,
     ) -> tuple[
@@ -445,16 +412,11 @@ class ValidationParser:
             self._parse_attribute_validation(
                 self._mapping(
                     raw_validation,
-                    location=(
-                        f"{location}[{index}]"
-                    ),
+                    location=(f"{location}[{index}]"),
                 ),
-                location=(
-                    f"{location}[{index}]"
-                ),
+                location=(f"{location}[{index}]"),
             )
-            for index, raw_validation
-            in enumerate(
+            for index, raw_validation in enumerate(
                 raw_validations,
             )
         )
@@ -492,9 +454,7 @@ class ValidationParser:
                 data.get(
                     "context_value",
                 ),
-                location=(
-                    f"{location}.context_value"
-                ),
+                location=(f"{location}.context_value"),
             ),
             parameters=self._parameters(
                 data.get(
@@ -507,9 +467,7 @@ class ValidationParser:
 
     def _parse_object_validations(
         self,
-        raw_validations: Sequence[
-            Any,
-        ],
+        raw_validations: Sequence[Any,],
         *,
         location: str,
     ) -> tuple[
@@ -524,16 +482,11 @@ class ValidationParser:
             self._parse_object_validation(
                 self._mapping(
                     raw_validation,
-                    location=(
-                        f"{location}[{index}]"
-                    ),
+                    location=(f"{location}[{index}]"),
                 ),
-                location=(
-                    f"{location}[{index}]"
-                ),
+                location=(f"{location}[{index}]"),
             )
-            for index, raw_validation
-            in enumerate(
+            for index, raw_validation in enumerate(
                 raw_validations,
             )
         )
@@ -594,13 +547,14 @@ class ValidationParser:
             "id",
         )
 
-        if not isinstance(
-            validation_id,
-            str,
-        ) or not validation_id:
-            raise ValueError(
-                f"{location}.id must be a non-empty string."
+        if (
+            not isinstance(
+                validation_id,
+                str,
             )
+            or not validation_id
+        ):
+            raise ValueError(f"{location}.id must be a non-empty string.")
 
         return validation_id
 
@@ -652,10 +606,7 @@ class ValidationParser:
 
         raw_operations = data.get(
             "operations",
-            tuple(
-                operation.value
-                for operation in default
-            ),
+            tuple(operation.value for operation in default),
         )
 
         operation_values = self._sequence(
@@ -672,8 +623,7 @@ class ValidationParser:
             )
         except ValueError as exception:
             raise ValueError(
-                f"{location}.operations contains an "
-                "unsupported change operation."
+                f"{location}.operations contains an unsupported change operation."
             ) from exception
 
     def _parameters(
@@ -701,9 +651,7 @@ class ValidationParser:
 
         if "attributes" in parameters:
             raw_attributes = self._sequence(
-                parameters[
-                    "attributes"
-                ],
+                parameters["attributes"],
                 location=f"{location}.attributes",
             )
 
@@ -712,22 +660,22 @@ class ValidationParser:
             for index, attribute_id in enumerate(
                 raw_attributes,
             ):
-                if not isinstance(
-                    attribute_id,
-                    str,
-                ) or not attribute_id:
+                if (
+                    not isinstance(
+                        attribute_id,
+                        str,
+                    )
+                    or not attribute_id
+                ):
                     raise TypeError(
-                        f"{location}.attributes[{index}] "
-                        "must be a non-empty string."
+                        f"{location}.attributes[{index}] must be a non-empty string."
                     )
 
                 attributes.append(
                     attribute_id,
                 )
 
-            parameters[
-                "attributes"
-            ] = tuple(
+            parameters["attributes"] = tuple(
                 attributes,
             )
 
@@ -754,8 +702,7 @@ class ValidationParser:
             Mapping,
         ):
             raise TypeError(
-                f"Expected mapping at {location}, "
-                f"got {type(value).__name__}."
+                f"Expected mapping at {location}, got {type(value).__name__}."
             )
 
         return value
@@ -765,9 +712,7 @@ class ValidationParser:
         value: Any,
         *,
         location: str,
-    ) -> Sequence[
-        Any,
-    ]:
+    ) -> Sequence[Any,]:
         """
         Return a non-string sequence or raise a configuration error.
         """
@@ -787,8 +732,7 @@ class ValidationParser:
             Sequence,
         ):
             raise TypeError(
-                f"Expected sequence at {location}, "
-                f"got {type(value).__name__}."
+                f"Expected sequence at {location}, got {type(value).__name__}."
             )
 
         return value
@@ -806,13 +750,13 @@ class ValidationParser:
         if value is None:
             return None
 
-        if not isinstance(
-            value,
-            str,
-        ) or not value:
-            raise TypeError(
-                f"{location} must be a non-empty string "
-                "or null."
+        if (
+            not isinstance(
+                value,
+                str,
             )
+            or not value
+        ):
+            raise TypeError(f"{location} must be a non-empty string or null.")
 
         return value
