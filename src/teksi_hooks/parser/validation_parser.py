@@ -102,14 +102,6 @@ class ValidationParser:
             location="defaults",
         )
 
-        default_validation_rules = self._mapping(
-            defaults.get(
-                "validation_rules",
-                {},
-            ),
-            location="defaults.validation_rules",
-        )
-
         classes = self._parse_classes(
             data.get(
                 "classes",
@@ -129,26 +121,98 @@ class ValidationParser:
             ),
             attribute_validations=(
                 self._parse_attribute_validation_groups(
-                    default_validation_rules.get(
-                        "attributes",
+                    defaults.get(
+                        "validation_rules",
                         {},
                     ),
-                    location=("defaults.validation_rules.attributes"),
+                    location=(
+                        "defaults.validation_rules"
+                    ),
                 )
             ),
             object_validations=(
                 self._parse_object_validation_groups(
-                    default_validation_rules.get(
-                        "objects",
+                    defaults.get(
+                        "object_validation_rules",
                         {},
                     ),
-                    location=("defaults.validation_rules.objects"),
+                    location=(
+                        "defaults.object_validation_rules"
+                    ),
                 )
             ),
             classes={
-                class_definition.class_id: (class_definition)
+                class_definition.class_id: (
+                    class_definition
+                )
                 for class_definition in classes
             },
+        )
+
+
+    def _parse_class(
+        self,
+        raw: Mapping[
+            str,
+            Any,
+        ],
+        *,
+        index: int,
+    ) -> ClassValidationDefinition:
+        """
+        Parse one class-specific validation definition.
+        """
+
+        location = f"classes[{index}]"
+
+        class_id = raw.get(
+            "id",
+        )
+
+        if not isinstance(
+            class_id,
+            str,
+        ) or not class_id:
+            raise ValueError(
+                f"{location}.id must be a non-empty string."
+            )
+
+        return ClassValidationDefinition(
+            class_id=class_id,
+            mandatory_attributes=(
+                self._parse_mandatory_attributes(
+                    raw.get(
+                        "mandatory",
+                        (),
+                    ),
+                    location=(
+                        f"{location}.mandatory"
+                    ),
+                )
+            ),
+            attribute_validations=(
+                self._parse_attribute_validation_groups(
+                    raw.get(
+                        "validation_rules",
+                        {},
+                    ),
+                    location=(
+                        f"{location}.validation_rules"
+                    ),
+                )
+            ),
+            object_validations=(
+                self._parse_object_validation_groups(
+                    raw.get(
+                        "object_validation_rules",
+                        {},
+                    ),
+                    location=(
+                        f"{location}."
+                        "object_validation_rules"
+                    ),
+                )
+            ),
         )
 
     def _parse_classes(
@@ -199,73 +263,6 @@ class ValidationParser:
             )
 
         return parsed_classes
-
-    def _parse_class(
-        self,
-        raw: Mapping[
-            str,
-            Any,
-        ],
-        *,
-        index: int,
-    ) -> ClassValidationDefinition:
-        """
-        Parse one class-specific validation definition.
-        """
-
-        location = f"classes[{index}]"
-
-        class_id = raw.get(
-            "id",
-        )
-
-        if (
-            not isinstance(
-                class_id,
-                str,
-            )
-            or not class_id
-        ):
-            raise ValueError(f"{location}.id must be a non-empty string.")
-
-        validation_rules = self._mapping(
-            raw.get(
-                "validation_rules",
-                {},
-            ),
-            location=f"{location}.validation_rules",
-        )
-
-        return ClassValidationDefinition(
-            class_id=class_id,
-            mandatory_attributes=(
-                self._parse_mandatory_attributes(
-                    raw.get(
-                        "mandatory",
-                        (),
-                    ),
-                    location=(f"{location}.mandatory"),
-                )
-            ),
-            attribute_validations=(
-                self._parse_attribute_validation_groups(
-                    validation_rules.get(
-                        "attributes",
-                        {},
-                    ),
-                    location=(f"{location}.validation_rules.attributes"),
-                )
-            ),
-            object_validations=(
-                self._parse_object_validation_groups(
-                    validation_rules.get(
-                        "objects",
-                        {},
-                    ),
-                    location=(f"{location}.validation_rules.objects"),
-                )
-            ),
-        )
 
     def _parse_mandatory_attributes(
         self,

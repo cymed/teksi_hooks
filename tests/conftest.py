@@ -9,14 +9,17 @@ from shapely import to_wkb
 from teksi_hooks.models.oid import Standardoid
 from teksi_hooks.models.rights import (
     RightsDefinition,
-    ResolvedClassDefinition,
+    ResolvedRights,
 )
+from teksi_hooks.models.provider import Provider, ResolvedProvider
+from teksi_hooks.models.mapping import ModelMapping
+from teksi_hooks.models.validation import ValidationDefinition
+
 from teksi_hooks.parser.provider_rights_parser import ProviderRightsParser
 from teksi_hooks.parser.rights_parser import RightsParser
 from teksi_hooks.parser.model_mapping_parser import ModelMappingParser
+from teksi_hooks.parser.validation_parser import ValidationParser
 
-from teksi_hooks.models.provider import Provider, ResolvedProvider
-from teksi_hooks.models.mapping import ModelMapping
 
 from teksi_hooks.capabilities.conditions import ConditionsCapability
 from teksi_hooks.capabilities.rights import (
@@ -44,6 +47,11 @@ def rights_definition() -> RightsDefinition:
         DATA_DIR / "rights_parser_minimal.yaml",
     )
 
+@pytest.fixture
+def validation_definition() -> ValidationDefinition:
+    return ValidationParser().parse_file(
+        DATA_DIR / "validation.yaml",
+    )
 
 @pytest.fixture
 def rights_definition_non_transitive() -> RightsDefinition:
@@ -71,9 +79,11 @@ def resolved_providers(
 @pytest.fixture
 def resolved_rights(
     rights_definition: RightsDefinition,
-) -> Mapping[str, ResolvedClassDefinition]:
+    validation_definition:ValidationDefinition,
+) -> ResolvedRights:
     return RightsResolver().resolve(
         rights_definition,
+        validation_definition,
     )
 
 
