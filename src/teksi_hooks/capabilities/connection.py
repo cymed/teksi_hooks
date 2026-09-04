@@ -22,10 +22,10 @@ class DatabaseConnectionFactory(
         autocommit: bool = False,
     ) -> AbstractContextManager[Any]:
         """
-        Return a managed database connection.
+            Return a managed database connection.
 
-    commit`` is false, the connection context should commit on
-        successful exit and roll back when an exception leaves the context.
+        commit`` is false, the connection context should commit on
+            successful exit and roll back when an exception leaves the context.
         """
 
         ...

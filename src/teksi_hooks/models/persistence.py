@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any
-from uuid import UUID, uuid4
+from uuid import UUID
 
 from .canonical_object import (
     CanonicalObjectIdentity,
@@ -11,7 +11,6 @@ from .canonical_object import (
 from .validation import (
     Change,
 )
-
 
 
 @dataclass(
@@ -34,7 +33,6 @@ class AttributePersistenceDecision:
     - construct a canonical update directly;
     - apply another model-specific strategy.
     """
-
 
     class_id: str = field(
         metadata={
@@ -85,8 +83,8 @@ class AttributePersistenceDecision:
     def key(
         self,
     ) -> tuple[
-    str,
-    str,
+        str,
+        str,
     ]:
         """
         Return the decision key within its parent change decision.
@@ -209,10 +207,8 @@ class ChangePersistenceDecision:
         Return all changed attributes having a persistence decision.
         """
 
-        return frozenset(
-            decision.attribute_id
-            for decision in self.attribute_decisions
-        )
+        return frozenset(decision.attribute_id for decision in self.attribute_decisions)
+
 
 @dataclass(
     frozen=True,
@@ -403,10 +399,7 @@ class PersistenceResult:
         Return the total number of affected physical rows.
         """
 
-        return sum(
-            result.affected_rows
-            for result in self.change_results
-        )
+        return sum(result.affected_rows for result in self.change_results)
 
 
 @dataclass(
@@ -432,11 +425,7 @@ class DeletionTarget:
     )
 
     identity: CanonicalObjectIdentity = field(
-        metadata={
-            "doc": (
-                "Canonical identity of the object proposed for deletion."
-            )
-        },
+        metadata={"doc": ("Canonical identity of the object proposed for deletion.")},
     )
 
     last_modification: datetime | None = field(
@@ -466,6 +455,7 @@ class DeletionTarget:
         },
     )
 
+
 @dataclass(
     frozen=True,
     slots=True,
@@ -480,19 +470,11 @@ class DeletionPlan:
     """
 
     plan_id: str = field(
-        metadata={
-            "doc": (
-                "Stable identifier of this deletion plan."
-            )
-        },
+        metadata={"doc": ("Stable identifier of this deletion plan.")},
     )
 
     job_id: str = field(
-        metadata={
-            "doc": (
-                "Logical review-job identifier owning the deletion plan."
-            )
-        },
+        metadata={"doc": ("Logical review-job identifier owning the deletion plan.")},
     )
 
     snapshot_id: str = field(
@@ -505,11 +487,7 @@ class DeletionPlan:
     )
 
     created_at: datetime = field(
-        metadata={
-            "doc": (
-                "Timestamp when the deletion plan was created."
-            )
-        },
+        metadata={"doc": ("Timestamp when the deletion plan was created.")},
     )
 
     targets: tuple[
@@ -517,11 +495,7 @@ class DeletionPlan:
         ...,
     ] = field(
         default_factory=tuple,
-        metadata={
-            "doc": (
-                "Ordered canonical objects proposed for deletion."
-            )
-        },
+        metadata={"doc": ("Ordered canonical objects proposed for deletion.")},
     )
 
     metadata: dict[
@@ -539,6 +513,7 @@ class DeletionPlan:
         },
     )
 
+
 @dataclass(
     frozen=True,
     slots=True,
@@ -549,27 +524,18 @@ class DeletionConfirmation:
     """
 
     plan_id: str = field(
-        metadata={
-            "doc": (
-                "Identifier of the confirmed deletion plan."
-            )
-        },
+        metadata={"doc": ("Identifier of the confirmed deletion plan.")},
     )
 
     confirmed_at: datetime = field(
-        metadata={
-            "doc": (
-                "Timestamp when the reviewer confirmed the plan."
-            )
-        },
+        metadata={"doc": ("Timestamp when the reviewer confirmed the plan.")},
     )
 
     reviewer_id: str | None = field(
         default=None,
         metadata={
             "doc": (
-                "Optional identifier of the reviewer who confirmed the "
-                "deletion plan."
+                "Optional identifier of the reviewer who confirmed the deletion plan."
             )
         },
     )
@@ -577,8 +543,6 @@ class DeletionConfirmation:
     comment: str | None = field(
         default=None,
         metadata={
-            "doc": (
-                "Optional reviewer comment associated with the confirmation."
-            )
+            "doc": ("Optional reviewer comment associated with the confirmation.")
         },
     )

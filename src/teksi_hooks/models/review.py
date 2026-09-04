@@ -2,13 +2,15 @@ from __future__ import annotations
 
 
 from dataclasses import dataclass, field
-from typing import Any, Mapping, Sequence
+from typing import Any
+from collections.abc import Mapping, Sequence
 from enum import StrEnum
 from uuid import UUID
 
 from .persistence import (
     PersistenceResult,
 )
+
 
 @dataclass(slots=True)
 class ReviewFeature:
@@ -99,10 +101,7 @@ class DiffReviewDecisionResult:
 
     job_id: str = field(
         metadata={
-            "doc": (
-                "Logical identifier of the diff review job that was "
-                "resolved."
-            )
+            "doc": ("Logical identifier of the diff review job that was resolved.")
         },
     )
 
@@ -116,19 +115,11 @@ class DiffReviewDecisionResult:
     )
 
     decision: DiffReviewDecision = field(
-        metadata={
-            "doc": (
-                "Decision taken for the pending review job."
-            )
-        },
+        metadata={"doc": ("Decision taken for the pending review job.")},
     )
 
     job_status: DiffReviewJobStatus = field(
-        metadata={
-            "doc": (
-                "Resulting lifecycle status of the diff review job."
-            )
-        },
+        metadata={"doc": ("Resulting lifecycle status of the diff review job.")},
     )
 
     persistence_result: PersistenceResult | None = field(
@@ -140,6 +131,7 @@ class DiffReviewDecisionResult:
             )
         },
     )
+
 
 @dataclass(
     frozen=True,
@@ -256,9 +248,7 @@ class DiffReviewJob:
 
     features_by_class: Mapping[
         str,
-        Sequence[
-            ReviewFeature,
-        ],
+        Sequence[ReviewFeature,],
     ] = field(
         default_factory=dict,
         metadata={
@@ -308,18 +298,13 @@ class DiffSchemaWriteResult:
     job_db_id: int = field(
         metadata={
             "doc": (
-                "Database-generated identifier of the inserted review-job "
-                "metadata row."
+                "Database-generated identifier of the inserted review-job metadata row."
             )
         },
     )
 
     job_id: str = field(
-        metadata={
-            "doc": (
-                "Stable external identifier of the written review job."
-            )
-        },
+        metadata={"doc": ("Stable external identifier of the written review job.")},
     )
 
     row_count: int = field(
