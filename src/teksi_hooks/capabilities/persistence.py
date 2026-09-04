@@ -8,7 +8,7 @@ from ..models.persistence import (
     ChangePersistenceDocument,
     PersistenceResult,
 )
-from ..models.review import (
+from ..models.diff_snapshot import (
     DiffSnapshot,
 )
 
