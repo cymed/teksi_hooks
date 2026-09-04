@@ -3,13 +3,13 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import StrEnum
-from typing import Any, Mapping
+from typing import Any
+from collections.abc import Mapping
 
 from .privilege import PrivilegeId
 from .rulesets import StateTransitionRule
 from ..exceptions import Severity, Finding
 from .canonical_object import CanonicalObjectIdentity
-
 
 
 @dataclass(slots=True, frozen=True)
