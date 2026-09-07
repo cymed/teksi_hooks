@@ -14,7 +14,6 @@ from .validation import (
 )
 
 
-
 class DiffJobMode(StrEnum):
     """
     Defines how an existing diff job is handled.
@@ -23,6 +22,7 @@ class DiffJobMode(StrEnum):
     CREATE = "create"
     REPLACE = "replace"
     REFRESH = "refresh"
+
 
 @dataclass(
     frozen=True,
