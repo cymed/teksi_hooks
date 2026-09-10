@@ -71,9 +71,7 @@ def test_model_mapping_capability_returns_value_list_attribute_definition(
     assert attribute.canonical_attr_id == "infiltration_capacity"
 
     assert attribute.value_list is not None
-    assert value_list.relation == (
-        "tww_vl.infiltration_zone_infiltration_capacity"
-    )
+    assert value_list.relation == ("tww_vl.infiltration_zone_infiltration_capacity")
     assert attribute.value_list.mapping_attribute == "value_de"
 
 

@@ -700,8 +700,7 @@ class ModelMappingParser:
         if raw is None:
             if mapping_attribute is not None:
                 raise ValueError(
-                    f"{path}.mapping_attribute requires "
-                    f"{path}.value_list."
+                    f"{path}.mapping_attribute requires {path}.value_list."
                 )
 
             return None
@@ -726,8 +725,7 @@ class ModelMappingParser:
 
         if not schema_name or not relation_name:
             raise ValueError(
-                f"{path}.value_list must define a non-empty "
-                "schema and relation."
+                f"{path}.value_list must define a non-empty schema and relation."
             )
 
         return ValueListMapping(

@@ -262,9 +262,7 @@ def test_agxx_mapping_parser_imports_value_list_mapping(
     value_list = agxx_mapping.classes["GepMassnahme"].attributes["kategorie"].value_list
 
     assert value_list is not None
-    assert value_list.relation == (
-        "tww_vl.measure_category_import_rel_agxx"
-    )
+    assert value_list.relation == ("tww_vl.measure_category_import_rel_agxx")
     assert value_list.mapping_attribute == "value_de"
 
 
