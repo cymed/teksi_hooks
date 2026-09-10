@@ -12,7 +12,7 @@ from ..models.mapping import (
     AttributeMapping,
     ClassMapping,
     ModelMapping,
-    ModelMappingDefaults,
+    MappingDefaults,
 )
 
 
@@ -80,7 +80,7 @@ class ImplicitModelMappingResolver:
         return ModelMapping(
             identifier=self.identifier,
             classes=classes,
-            defaults=ModelMappingDefaults(
+            defaults=MappingDefaults(
                 identity=default_identity,
             ),
             is_ssot=True,
