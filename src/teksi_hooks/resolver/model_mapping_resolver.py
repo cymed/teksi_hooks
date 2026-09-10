@@ -138,10 +138,7 @@ class ImplicitModelMappingResolver:
 
             source_attribute_id = self._required_identifier(
                 source_attribute_id,
-                context=(
-                    "Implicit source attribute for class "
-                    f"{ili_class_name!r}"
-                ),
+                context=(f"Implicit source attribute for class {ili_class_name!r}"),
             )
 
             canonical_class_id = self._required_identifier(
@@ -208,10 +205,7 @@ class ImplicitModelMappingResolver:
 
             canonical_class_id = self._required_identifier(
                 canonical_class_id,
-                context=(
-                    "Implicit canonical class identifier for "
-                    f"{ili_class_name!r}"
-                ),
+                context=(f"Implicit canonical class identifier for {ili_class_name!r}"),
             )
 
             mappings.append(
@@ -268,16 +262,11 @@ class ImplicitModelMappingResolver:
             value,
             str,
         ):
-            raise TypeError(
-                f"{context} must be a string, got "
-                f"{type(value)!r}."
-            )
+            raise TypeError(f"{context} must be a string, got {type(value)!r}.")
 
         normalized = value.strip()
 
         if not normalized:
-            raise ValueError(
-                f"{context} must not be empty."
-            )
+            raise ValueError(f"{context} must not be empty.")
 
         return normalized

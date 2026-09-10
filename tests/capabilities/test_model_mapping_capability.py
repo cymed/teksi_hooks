@@ -23,10 +23,7 @@ def test_model_mapping_capability_returns_function_backed_class(
 
     assert cls.function is not None
     assert cls.function.schema == "tww_app"
-    assert (
-        cls.function.name
-        == "fct_agxx_gepknoten_mapping_jsonb"
-    )
+    assert cls.function.name == "fct_agxx_gepknoten_mapping_jsonb"
     assert cls.function.parameters == {
         "row": "$row",
     }
@@ -45,10 +42,7 @@ def test_model_mapping_capability_returns_attribute_backed_class(
 
     assert cls.function is None
     assert "q_check" in cls.attributes
-    assert (
-        "versickerungsmoeglichkeitag"
-        in cls.attributes
-    )
+    assert "versickerungsmoeglichkeitag" in cls.attributes
 
 
 def test_model_mapping_capability_returns_attribute_definition(
@@ -59,14 +53,8 @@ def test_model_mapping_capability_returns_attribute_definition(
         "q_check",
     )
 
-    assert (
-        attribute.canonical_class_id
-        == "agxx_infiltration_zone"
-    )
-    assert (
-        attribute.canonical_attr_id
-        == "ag96_q_check"
-    )
+    assert attribute.canonical_class_id == "agxx_infiltration_zone"
+    assert attribute.canonical_attr_id == "ag96_q_check"
     assert attribute.value_list is None
     assert attribute.values == {}
 
@@ -79,28 +67,13 @@ def test_model_mapping_capability_returns_value_list_attribute_definition(
         "versickerungsmoeglichkeitag",
     )
 
-    assert (
-        attribute.canonical_class_id
-        == "infiltration_zone"
-    )
-    assert (
-        attribute.canonical_attr_id
-        == "infiltration_capacity"
-    )
+    assert attribute.canonical_class_id == "infiltration_zone"
+    assert attribute.canonical_attr_id == "infiltration_capacity"
 
     assert attribute.value_list is not None
-    assert (
-        attribute.value_list.schema
-        == "tww_vl"
-    )
-    assert (
-        attribute.value_list.relation
-        == "infiltration_zone_infiltration_capacity"
-    )
-    assert (
-        attribute.value_list.mapping_attribute
-        == "value_de"
-    )
+    assert attribute.value_list.schema == "tww_vl"
+    assert attribute.value_list.relation == "infiltration_zone_infiltration_capacity"
+    assert attribute.value_list.mapping_attribute == "value_de"
 
 
 def test_model_mapping_capability_returns_class_identity(
@@ -110,15 +83,10 @@ def test_model_mapping_capability_returns_class_identity(
         "VersickerungsbereichAG",
     )
 
-    identity = cls.identities[
-        "agxx_infiltration_zone"
-    ]
+    identity = cls.identities["agxx_infiltration_zone"]
 
     assert identity.source_attribute == "obj_id"
-    assert (
-        identity.canonical_attribute
-        == "fk_infiltration_zone"
-    )
+    assert identity.canonical_attribute == "fk_infiltration_zone"
 
 
 def test_model_mapping_capability_returns_defaulted_class_identity(
@@ -128,9 +96,7 @@ def test_model_mapping_capability_returns_defaulted_class_identity(
         "VersickerungsbereichAG",
     )
 
-    identity = cls.identities[
-        "infiltration_zone"
-    ]
+    identity = cls.identities["infiltration_zone"]
 
     assert identity.source_attribute == "obj_id"
     assert identity.canonical_attribute == "obj_id"
@@ -150,22 +116,12 @@ def test_model_mapping_capability_returns_multiple_target_identities(
         "building_group",
     }
 
-    extension_identity = cls.identities[
-        "agxx_building_group"
-    ]
+    extension_identity = cls.identities["agxx_building_group"]
 
-    assert (
-        extension_identity.source_attribute
-        == "obj_id"
-    )
-    assert (
-        extension_identity.canonical_attribute
-        == "fk_building_group"
-    )
+    assert extension_identity.source_attribute == "obj_id"
+    assert extension_identity.canonical_attribute == "fk_building_group"
 
-    base_identity = cls.identities[
-        "building_group"
-    ]
+    base_identity = cls.identities["building_group"]
 
     assert base_identity.source_attribute == "obj_id"
     assert base_identity.canonical_attribute == "obj_id"
@@ -178,15 +134,10 @@ def test_model_mapping_capability_returns_sbw_identity(
         "SBWEinzugsgebiet",
     )
 
-    identity = cls.identities[
-        "agxx_catchment_area_totals"
-    ]
+    identity = cls.identities["agxx_catchment_area_totals"]
 
     assert identity.source_attribute == "obj_id"
-    assert (
-        identity.canonical_attribute
-        == "fk_catchment_area_totals"
-    )
+    assert identity.canonical_attribute == "fk_catchment_area_totals"
 
 
 def test_model_mapping_capability_exposes_mapping_defaults(
@@ -195,31 +146,17 @@ def test_model_mapping_capability_exposes_mapping_defaults(
     defaults = capability.mapping.defaults
 
     assert defaults.identity.source_attribute == "obj_id"
-    assert (
-        defaults.identity.canonical_attribute
-        == "obj_id"
-    )
+    assert defaults.identity.canonical_attribute == "obj_id"
 
-    assert (
-        "agxx_last_modification"
-        in defaults.identities
-    )
-    assert (
-        "letzte_aenderung_wi"
-        in defaults.attributes
-    )
-    assert (
-        "letzte_aenderung_gep"
-        in defaults.attributes
-    )
+    assert "agxx_last_modification" in defaults.identities
+    assert "letzte_aenderung_wi" in defaults.attributes
+    assert "letzte_aenderung_gep" in defaults.attributes
 
 
 def test_model_mapping_capability_exposes_default_last_modification_identity(
     capability: ModelMappingCapability,
 ) -> None:
-    identity = capability.mapping.defaults.identities[
-        "agxx_last_modification"
-    ]
+    identity = capability.mapping.defaults.identities["agxx_last_modification"]
 
     assert identity.source_attribute == "obj_id"
     assert identity.canonical_attribute == "fk_element"
@@ -228,18 +165,10 @@ def test_model_mapping_capability_exposes_default_last_modification_identity(
 def test_model_mapping_capability_exposes_default_attribute_mapping(
     capability: ModelMappingCapability,
 ) -> None:
-    attribute = capability.mapping.defaults.attributes[
-        "letzte_aenderung_wi"
-    ]
+    attribute = capability.mapping.defaults.attributes["letzte_aenderung_wi"]
 
-    assert (
-        attribute.canonical_class_id
-        == "agxx_last_modification"
-    )
-    assert (
-        attribute.canonical_attr_id
-        == "ag64_last_modification"
-    )
+    assert attribute.canonical_class_id == "agxx_last_modification"
+    assert attribute.canonical_attr_id == "ag64_last_modification"
 
 
 def test_model_mapping_capability_reports_non_ssot_mapping(

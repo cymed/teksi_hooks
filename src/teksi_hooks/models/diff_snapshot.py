@@ -102,6 +102,6 @@ class SnapshotValidationFinding:
         metadata={"doc": ("Canonical identity of the referenced object.")},
     )
 
-    state: SnapshotState= field(
-         metadata={"doc": ("Snapshot state (enumeration)")},
+    state: SnapshotState = field(
+        metadata={"doc": ("Snapshot state (enumeration)")},
     )

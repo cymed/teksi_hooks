@@ -11,7 +11,6 @@ DATA_DIR = Path(__file__).parent / "data"
 MAPPING_PATH = DATA_DIR / "explicit_mapping.yaml"
 
 
-
 def test_mapping_parser_imports_all_models(
     mappings,
 ) -> None:
@@ -79,9 +78,7 @@ def test_agxx_mapping_parser_imports_model_identity_defaults(
 def test_agxx_mapping_parser_imports_default_extension_identity(
     agxx_mapping,
 ) -> None:
-    identity = agxx_mapping.defaults.identities[
-        "agxx_last_modification"
-    ]
+    identity = agxx_mapping.defaults.identities["agxx_last_modification"]
 
     assert identity.source_attribute == "obj_id"
     assert identity.canonical_attribute == "fk_element"
@@ -101,18 +98,10 @@ def test_agxx_mapping_parser_imports_default_attributes(
 def test_agxx_mapping_parser_imports_default_wi_last_modification(
     agxx_mapping,
 ) -> None:
-    attribute = agxx_mapping.defaults.attributes[
-        "letzte_aenderung_wi"
-    ]
+    attribute = agxx_mapping.defaults.attributes["letzte_aenderung_wi"]
 
-    assert (
-        attribute.canonical_class_id
-        == "agxx_last_modification"
-    )
-    assert (
-        attribute.canonical_attr_id
-        == "ag64_last_modification"
-    )
+    assert attribute.canonical_class_id == "agxx_last_modification"
+    assert attribute.canonical_attr_id == "ag64_last_modification"
     assert attribute.value_list is None
     assert attribute.values == {}
 
@@ -120,18 +109,10 @@ def test_agxx_mapping_parser_imports_default_wi_last_modification(
 def test_agxx_mapping_parser_imports_default_gep_last_modification(
     agxx_mapping,
 ) -> None:
-    attribute = agxx_mapping.defaults.attributes[
-        "letzte_aenderung_gep"
-    ]
+    attribute = agxx_mapping.defaults.attributes["letzte_aenderung_gep"]
 
-    assert (
-        attribute.canonical_class_id
-        == "agxx_last_modification"
-    )
-    assert (
-        attribute.canonical_attr_id
-        == "ag96_last_modification"
-    )
+    assert attribute.canonical_class_id == "agxx_last_modification"
+    assert attribute.canonical_attr_id == "ag96_last_modification"
     assert attribute.value_list is None
     assert attribute.values == {}
 
@@ -139,16 +120,11 @@ def test_agxx_mapping_parser_imports_default_gep_last_modification(
 def test_agxx_mapping_parser_imports_gepknoten_function(
     agxx_mapping,
 ) -> None:
-    cls = agxx_mapping.classes[
-        "GepKnoten"
-    ]
+    cls = agxx_mapping.classes["GepKnoten"]
 
     assert cls.function is not None
     assert cls.function.schema == "tww_app"
-    assert (
-        cls.function.name
-        == "fct_agxx_gepknoten_mapping_jsonb"
-    )
+    assert cls.function.name == "fct_agxx_gepknoten_mapping_jsonb"
     assert cls.function.parameters == {
         "row": "$row",
     }
@@ -161,16 +137,11 @@ def test_agxx_mapping_parser_imports_gepknoten_function(
 def test_agxx_mapping_parser_imports_gephaltung_function(
     agxx_mapping,
 ) -> None:
-    cls = agxx_mapping.classes[
-        "GepHaltung"
-    ]
+    cls = agxx_mapping.classes["GepHaltung"]
 
     assert cls.function is not None
     assert cls.function.schema == "tww_app"
-    assert (
-        cls.function.name
-        == "fct_agxx_gephaltung_mapping_jsonb"
-    )
+    assert cls.function.name == "fct_agxx_gephaltung_mapping_jsonb"
     assert cls.function.parameters == {
         "row": "$row",
     }
@@ -183,15 +154,11 @@ def test_agxx_mapping_parser_imports_gephaltung_function(
 def test_agxx_mapping_parser_imports_ueberlauf_function(
     agxx_mapping,
 ) -> None:
-    cls = agxx_mapping.classes[
-        "Ueberlauf_Foerderaggregat"
-    ]
+    cls = agxx_mapping.classes["Ueberlauf_Foerderaggregat"]
 
     assert cls.function is not None
     assert cls.function.schema == "tww_app"
-    assert cls.function.name == (
-        "fct_agxx_ueberlauf_foerderaggregat_mapping_jsonb"
-    )
+    assert cls.function.name == ("fct_agxx_ueberlauf_foerderaggregat_mapping_jsonb")
     assert cls.function.parameters == {
         "row": "$row",
     }
@@ -204,26 +171,17 @@ def test_agxx_mapping_parser_imports_ueberlauf_function(
 def test_agxx_mapping_parser_imports_attribute_backed_class(
     agxx_mapping,
 ) -> None:
-    cls = agxx_mapping.classes[
-        "VersickerungsbereichAG"
-    ]
+    cls = agxx_mapping.classes["VersickerungsbereichAG"]
 
     assert cls.function is None
     assert "q_check" in cls.attributes
-    assert (
-        "versickerungsmoeglichkeitag"
-        in cls.attributes
-    )
+    assert "versickerungsmoeglichkeitag" in cls.attributes
 
 
 def test_agxx_mapping_parser_imports_empty_identity_with_defaults(
     agxx_mapping,
 ) -> None:
-    identity = agxx_mapping.classes[
-        "GepMassnahme"
-    ].identities[
-        "measure"
-    ]
+    identity = agxx_mapping.classes["GepMassnahme"].identities["measure"]
 
     assert identity.source_attribute == "obj_id"
     assert identity.canonical_attribute == "obj_id"
@@ -232,25 +190,18 @@ def test_agxx_mapping_parser_imports_empty_identity_with_defaults(
 def test_agxx_mapping_parser_imports_extension_identity_override(
     agxx_mapping,
 ) -> None:
-    identity = agxx_mapping.classes[
-        "VersickerungsbereichAG"
-    ].identities[
+    identity = agxx_mapping.classes["VersickerungsbereichAG"].identities[
         "agxx_infiltration_zone"
     ]
 
     assert identity.source_attribute == "obj_id"
-    assert (
-        identity.canonical_attribute
-        == "fk_infiltration_zone"
-    )
+    assert identity.canonical_attribute == "fk_infiltration_zone"
 
 
 def test_agxx_mapping_parser_imports_base_identity(
     agxx_mapping,
 ) -> None:
-    identity = agxx_mapping.classes[
-        "VersickerungsbereichAG"
-    ].identities[
+    identity = agxx_mapping.classes["VersickerungsbereichAG"].identities[
         "infiltration_zone"
     ]
 
@@ -261,58 +212,33 @@ def test_agxx_mapping_parser_imports_base_identity(
 def test_agxx_mapping_parser_imports_building_group_identities(
     agxx_mapping,
 ) -> None:
-    identities = agxx_mapping.classes[
-        "BautenAusserhalbBaugebiet"
-    ].identities
+    identities = agxx_mapping.classes["BautenAusserhalbBaugebiet"].identities
 
-    assert identities[
-        "building_group"
-    ].source_attribute == "obj_id"
-    assert identities[
-        "building_group"
-    ].canonical_attribute == "obj_id"
+    assert identities["building_group"].source_attribute == "obj_id"
+    assert identities["building_group"].canonical_attribute == "obj_id"
 
-    assert identities[
-        "agxx_building_group"
-    ].source_attribute == "obj_id"
-    assert identities[
-        "agxx_building_group"
-    ].canonical_attribute == "fk_building_group"
+    assert identities["agxx_building_group"].source_attribute == "obj_id"
+    assert identities["agxx_building_group"].canonical_attribute == "fk_building_group"
 
 
 def test_agxx_mapping_parser_imports_catchment_totals_identity(
     agxx_mapping,
 ) -> None:
-    identity = agxx_mapping.classes[
-        "SBWEinzugsgebiet"
-    ].identities[
+    identity = agxx_mapping.classes["SBWEinzugsgebiet"].identities[
         "agxx_catchment_area_totals"
     ]
 
     assert identity.source_attribute == "obj_id"
-    assert (
-        identity.canonical_attribute
-        == "fk_catchment_area_totals"
-    )
+    assert identity.canonical_attribute == "fk_catchment_area_totals"
 
 
 def test_agxx_mapping_parser_imports_agxx_extension_attribute_mapping(
     agxx_mapping,
 ) -> None:
-    attribute = agxx_mapping.classes[
-        "VersickerungsbereichAG"
-    ].attributes[
-        "q_check"
-    ]
+    attribute = agxx_mapping.classes["VersickerungsbereichAG"].attributes["q_check"]
 
-    assert (
-        attribute.canonical_class_id
-        == "agxx_infiltration_zone"
-    )
-    assert (
-        attribute.canonical_attr_id
-        == "ag96_q_check"
-    )
+    assert attribute.canonical_class_id == "agxx_infiltration_zone"
+    assert attribute.canonical_attr_id == "ag96_q_check"
     assert attribute.value_list is None
     assert attribute.values == {}
 
@@ -320,20 +246,12 @@ def test_agxx_mapping_parser_imports_agxx_extension_attribute_mapping(
 def test_agxx_mapping_parser_imports_base_tww_attribute_mapping(
     agxx_mapping,
 ) -> None:
-    attribute = agxx_mapping.classes[
-        "VersickerungsbereichAG"
-    ].attributes[
+    attribute = agxx_mapping.classes["VersickerungsbereichAG"].attributes[
         "versickerungsmoeglichkeitag"
     ]
 
-    assert (
-        attribute.canonical_class_id
-        == "infiltration_zone"
-    )
-    assert (
-        attribute.canonical_attr_id
-        == "infiltration_capacity"
-    )
+    assert attribute.canonical_class_id == "infiltration_zone"
+    assert attribute.canonical_attr_id == "infiltration_capacity"
     assert attribute.value_list is not None
     assert attribute.values == {}
 
@@ -341,101 +259,67 @@ def test_agxx_mapping_parser_imports_base_tww_attribute_mapping(
 def test_agxx_mapping_parser_imports_value_list_mapping(
     agxx_mapping,
 ) -> None:
-    value_list = agxx_mapping.classes[
-        "GepMassnahme"
-    ].attributes[
-        "kategorie"
-    ].value_list
+    value_list = agxx_mapping.classes["GepMassnahme"].attributes["kategorie"].value_list
 
     assert value_list is not None
     assert value_list.schema == "tww_vl"
-    assert (
-        value_list.relation
-        == "measure_category_import_rel_agxx"
-    )
-    assert (
-        value_list.mapping_attribute
-        == "value_de"
-    )
+    assert value_list.relation == "measure_category_import_rel_agxx"
+    assert value_list.mapping_attribute == "value_de"
 
 
 def test_agxx_mapping_parser_imports_current_drainage_value_list(
     agxx_mapping,
 ) -> None:
-    value_list = agxx_mapping.classes[
-        "Einzugsgebiet"
-    ].attributes[
-        "entwaesserungssystemag_ist"
-    ].value_list
+    value_list = (
+        agxx_mapping.classes["Einzugsgebiet"]
+        .attributes["entwaesserungssystemag_ist"]
+        .value_list
+    )
 
     assert value_list is not None
     assert value_list.schema == "tww_vl"
     assert value_list.relation == (
-        "catchment_area_"
-        "drainage_system_current_import_rel_agxx"
+        "catchment_area_drainage_system_current_import_rel_agxx"
     )
-    assert (
-        value_list.mapping_attribute
-        == "value_de"
-    )
+    assert value_list.mapping_attribute == "value_de"
 
 
 def test_agxx_mapping_parser_imports_planned_drainage_value_list(
     agxx_mapping,
 ) -> None:
-    value_list = agxx_mapping.classes[
-        "Einzugsgebiet"
-    ].attributes[
-        "entwaesserungssystemag_geplant"
-    ].value_list
+    value_list = (
+        agxx_mapping.classes["Einzugsgebiet"]
+        .attributes["entwaesserungssystemag_geplant"]
+        .value_list
+    )
 
     assert value_list is not None
     assert value_list.schema == "tww_vl"
     assert value_list.relation == (
-        "catchment_area_"
-        "drainage_system_planned_import_rel_agxx"
+        "catchment_area_drainage_system_planned_import_rel_agxx"
     )
-    assert (
-        value_list.mapping_attribute
-        == "value_de"
-    )
+    assert value_list.mapping_attribute == "value_de"
 
 
 def test_agxx_mapping_parser_imports_sbw_targets(
     agxx_mapping,
 ) -> None:
-    cls = agxx_mapping.classes[
-        "SBWEinzugsgebiet"
-    ]
+    cls = agxx_mapping.classes["SBWEinzugsgebiet"]
 
     expected_attributes = {
-        "fremdwasseranfall_geplant": (
-            "ag96_sewer_infiltration_water_dim"
-        ),
-        "schmutzabwasseranfall_geplant": (
-            "ag96_waste_water_production_dim"
-        ),
-        "perimeter_ist": (
-            "ag96_perimeter_geometry"
-        ),
+        "fremdwasseranfall_geplant": ("ag96_sewer_infiltration_water_dim"),
+        "schmutzabwasseranfall_geplant": ("ag96_waste_water_production_dim"),
+        "perimeter_ist": ("ag96_perimeter_geometry"),
     }
 
     for (
         source_attribute,
         canonical_attribute,
     ) in expected_attributes.items():
-        mapping = cls.attributes[
-            source_attribute
-        ]
+        mapping = cls.attributes[source_attribute]
 
-        assert (
-            mapping.canonical_class_id
-            == "agxx_catchment_area_totals"
-        )
-        assert (
-            mapping.canonical_attr_id
-            == canonical_attribute
-        )
+        assert mapping.canonical_class_id == "agxx_catchment_area_totals"
+        assert mapping.canonical_attr_id == canonical_attribute
 
 
 def test_sia405_mapping_parser_imports_default_relations(
@@ -454,19 +338,11 @@ def test_sia405_mapping_parser_imports_default_relations(
 def test_sia405_mapping_parser_imports_provider_relation(
     sia405_mapping,
 ) -> None:
-    relation = sia405_mapping.defaults.relations[
-        "fk_provider"
-    ]
+    relation = sia405_mapping.defaults.relations["fk_provider"]
 
     assert relation.local_attribute == "fk_provider"
-    assert (
-        relation.referenced_class_id
-        == "organisation"
-    )
-    assert (
-        relation.referenced_attribute_id
-        == "obj_id"
-    )
+    assert relation.referenced_class_id == "organisation"
+    assert relation.referenced_attribute_id == "obj_id"
     assert relation.localisations == {
         "de": "DatenbewirtschafterRef",
     }
@@ -475,19 +351,11 @@ def test_sia405_mapping_parser_imports_provider_relation(
 def test_sia405_mapping_parser_imports_owner_relation(
     sia405_mapping,
 ) -> None:
-    relation = sia405_mapping.defaults.relations[
-        "fk_owner"
-    ]
+    relation = sia405_mapping.defaults.relations["fk_owner"]
 
     assert relation.local_attribute == "fk_owner"
-    assert (
-        relation.referenced_class_id
-        == "organisation"
-    )
-    assert (
-        relation.referenced_attribute_id
-        == "obj_id"
-    )
+    assert relation.referenced_class_id == "organisation"
+    assert relation.referenced_attribute_id == "obj_id"
     assert relation.localisations == {
         "de": "EigentuemerRef",
     }
@@ -496,9 +364,7 @@ def test_sia405_mapping_parser_imports_owner_relation(
 def test_sia405_mapping_parser_imports_reach_relations(
     sia405_mapping,
 ) -> None:
-    cls = sia405_mapping.classes[
-        "reach"
-    ]
+    cls = sia405_mapping.classes["reach"]
 
     assert set(
         cls.relations,
@@ -511,24 +377,11 @@ def test_sia405_mapping_parser_imports_reach_relations(
 def test_sia405_mapping_parser_imports_reach_point_from_relation(
     sia405_mapping,
 ) -> None:
-    relation = sia405_mapping.classes[
-        "reach"
-    ].relations[
-        "fk_reach_point_from"
-    ]
+    relation = sia405_mapping.classes["reach"].relations["fk_reach_point_from"]
 
-    assert (
-        relation.local_attribute
-        == "fk_reach_point_from"
-    )
-    assert (
-        relation.referenced_class_id
-        == "reach_point"
-    )
-    assert (
-        relation.referenced_attribute_id
-        == "obj_id"
-    )
+    assert relation.local_attribute == "fk_reach_point_from"
+    assert relation.referenced_class_id == "reach_point"
+    assert relation.referenced_attribute_id == "obj_id"
     assert relation.localisations == {
         "de": "HaltungspunktVonRef",
     }
@@ -537,24 +390,11 @@ def test_sia405_mapping_parser_imports_reach_point_from_relation(
 def test_sia405_mapping_parser_imports_reach_point_to_relation(
     sia405_mapping,
 ) -> None:
-    relation = sia405_mapping.classes[
-        "reach"
-    ].relations[
-        "fk_reach_point_to"
-    ]
+    relation = sia405_mapping.classes["reach"].relations["fk_reach_point_to"]
 
-    assert (
-        relation.local_attribute
-        == "fk_reach_point_to"
-    )
-    assert (
-        relation.referenced_class_id
-        == "reach_point"
-    )
-    assert (
-        relation.referenced_attribute_id
-        == "obj_id"
-    )
+    assert relation.local_attribute == "fk_reach_point_to"
+    assert relation.referenced_class_id == "reach_point"
+    assert relation.referenced_attribute_id == "obj_id"
     assert relation.localisations == {
         "de": "HaltungspunktNachRef",
     }
@@ -581,12 +421,7 @@ def test_mapping_parser_imports_model_inheritance(
     model_id: str,
     parent_id: str,
 ) -> None:
-    assert (
-        mappings[
-            model_id
-        ].defaults.inherit_from
-        == parent_id
-    )
+    assert mappings[model_id].defaults.inherit_from == parent_id
 
 
 def test_mapping_parser_rejects_obsolete_targets_syntax(
@@ -710,9 +545,7 @@ def test_mapping_parser_rejects_value_list_without_mapping_attribute(
                                         "target": {
                                             "class": "target_class",
                                             "attribute": "value",
-                                            "value_list": (
-                                                "tww_vl.lookup"
-                                            ),
+                                            "value_list": ("tww_vl.lookup"),
                                         }
                                     }
                                 },

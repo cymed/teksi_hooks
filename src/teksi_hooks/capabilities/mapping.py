@@ -179,13 +179,9 @@ class ModelMappingCapability:
         """
 
         try:
-            return self.mapping.classes[
-                class_id
-            ]
+            return self.mapping.classes[class_id]
         except KeyError as exception:
-            raise KeyError(
-                f"Unknown class: {class_id!r}."
-            ) from exception
+            raise KeyError(f"Unknown class: {class_id!r}.") from exception
 
     def try_class_definition(
         self,
@@ -226,14 +222,10 @@ class ModelMappingCapability:
         )
 
         try:
-            return class_mapping.attributes[
-                attribute_name
-            ]
+            return class_mapping.attributes[attribute_name]
         except KeyError as exception:
             raise KeyError(
-                "Unknown attribute "
-                f"{attribute_name!r} for class "
-                f"{class_id!r}."
+                f"Unknown attribute {attribute_name!r} for class {class_id!r}."
             ) from exception
 
     def try_attribute_definition(
@@ -291,9 +283,7 @@ class ModelMappingCapability:
         )
 
         try:
-            return attribute_mapping.values[
-                value
-            ]
+            return attribute_mapping.values[value]
         except KeyError as exception:
             raise KeyError(
                 "Unknown value "
@@ -314,11 +304,9 @@ class ModelMappingCapability:
         `AttributeMapping.value_list` and are not returned by this method.
         """
 
-        attribute_mapping = (
-            self.try_attribute_definition(
-                class_id,
-                attribute_name,
-            )
+        attribute_mapping = self.try_attribute_definition(
+            class_id,
+            attribute_name,
         )
 
         if attribute_mapping is None:
@@ -362,16 +350,13 @@ class ModelMappingCapability:
             return identity
 
         if (
-            class_mapping.canonical_class_id
-            == canonical_class_id
+            class_mapping.canonical_class_id == canonical_class_id
             and class_mapping.identity is not None
         ):
             return class_mapping.identity
 
         raise KeyError(
-            "Unknown target identity "
-            f"{canonical_class_id!r} for class "
-            f"{class_id!r}."
+            f"Unknown target identity {canonical_class_id!r} for class {class_id!r}."
         )
 
     def try_identity_definition(
@@ -397,10 +382,7 @@ class ModelMappingCapability:
         if identity is not None:
             return identity
 
-        if (
-            class_mapping.canonical_class_id
-            == canonical_class_id
-        ):
+        if class_mapping.canonical_class_id == canonical_class_id:
             return class_mapping.identity
 
         return None
@@ -432,14 +414,10 @@ class ModelMappingCapability:
         )
 
         try:
-            return class_mapping.relations[
-                relation_id
-            ]
+            return class_mapping.relations[relation_id]
         except KeyError as exception:
             raise KeyError(
-                "Unknown relation "
-                f"{relation_id!r} for class "
-                f"{class_id!r}."
+                f"Unknown relation {relation_id!r} for class {class_id!r}."
             ) from exception
 
     def try_relation_definition(
@@ -514,22 +492,16 @@ class EffectiveModelMappingCapability:
         Return the effective class mapping.
         """
 
-        explicit = (
-            self.explicit_mapping
-            .try_class_definition(
-                class_id,
-            )
+        explicit = self.explicit_mapping.try_class_definition(
+            class_id,
         )
 
         if explicit is not None:
             return explicit
 
         if self.implicit_mapping is None:
-            return (
-                self.explicit_mapping
-                .class_definition(
-                    class_id,
-                )
+            return self.explicit_mapping.class_definition(
+                class_id,
             )
 
         return self.implicit_mapping.class_definition(
@@ -544,11 +516,8 @@ class EffectiveModelMappingCapability:
         Return the effective class mapping if available.
         """
 
-        explicit = (
-            self.explicit_mapping
-            .try_class_definition(
-                class_id,
-            )
+        explicit = self.explicit_mapping.try_class_definition(
+            class_id,
         )
 
         if explicit is not None:
@@ -557,11 +526,8 @@ class EffectiveModelMappingCapability:
         if self.implicit_mapping is None:
             return None
 
-        return (
-            self.implicit_mapping
-            .try_class_definition(
-                class_id,
-            )
+        return self.implicit_mapping.try_class_definition(
+            class_id,
         )
 
     def attribute_definition(
@@ -573,32 +539,23 @@ class EffectiveModelMappingCapability:
         Return the effective attribute mapping.
         """
 
-        explicit = (
-            self.explicit_mapping
-            .try_attribute_definition(
-                class_id,
-                attribute_name,
-            )
+        explicit = self.explicit_mapping.try_attribute_definition(
+            class_id,
+            attribute_name,
         )
 
         if explicit is not None:
             return explicit
 
         if self.implicit_mapping is None:
-            return (
-                self.explicit_mapping
-                .attribute_definition(
-                    class_id,
-                    attribute_name,
-                )
-            )
-
-        return (
-            self.implicit_mapping
-            .attribute_definition(
+            return self.explicit_mapping.attribute_definition(
                 class_id,
                 attribute_name,
             )
+
+        return self.implicit_mapping.attribute_definition(
+            class_id,
+            attribute_name,
         )
 
     def try_attribute_definition(
@@ -610,12 +567,9 @@ class EffectiveModelMappingCapability:
         Return the effective attribute mapping if available.
         """
 
-        explicit = (
-            self.explicit_mapping
-            .try_attribute_definition(
-                class_id,
-                attribute_name,
-            )
+        explicit = self.explicit_mapping.try_attribute_definition(
+            class_id,
+            attribute_name,
         )
 
         if explicit is not None:
@@ -624,12 +578,9 @@ class EffectiveModelMappingCapability:
         if self.implicit_mapping is None:
             return None
 
-        return (
-            self.implicit_mapping
-            .try_attribute_definition(
-                class_id,
-                attribute_name,
-            )
+        return self.implicit_mapping.try_attribute_definition(
+            class_id,
+            attribute_name,
         )
 
     def value_mapping(
@@ -642,26 +593,20 @@ class EffectiveModelMappingCapability:
         Return the effective static value mapping.
         """
 
-        explicit = (
-            self.explicit_mapping
-            .try_value_mapping(
-                class_id,
-                attribute_name,
-                value,
-            )
+        explicit = self.explicit_mapping.try_value_mapping(
+            class_id,
+            attribute_name,
+            value,
         )
 
         if explicit is not None:
             return explicit
 
         if self.implicit_mapping is None:
-            return (
-                self.explicit_mapping
-                .value_mapping(
-                    class_id,
-                    attribute_name,
-                    value,
-                )
+            return self.explicit_mapping.value_mapping(
+                class_id,
+                attribute_name,
+                value,
             )
 
         return self.implicit_mapping.value_mapping(
@@ -680,13 +625,10 @@ class EffectiveModelMappingCapability:
         Return the effective static value mapping if available.
         """
 
-        explicit = (
-            self.explicit_mapping
-            .try_value_mapping(
-                class_id,
-                attribute_name,
-                value,
-            )
+        explicit = self.explicit_mapping.try_value_mapping(
+            class_id,
+            attribute_name,
+            value,
         )
 
         if explicit is not None:
@@ -695,13 +637,10 @@ class EffectiveModelMappingCapability:
         if self.implicit_mapping is None:
             return None
 
-        return (
-            self.implicit_mapping
-            .try_value_mapping(
-                class_id,
-                attribute_name,
-                value,
-            )
+        return self.implicit_mapping.try_value_mapping(
+            class_id,
+            attribute_name,
+            value,
         )
 
     def identity_definition(
@@ -713,32 +652,23 @@ class EffectiveModelMappingCapability:
         Return the effective target identity.
         """
 
-        explicit = (
-            self.explicit_mapping
-            .try_identity_definition(
-                class_id,
-                canonical_class_id,
-            )
+        explicit = self.explicit_mapping.try_identity_definition(
+            class_id,
+            canonical_class_id,
         )
 
         if explicit is not None:
             return explicit
 
         if self.implicit_mapping is None:
-            return (
-                self.explicit_mapping
-                .identity_definition(
-                    class_id,
-                    canonical_class_id,
-                )
-            )
-
-        return (
-            self.implicit_mapping
-            .identity_definition(
+            return self.explicit_mapping.identity_definition(
                 class_id,
                 canonical_class_id,
             )
+
+        return self.implicit_mapping.identity_definition(
+            class_id,
+            canonical_class_id,
         )
 
     def try_identity_definition(
@@ -750,12 +680,9 @@ class EffectiveModelMappingCapability:
         Return the effective target identity if available.
         """
 
-        explicit = (
-            self.explicit_mapping
-            .try_identity_definition(
-                class_id,
-                canonical_class_id,
-            )
+        explicit = self.explicit_mapping.try_identity_definition(
+            class_id,
+            canonical_class_id,
         )
 
         if explicit is not None:
@@ -764,12 +691,9 @@ class EffectiveModelMappingCapability:
         if self.implicit_mapping is None:
             return None
 
-        return (
-            self.implicit_mapping
-            .try_identity_definition(
-                class_id,
-                canonical_class_id,
-            )
+        return self.implicit_mapping.try_identity_definition(
+            class_id,
+            canonical_class_id,
         )
 
     def relation_definition(
@@ -781,32 +705,23 @@ class EffectiveModelMappingCapability:
         Return the effective relation mapping.
         """
 
-        explicit = (
-            self.explicit_mapping
-            .try_relation_definition(
-                class_id,
-                relation_id,
-            )
+        explicit = self.explicit_mapping.try_relation_definition(
+            class_id,
+            relation_id,
         )
 
         if explicit is not None:
             return explicit
 
         if self.implicit_mapping is None:
-            return (
-                self.explicit_mapping
-                .relation_definition(
-                    class_id,
-                    relation_id,
-                )
-            )
-
-        return (
-            self.implicit_mapping
-            .relation_definition(
+            return self.explicit_mapping.relation_definition(
                 class_id,
                 relation_id,
             )
+
+        return self.implicit_mapping.relation_definition(
+            class_id,
+            relation_id,
         )
 
     def try_relation_definition(
@@ -818,12 +733,9 @@ class EffectiveModelMappingCapability:
         Return the effective relation mapping if available.
         """
 
-        explicit = (
-            self.explicit_mapping
-            .try_relation_definition(
-                class_id,
-                relation_id,
-            )
+        explicit = self.explicit_mapping.try_relation_definition(
+            class_id,
+            relation_id,
         )
 
         if explicit is not None:
@@ -832,12 +744,9 @@ class EffectiveModelMappingCapability:
         if self.implicit_mapping is None:
             return None
 
-        return (
-            self.implicit_mapping
-            .try_relation_definition(
-                class_id,
-                relation_id,
-            )
+        return self.implicit_mapping.try_relation_definition(
+            class_id,
+            relation_id,
         )
 
     @property

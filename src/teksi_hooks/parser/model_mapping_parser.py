@@ -138,8 +138,7 @@ class ModelMappingParser:
 
         if not raw_models:
             raise ValueError(
-                "Mapping document must define at least one model "
-                "under `models`."
+                "Mapping document must define at least one model under `models`."
             )
 
         parsed = {
@@ -458,9 +457,7 @@ class ModelMappingParser:
 
         relations = self._parse_relations(
             raw_relations,
-            default_target_attribute=(
-                class_identity.canonical_attribute
-            ),
+            default_target_attribute=(class_identity.canonical_attribute),
             path=f"{path}.relations",
         )
 
@@ -470,10 +467,7 @@ class ModelMappingParser:
             if attribute.canonical_class_id is not None
         )
 
-        missing_identities = (
-            target_classes
-            - identities.keys()
-        )
+        missing_identities = target_classes - identities.keys()
 
         if missing_identities:
             raise ValueError(
@@ -489,10 +483,7 @@ class ModelMappingParser:
             path=f"{path}.class",
         )
 
-        if (
-            canonical_class_id is not None
-            and canonical_class_id not in identities
-        ):
+        if canonical_class_id is not None and canonical_class_id not in identities:
             raise ValueError(
                 f"{path}.class refers to canonical class "
                 f"{canonical_class_id!r}, but no identity is "
@@ -547,9 +538,7 @@ class ModelMappingParser:
                 path=f"{path}.<target_class_id>",
             )
 
-            identity_path = (
-                f"{path}.{target_class_id}"
-            )
+            identity_path = f"{path}.{target_class_id}"
 
             identity_data = self._mapping(
                 raw_identity or {},
@@ -560,33 +549,21 @@ class ModelMappingParser:
                 identity_data.get(
                     "source_attribute",
                 ),
-                path=(
-                    f"{identity_path}."
-                    "source_attribute"
-                ),
-                default=(
-                    default_identity.source_attribute
-                ),
+                path=(f"{identity_path}.source_attribute"),
+                default=(default_identity.source_attribute),
             )
 
             target_attribute = self._optional_string(
                 identity_data.get(
                     "target_attribute",
                 ),
-                path=(
-                    f"{identity_path}."
-                    "target_attribute"
-                ),
-                default=(
-                    default_identity.canonical_attribute
-                ),
+                path=(f"{identity_path}.target_attribute"),
+                default=(default_identity.canonical_attribute),
             )
 
-            identities[target_class_id] = (
-                CanonicalIdentityMapping(
-                    source_attribute=source_attribute,
-                    canonical_attribute=target_attribute,
-                )
+            identities[target_class_id] = CanonicalIdentityMapping(
+                source_attribute=source_attribute,
+                canonical_attribute=target_attribute,
             )
 
         return identities
@@ -617,16 +594,11 @@ class ModelMappingParser:
                 ),
                 raw=self._mapping(
                     raw_attribute or {},
-                    path=(
-                        f"{path}.{attribute_name}"
-                    ),
+                    path=(f"{path}.{attribute_name}"),
                 ),
-                path=(
-                    f"{path}.{attribute_name}"
-                ),
+                path=(f"{path}.{attribute_name}"),
             )
-            for attribute_name, raw_attribute
-            in raw_attributes.items()
+            for attribute_name, raw_attribute in raw_attributes.items()
         }
 
     def _parse_attribute(
@@ -660,9 +632,7 @@ class ModelMappingParser:
         )
 
         if not target:
-            raise ValueError(
-                f"{path} must define a non-empty `target`."
-            )
+            raise ValueError(f"{path} must define a non-empty `target`.")
 
         canonical_class_id = self._required_string(
             target.get(
@@ -671,13 +641,11 @@ class ModelMappingParser:
             path=f"{path}.target.class",
         )
 
-        canonical_attribute_id = (
-            self._required_string(
-                target.get(
-                    "attribute",
-                ),
-                path=f"{path}.target.attribute",
-            )
+        canonical_attribute_id = self._required_string(
+            target.get(
+                "attribute",
+            ),
+            path=f"{path}.target.attribute",
         )
 
         value_list = self._parse_value_list(
@@ -712,9 +680,7 @@ class ModelMappingParser:
 
         return AttributeMapping(
             canonical_class_id=canonical_class_id,
-            canonical_attr_id=(
-                canonical_attribute_id
-            ),
+            canonical_attr_id=(canonical_attribute_id),
             value_list=value_list,
         )
 
@@ -735,8 +701,7 @@ class ModelMappingParser:
         if raw is None:
             if mapping_attribute is not None:
                 raise ValueError(
-                    f"{path}.mapping_attribute requires "
-                    f"{path}.value_list."
+                    f"{path}.mapping_attribute requires {path}.value_list."
                 )
 
             return None
@@ -761,8 +726,7 @@ class ModelMappingParser:
 
         if not schema or not relation:
             raise ValueError(
-                f"{path}.value_list must define a non-empty "
-                "schema and relation."
+                f"{path}.value_list must define a non-empty schema and relation."
             )
 
         return ValueListMapping(
@@ -801,9 +765,7 @@ class ModelMappingParser:
                 path=f"{path}.<local_attribute>",
             )
 
-            relation_path = (
-                f"{path}.{local_attribute}"
-            )
+            relation_path = f"{path}.{local_attribute}"
 
             relation_data = self._mapping(
                 raw_relation or {},
@@ -818,44 +780,29 @@ class ModelMappingParser:
             )
 
             if not target:
-                raise ValueError(
-                    f"{relation_path} must define a "
-                    "non-empty `target`."
-                )
+                raise ValueError(f"{relation_path} must define a non-empty `target`.")
 
             target_class_id = self._required_string(
                 target.get(
                     "class",
                 ),
-                path=(
-                    f"{relation_path}.target.class"
-                ),
+                path=(f"{relation_path}.target.class"),
             )
 
-            target_attribute_id = (
-                self._optional_string(
-                    target.get(
-                        "attribute",
-                    ),
-                    path=(
-                        f"{relation_path}.target."
-                        "attribute"
-                    ),
-                    default=(
-                        default_target_attribute
-                    ),
-                )
-            )
-
-            target_unknown_keys = (
-                set(
-                    target,
-                )
-                - {
-                    "class",
+            target_attribute_id = self._optional_string(
+                target.get(
                     "attribute",
-                }
+                ),
+                path=(f"{relation_path}.target.attribute"),
+                default=(default_target_attribute),
             )
+
+            target_unknown_keys = set(
+                target,
+            ) - {
+                "class",
+                "attribute",
+            }
 
             if target_unknown_keys:
                 raise ValueError(
@@ -872,15 +819,12 @@ class ModelMappingParser:
                 path=f"{relation_path}.aliases",
             )
 
-            relation_unknown_keys = (
-                set(
-                    relation_data,
-                )
-                - {
-                    "target",
-                    "aliases",
-                }
-            )
+            relation_unknown_keys = set(
+                relation_data,
+            ) - {
+                "target",
+                "aliases",
+            }
 
             if relation_unknown_keys:
                 raise ValueError(
@@ -888,17 +832,11 @@ class ModelMappingParser:
                     f"{tuple(sorted(relation_unknown_keys))!r}."
                 )
 
-            relations[local_attribute] = (
-                RelationMapping(
-                    local_attribute=local_attribute,
-                    referenced_class_id=(
-                        target_class_id
-                    ),
-                    referenced_attribute_id=(
-                        target_attribute_id
-                    ),
-                    aliases=aliases,
-                )
+            relations[local_attribute] = RelationMapping(
+                local_attribute=local_attribute,
+                referenced_class_id=(target_class_id),
+                referenced_attribute_id=(target_attribute_id),
+                aliases=aliases,
             )
 
         return relations
@@ -929,11 +867,9 @@ class ModelMappingParser:
                 path=f"{path}.<language>",
             )
 
-            aliases[language] = (
-                self._required_string(
-                    alias,
-                    path=f"{path}.{language}",
-                )
+            aliases[language] = self._required_string(
+                alias,
+                path=f"{path}.{language}",
             )
 
         return aliases
@@ -968,36 +904,25 @@ class ModelMappingParser:
         parameters = {
             self._required_string(
                 parameter,
-                path=(
-                    f"{path}.parameters."
-                    "<parameter>"
-                ),
+                path=(f"{path}.parameters.<parameter>"),
             ): self._required_string(
                 source,
-                path=(
-                    f"{path}.parameters."
-                    f"{parameter}"
-                ),
+                path=(f"{path}.parameters.{parameter}"),
             )
-            for parameter, source
-            in raw_parameters.items()
+            for parameter, source in raw_parameters.items()
         }
 
-        unknown_keys = (
-            set(
-                function_data,
-            )
-            - {
-                "schema",
-                "name",
-                "parameters",
-            }
-        )
+        unknown_keys = set(
+            function_data,
+        ) - {
+            "schema",
+            "name",
+            "parameters",
+        }
 
         if unknown_keys:
             raise ValueError(
-                f"{path} contains unsupported keys: "
-                f"{tuple(sorted(unknown_keys))!r}."
+                f"{path} contains unsupported keys: {tuple(sorted(unknown_keys))!r}."
             )
 
         return FunctionMapping(
@@ -1030,18 +955,12 @@ class ModelMappingParser:
 
         for model_id, mapping in mappings.items():
             parent_id = (
-                mapping.defaults.inherit_from
-                if mapping.defaults is not None
-                else None
+                mapping.defaults.inherit_from if mapping.defaults is not None else None
             )
 
-            if (
-                parent_id is not None
-                and parent_id not in mappings
-            ):
+            if parent_id is not None and parent_id not in mappings:
                 raise KeyError(
-                    f"Model mapping {model_id!r} inherits "
-                    f"unknown model {parent_id!r}."
+                    f"Model mapping {model_id!r} inherits unknown model {parent_id!r}."
                 )
 
         visited: set[str] = set()
@@ -1076,9 +995,7 @@ class ModelMappingParser:
 
             mapping = mappings[model_id]
             parent_id = (
-                mapping.defaults.inherit_from
-                if mapping.defaults is not None
-                else None
+                mapping.defaults.inherit_from if mapping.defaults is not None else None
             )
 
             if parent_id is not None:
@@ -1110,10 +1027,7 @@ class ModelMappingParser:
             value,
             Mapping,
         ):
-            raise TypeError(
-                f"{path} must be a mapping, got "
-                f"{type(value)!r}."
-            )
+            raise TypeError(f"{path} must be a mapping, got {type(value)!r}.")
 
         return value
 
@@ -1131,16 +1045,12 @@ class ModelMappingParser:
             value,
             str,
         ):
-            raise TypeError(
-                f"{path} must be a string."
-            )
+            raise TypeError(f"{path} must be a string.")
 
         normalized = value.strip()
 
         if not normalized:
-            raise ValueError(
-                f"{path} must not be empty."
-            )
+            raise ValueError(f"{path} must not be empty.")
 
         return normalized
 
@@ -1192,8 +1102,6 @@ class ModelMappingParser:
             value,
             bool,
         ):
-            raise TypeError(
-                f"{path} must be a boolean."
-            )
+            raise TypeError(f"{path} must be a boolean.")
 
         return value

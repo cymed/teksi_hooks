@@ -37,9 +37,7 @@ class FakeImplicitModelMappingCapability:
 def dictionary() -> FakeImplicitModelMappingCapability:
     return FakeImplicitModelMappingCapability(
         table_mapping={
-            "Abwasserbauwerk": (
-                "wastewater_structure"
-            ),
+            "Abwasserbauwerk": ("wastewater_structure"),
             "Haltung": "reach",
             "Organisation": "organisation",
         },
@@ -127,14 +125,9 @@ def test_model_mapping_resolver_imports_all_classes(
 def test_model_mapping_resolver_maps_source_class_to_canonical_class(
     resolved_mapping,
 ) -> None:
-    cls = resolved_mapping.classes[
-        "Abwasserbauwerk"
-    ]
+    cls = resolved_mapping.classes["Abwasserbauwerk"]
 
-    assert (
-        cls.canonical_class_id
-        == "wastewater_structure"
-    )
+    assert cls.canonical_class_id == "wastewater_structure"
 
 
 def test_model_mapping_resolver_uses_default_identity(
@@ -142,22 +135,14 @@ def test_model_mapping_resolver_uses_default_identity(
 ) -> None:
     identity = resolved_mapping.defaults.identity
 
-    assert (
-        identity.source_attribute
-        == "t_ili_tid"
-    )
-    assert (
-        identity.canonical_attribute
-        == "obj_id"
-    )
+    assert identity.source_attribute == "t_ili_tid"
+    assert identity.canonical_attribute == "obj_id"
 
 
 def test_model_mapping_resolver_adds_class_identity(
     resolved_mapping,
 ) -> None:
-    cls = resolved_mapping.classes[
-        "Abwasserbauwerk"
-    ]
+    cls = resolved_mapping.classes["Abwasserbauwerk"]
 
     assert set(
         cls.identities,
@@ -165,31 +150,24 @@ def test_model_mapping_resolver_adds_class_identity(
         "wastewater_structure",
     }
 
-    identity = cls.identities[
-        "wastewater_structure"
-    ]
+    identity = cls.identities["wastewater_structure"]
 
-    assert (
-        identity.source_attribute
-        == "t_ili_tid"
-    )
-    assert (
-        identity.canonical_attribute
-        == "obj_id"
-    )
+    assert identity.source_attribute == "t_ili_tid"
+    assert identity.canonical_attribute == "obj_id"
 
 
 def test_model_mapping_resolver_reuses_default_identity_for_classes(
     resolved_mapping,
 ) -> None:
-    default_identity = (
-        resolved_mapping.defaults.identity
-    )
+    default_identity = resolved_mapping.defaults.identity
 
     for cls in resolved_mapping.classes.values():
-        assert len(
-            cls.identities,
-        ) == 1
+        assert (
+            len(
+                cls.identities,
+            )
+            == 1
+        )
 
         class_identity = next(
             iter(
@@ -197,18 +175,13 @@ def test_model_mapping_resolver_reuses_default_identity_for_classes(
             )
         )
 
-        assert (
-            class_identity
-            == default_identity
-        )
+        assert class_identity == default_identity
 
 
 def test_model_mapping_resolver_imports_class_attributes(
     resolved_mapping,
 ) -> None:
-    cls = resolved_mapping.classes[
-        "Abwasserbauwerk"
-    ]
+    cls = resolved_mapping.classes["Abwasserbauwerk"]
 
     assert set(
         cls.attributes,
@@ -221,20 +194,10 @@ def test_model_mapping_resolver_imports_class_attributes(
 def test_model_mapping_resolver_maps_literal_attribute(
     resolved_mapping,
 ) -> None:
-    attribute = resolved_mapping.classes[
-        "Abwasserbauwerk"
-    ].attributes[
-        "Bezeichnung"
-    ]
+    attribute = resolved_mapping.classes["Abwasserbauwerk"].attributes["Bezeichnung"]
 
-    assert (
-        attribute.canonical_class_id
-        == "wastewater_structure"
-    )
-    assert (
-        attribute.canonical_attr_id
-        == "identifier"
-    )
+    assert attribute.canonical_class_id == "wastewater_structure"
+    assert attribute.canonical_attr_id == "identifier"
     assert attribute.value_list is None
     assert attribute.values == {}
 
@@ -242,20 +205,10 @@ def test_model_mapping_resolver_maps_literal_attribute(
 def test_model_mapping_resolver_maps_foreign_key_attribute(
     resolved_mapping,
 ) -> None:
-    attribute = resolved_mapping.classes[
-        "Abwasserbauwerk"
-    ].attributes[
-        "EigentuemerRef"
-    ]
+    attribute = resolved_mapping.classes["Abwasserbauwerk"].attributes["EigentuemerRef"]
 
-    assert (
-        attribute.canonical_class_id
-        == "wastewater_structure"
-    )
-    assert (
-        attribute.canonical_attr_id
-        == "fk_owner"
-    )
+    assert attribute.canonical_class_id == "wastewater_structure"
+    assert attribute.canonical_attr_id == "fk_owner"
     assert attribute.value_list is None
     assert attribute.values == {}
 
@@ -263,34 +216,16 @@ def test_model_mapping_resolver_maps_foreign_key_attribute(
 def test_model_mapping_resolver_maps_reach_point_references(
     resolved_mapping,
 ) -> None:
-    attributes = resolved_mapping.classes[
-        "Haltung"
-    ].attributes
+    attributes = resolved_mapping.classes["Haltung"].attributes
 
-    from_mapping = attributes[
-        "HaltungspunktVonRef"
-    ]
-    to_mapping = attributes[
-        "HaltungspunktNachRef"
-    ]
+    from_mapping = attributes["HaltungspunktVonRef"]
+    to_mapping = attributes["HaltungspunktNachRef"]
 
-    assert (
-        from_mapping.canonical_class_id
-        == "reach"
-    )
-    assert (
-        from_mapping.canonical_attr_id
-        == "fk_reach_point_from"
-    )
+    assert from_mapping.canonical_class_id == "reach"
+    assert from_mapping.canonical_attr_id == "fk_reach_point_from"
 
-    assert (
-        to_mapping.canonical_class_id
-        == "reach"
-    )
-    assert (
-        to_mapping.canonical_attr_id
-        == "fk_reach_point_to"
-    )
+    assert to_mapping.canonical_class_id == "reach"
+    assert to_mapping.canonical_attr_id == "fk_reach_point_to"
 
 
 def test_model_mapping_resolver_does_not_add_function_mapping(
@@ -328,33 +263,16 @@ def test_model_mapping_resolver_supports_custom_identity_attributes(
         canonical_identity_attribute="canonical_oid",
     ).resolve()
 
-    assert (
-        mapping.defaults.identity.source_attribute
-        == "source_oid"
-    )
-    assert (
-        mapping.defaults.identity.canonical_attribute
-        == "canonical_oid"
-    )
+    assert mapping.defaults.identity.source_attribute == "source_oid"
+    assert mapping.defaults.identity.canonical_attribute == "canonical_oid"
 
-    identity = mapping.classes[
-        "Haltung"
-    ].identities[
-        "reach"
-    ]
+    identity = mapping.classes["Haltung"].identities["reach"]
 
-    assert (
-        identity.source_attribute
-        == "source_oid"
-    )
-    assert (
-        identity.canonical_attribute
-        == "canonical_oid"
-    )
+    assert identity.source_attribute == "source_oid"
+    assert identity.canonical_attribute == "canonical_oid"
 
 
-def test_model_mapping_resolver_supports_empty_dictionary(
-) -> None:
+def test_model_mapping_resolver_supports_empty_dictionary() -> None:
     dictionary = FakeImplicitModelMappingCapability(
         table_mapping={},
         attribute_mapping={},
@@ -366,18 +284,11 @@ def test_model_mapping_resolver_supports_empty_dictionary(
 
     assert mapping.classes == {}
     assert mapping.is_ssot is True
-    assert (
-        mapping.defaults.identity.source_attribute
-        == "t_ili_tid"
-    )
-    assert (
-        mapping.defaults.identity.canonical_attribute
-        == "obj_id"
-    )
+    assert mapping.defaults.identity.source_attribute == "t_ili_tid"
+    assert mapping.defaults.identity.canonical_attribute == "obj_id"
 
 
-def test_model_mapping_resolver_rejects_orphan_attribute_mapping(
-) -> None:
+def test_model_mapping_resolver_rejects_orphan_attribute_mapping() -> None:
     dictionary = FakeImplicitModelMappingCapability(
         table_mapping={
             "Haltung": "reach",
@@ -395,10 +306,7 @@ def test_model_mapping_resolver_rejects_orphan_attribute_mapping(
 
     with pytest.raises(
         ValueError,
-        match=(
-            "attribute mappings refer to source classes "
-            "without table mappings"
-        ),
+        match=("attribute mappings refer to source classes without table mappings"),
     ):
         ImplicitModelMappingResolver(
             dictionary=dictionary,
@@ -537,15 +445,12 @@ def test_model_mapping_resolver_rejects_invalid_attribute_mapping(
         ).resolve()
 
 
-def test_model_mapping_resolver_output_is_deterministic(
-) -> None:
+def test_model_mapping_resolver_output_is_deterministic() -> None:
     dictionary = FakeImplicitModelMappingCapability(
         table_mapping={
             "Organisation": "organisation",
             "Haltung": "reach",
-            "Abwasserbauwerk": (
-                "wastewater_structure"
-            ),
+            "Abwasserbauwerk": ("wastewater_structure"),
         },
         attribute_mapping={},
     )

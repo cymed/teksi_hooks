@@ -41,6 +41,7 @@ DATA_DIR = Path(__file__).parent / "parser/data"
 
 MAPPING_PATH = DATA_DIR / "explicit_mapping.yaml"
 
+
 @pytest.fixture
 def rights_definition() -> RightsDefinition:
     return RightsParser().parse_file(
@@ -153,7 +154,6 @@ def ewkb_from_wkt(
         hex=False,
         include_srid=True,
     )
-
 
 
 @pytest.fixture

@@ -109,8 +109,7 @@ class FunctionMapping:
     schema: str = field(
         metadata={
             "doc": (
-                "Database schema containing the mapping function. "
-                "Example: `tww_app`."
+                "Database schema containing the mapping function. Example: `tww_app`."
             )
         },
     )
@@ -147,18 +146,12 @@ class AttributeMapping:
 
     canonical_class_id: str = field(
         metadata={
-            "doc": (
-                "Canonical class identifier containing the target "
-                "attribute."
-            )
+            "doc": ("Canonical class identifier containing the target attribute.")
         },
     )
     canonical_attr_id: str = field(
         metadata={
-            "doc": (
-                "Canonical attribute identifier receiving the mapped "
-                "source value."
-            )
+            "doc": ("Canonical attribute identifier receiving the mapped source value.")
         },
     )
     foreign_key: ForeignKeyMapping | None = field(
@@ -173,10 +166,7 @@ class AttributeMapping:
     values: Mapping[str, ValueMapping] = field(
         default_factory=dict,
         metadata={
-            "doc": (
-                "Optional static value mappings keyed by source-model "
-                "value."
-            )
+            "doc": ("Optional static value mappings keyed by source-model value.")
         },
     )
     value_list: ValueListMapping | None = field(
@@ -512,11 +502,7 @@ class RelationContext:
     """
 
     relation: type = field(
-        metadata={
-            "doc": (
-                "SQLAlchemy ORM relation generated for the source model."
-            )
-        },
+        metadata={"doc": ("SQLAlchemy ORM relation generated for the source model.")},
     )
     class_mapping: ClassMapping = field(
         metadata={
