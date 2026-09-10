@@ -39,6 +39,7 @@ from teksi_hooks.evaluators.rights import RightsEvaluator
 
 DATA_DIR = Path(__file__).parent / "parser/data"
 
+MAPPING_PATH = DATA_DIR / "explicit_mapping.yaml"
 
 @pytest.fixture
 def rights_definition() -> RightsDefinition:
@@ -151,4 +152,39 @@ def ewkb_from_wkt(
         geometry,
         hex=False,
         include_srid=True,
+    )
+
+
+
+@pytest.fixture
+def parser() -> ModelMappingParser:
+    return ModelMappingParser()
+
+
+@pytest.fixture
+def mappings(
+    parser: ModelMappingParser,
+):
+    return parser.parse_models_file(
+        MAPPING_PATH,
+    )
+
+
+@pytest.fixture
+def agxx_mapping(
+    parser: ModelMappingParser,
+):
+    return parser.parse_file(
+        MAPPING_PATH,
+        model_id="agxx",
+    )
+
+
+@pytest.fixture
+def sia405_mapping(
+    parser: ModelMappingParser,
+):
+    return parser.parse_file(
+        MAPPING_PATH,
+        model_id="sia405_abwasser",
     )
