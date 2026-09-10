@@ -11,7 +11,6 @@ from teksi_hooks.models.rights import (
     ResolvedRights,
 )
 from teksi_hooks.models.provider import Provider, ResolvedProvider
-from teksi_hooks.models.mapping import ModelMapping
 from teksi_hooks.models.validation import ValidationDefinition
 
 from teksi_hooks.parser.provider_rights_parser import ProviderRightsParser
