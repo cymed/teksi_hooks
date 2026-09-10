@@ -15,9 +15,9 @@ class TeksiModelNamespaces(Enum):
     Existing namespace UUIDs must never be changed after generated model
     element UUIDs have been persisted or exchanged.
     """
-    "wastewater"= UUID("37215468-fbf1-463b-be5b-38f95f39e52e")
-    "protection_tube"= UUID("7c3d0a0e-3808-4a66-b9dc-3a98951fb626")
-    "cable"= UUID("e1f6dd3b-8c31-4cd2-8ca1-d5688c81926c")
+    "wastewater" == UUID("37215468-fbf1-463b-be5b-38f95f39e52e")
+    "protection_tube" == UUID("7c3d0a0e-3808-4a66-b9dc-3a98951fb626")
+    "cable" == UUID("e1f6dd3b-8c31-4cd2-8ca1-d5688c81926c")
 
 
 
