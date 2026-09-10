@@ -15,7 +15,7 @@ from ..models.mapping import (
     ClassMapping,
     FunctionMapping,
     ModelMapping,
-    ModelMappingDefaults,
+    MappingDefaults,
     RelationMapping,
     ValueListMapping,
 )
@@ -243,7 +243,7 @@ class ModelMappingParser:
         raw: Any,
         *,
         path: str,
-    ) -> ModelMappingDefaults:
+    ) -> MappingDefaults:
         """
         Parse model-level defaults.
 
@@ -277,7 +277,7 @@ class ModelMappingParser:
             canonical_attribute=target_attribute,
         )
 
-        return ModelMappingDefaults(
+        return MappingDefaults(
             inherit_from=self._optional_string(
                 raw.get(
                     "inherit_from",
