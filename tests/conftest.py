@@ -91,13 +91,6 @@ def resolved_rights(
 
 
 @pytest.fixture
-def agxx_mapping() -> ModelMapping:
-    return ModelMappingParser().parse_file(
-        DATA_DIR / "agxx_mapping_minimal.yaml",
-    )
-
-
-@pytest.fixture
 def derived_rights(
     rights_definition,
 ):
