@@ -814,20 +814,15 @@ class ModelMappingParser:
                     "localisations",
                     {},
                 ),
-                path=(
-                    f"{relation_path}.localisations"
-                ),
+                path=(f"{relation_path}.localisations"),
             )
 
-            relation_unknown_keys = (
-                set(
-                    relation_data,
-                )
-                - {
-                    "target",
-                    "localisations",
-                }
-            )
+            relation_unknown_keys = set(
+                relation_data,
+            ) - {
+                "target",
+                "localisations",
+            }
 
             if relation_unknown_keys:
                 raise ValueError(
@@ -841,7 +836,6 @@ class ModelMappingParser:
                 referenced_attribute_id=target_attribute_id,
                 localisations=localisations,
             )
-
 
         return relations
 
@@ -865,19 +859,15 @@ class ModelMappingParser:
             str,
         ] = {}
 
-        for language, source_identifier in (
-            raw_localisations.items()
-        ):
+        for language, source_identifier in raw_localisations.items():
             language = self._required_string(
                 language,
                 path=f"{path}.<language>",
             )
 
-            localisations[language] = (
-                self._required_string(
-                    source_identifier,
-                    path=f"{path}.{language}",
-                )
+            localisations[language] = self._required_string(
+                source_identifier,
+                path=f"{path}.{language}",
             )
 
         return localisations
