@@ -36,7 +36,7 @@ class ModelMappingParser:
     - class-level row projection functions;
     - class-level canonical identities;
     - direct attribute mappings;
-    - source relation aliases;
+    - source relation localisations;
     - value-list lookup definitions.
 
     This parser only converts YAML into mapping models. It does not:
@@ -744,7 +744,7 @@ class ModelMappingParser:
         path: str,
     ) -> dict[str, RelationMapping]:
         """
-        Parse canonical relation definitions and localized source aliases.
+        Parse canonical relation definitions and source localisations.
         """
 
         raw_relations = self._mapping(
@@ -809,20 +809,25 @@ class ModelMappingParser:
                     f"{tuple(sorted(target_unknown_keys))!r}."
                 )
 
-            aliases = self._parse_aliases(
+            localisations = self._parse_localisations(
                 relation_data.get(
-                    "aliases",
+                    "localisations",
                     {},
                 ),
-                path=f"{relation_path}.aliases",
+                path=(
+                    f"{relation_path}.localisations"
+                ),
             )
 
-            relation_unknown_keys = set(
-                relation_data,
-            ) - {
-                "target",
-                "aliases",
-            }
+            relation_unknown_keys = (
+                set(
+                    relation_data,
+                )
+                - {
+                    "target",
+                    "localisations",
+                }
+            )
 
             if relation_unknown_keys:
                 raise ValueError(
@@ -832,14 +837,15 @@ class ModelMappingParser:
 
             relations[local_attribute] = RelationMapping(
                 local_attribute=local_attribute,
-                referenced_class_id=(target_class_id),
-                referenced_attribute_id=(target_attribute_id),
-                aliases=aliases,
+                referenced_class_id=target_class_id,
+                referenced_attribute_id=target_attribute_id,
+                localisations=localisations,
             )
+
 
         return relations
 
-    def _parse_aliases(
+    def _parse_localisations(
         self,
         raw: Any,
         *,
@@ -849,28 +855,32 @@ class ModelMappingParser:
         Parse exact source-model identifiers keyed by language.
         """
 
-        raw_aliases = self._mapping(
+        raw_localisations = self._mapping(
             raw or {},
             path=path,
         )
 
-        aliases: dict[
+        localisations: dict[
             str,
             str,
         ] = {}
 
-        for language, alias in raw_aliases.items():
+        for language, source_identifier in (
+            raw_localisations.items()
+        ):
             language = self._required_string(
                 language,
                 path=f"{path}.<language>",
             )
 
-            aliases[language] = self._required_string(
-                alias,
-                path=f"{path}.{language}",
+            localisations[language] = (
+                self._required_string(
+                    source_identifier,
+                    path=f"{path}.{language}",
+                )
             )
 
-        return aliases
+        return localisations
 
     def _parse_function(
         self,
