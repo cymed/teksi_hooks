@@ -5,7 +5,7 @@ from typing import Any
 
 import pytest
 
-from teksi_hooks.resolvers.model_mapping import (
+from teksi_hooks.resolver.model_mapping_resolver import (
     ImplicitModelMappingResolver,
 )
 
