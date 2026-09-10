@@ -226,7 +226,6 @@ class ModelMappingParser:
         )
 
         return ModelMapping(
-            identifier=model_id,
             classes=classes,
             defaults=defaults,
             is_ssot=self._boolean(
@@ -692,26 +691,27 @@ class ModelMappingParser:
         path: str,
     ) -> ValueListMapping | None:
         """
-        Parse a schema-qualified value-list lookup.
+        Parse a schema-qualified value-list lookup relation.
 
-        The lookup value column is always ``code``. The configured
-        ``mapping_attribute`` is matched against the submitted source value.
+        The configured mapping attribute is compared with the source value.
+        The canonical value is always read from the relation's `code` column.
         """
 
         if raw is None:
             if mapping_attribute is not None:
                 raise ValueError(
-                    f"{path}.mapping_attribute requires {path}.value_list."
+                    f"{path}.mapping_attribute requires "
+                    f"{path}.value_list."
                 )
 
             return None
 
-        value_list = self._required_string(
+        relation = self._required_string(
             raw,
             path=f"{path}.value_list",
         )
 
-        relation_parts = value_list.split(
+        relation_parts = relation.split(
             ".",
         )
 
@@ -719,18 +719,18 @@ class ModelMappingParser:
             raise ValueError(
                 f"{path}.value_list must be a schema-qualified "
                 "relation in the form `schema.relation`, got "
-                f"{value_list!r}."
+                f"{relation!r}."
             )
 
-        schema, relation = relation_parts
+        schema_name, relation_name = relation_parts
 
-        if not schema or not relation:
+        if not schema_name or not relation_name:
             raise ValueError(
-                f"{path}.value_list must define a non-empty schema and relation."
+                f"{path}.value_list must define a non-empty "
+                "schema and relation."
             )
 
         return ValueListMapping(
-            schema=schema,
             relation=relation,
             mapping_attribute=self._required_string(
                 mapping_attribute,

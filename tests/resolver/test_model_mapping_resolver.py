@@ -94,7 +94,6 @@ def resolved_mapping(
 ):
     return ImplicitModelMappingResolver(
         dictionary=dictionary,
-        identifier="dss",
     ).resolve()
 
 
@@ -102,12 +101,6 @@ def test_model_mapping_resolver_returns_ssot_mapping(
     resolved_mapping,
 ) -> None:
     assert resolved_mapping.is_ssot is True
-
-
-def test_model_mapping_resolver_sets_mapping_identifier(
-    resolved_mapping,
-) -> None:
-    assert resolved_mapping.identifier == "dss"
 
 
 def test_model_mapping_resolver_imports_all_classes(
@@ -258,7 +251,6 @@ def test_model_mapping_resolver_supports_custom_identity_attributes(
 ) -> None:
     mapping = ImplicitModelMappingResolver(
         dictionary=dictionary,
-        identifier="custom",
         source_identity_attribute="source_oid",
         canonical_identity_attribute="canonical_oid",
     ).resolve()

@@ -262,8 +262,9 @@ def test_agxx_mapping_parser_imports_value_list_mapping(
     value_list = agxx_mapping.classes["GepMassnahme"].attributes["kategorie"].value_list
 
     assert value_list is not None
-    assert value_list.schema == "tww_vl"
-    assert value_list.relation == "measure_category_import_rel_agxx"
+    assert value_list.relation == (
+        "tww_vl.measure_category_import_rel_agxx"
+    )
     assert value_list.mapping_attribute == "value_de"
 
 
@@ -277,9 +278,8 @@ def test_agxx_mapping_parser_imports_current_drainage_value_list(
     )
 
     assert value_list is not None
-    assert value_list.schema == "tww_vl"
     assert value_list.relation == (
-        "catchment_area_drainage_system_current_import_rel_agxx"
+        "tww_vl.catchment_area_drainage_system_current_import_rel_agxx"
     )
     assert value_list.mapping_attribute == "value_de"
 
@@ -294,9 +294,8 @@ def test_agxx_mapping_parser_imports_planned_drainage_value_list(
     )
 
     assert value_list is not None
-    assert value_list.schema == "tww_vl"
     assert value_list.relation == (
-        "catchment_area_drainage_system_planned_import_rel_agxx"
+        "tww_vl.catchment_area_drainage_system_planned_import_rel_agxx"
     )
     assert value_list.mapping_attribute == "value_de"
 

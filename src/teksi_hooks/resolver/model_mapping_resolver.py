@@ -34,8 +34,6 @@ class ImplicitModelMappingResolver:
 
     dictionary: ImplicitModelMappingCapability
 
-    identifier: str = "implicit_ssot"
-
     source_identity_attribute: str = "t_ili_tid"
 
     canonical_identity_attribute: str = "obj_id"
