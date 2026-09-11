@@ -831,7 +831,6 @@ class ModelMappingParser:
                 )
 
             relations[local_attribute] = RelationMapping(
-                local_attribute=local_attribute,
                 referenced_class_id=target_class_id,
                 referenced_attribute_id=target_attribute_id,
                 localisations=localisations,

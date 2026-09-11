@@ -76,7 +76,6 @@ class ImplicitModelMappingResolver:
         )
 
         return ModelMapping(
-            identifier=self.identifier,
             classes=classes,
             defaults=MappingDefaults(
                 identity=default_identity,
