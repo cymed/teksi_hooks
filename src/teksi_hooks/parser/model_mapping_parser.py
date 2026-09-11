@@ -71,9 +71,10 @@ class ModelMappingParser:
         mappings = self.parse_models_file(
             path,
         )
-        resolved_mappings = ModelMappingInheritanceResolver(mappings=mappings).resolve_all()
+        resolved_mappings = ModelMappingInheritanceResolver(
+            mappings=mappings
+        ).resolve_all()
 
-    
         return self._select_model(
             mappings=resolved_mappings,
             model_id=model_id,

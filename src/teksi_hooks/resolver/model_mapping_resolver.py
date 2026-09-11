@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Mapping
+from collections.abc import Mapping
 
 from ..capabilities.mapping import (
     ImplicitModelMappingCapability,
@@ -270,8 +270,6 @@ class ImplicitModelMappingResolver:
         return normalized
 
 
-
-
 @dataclass(slots=True, frozen=True)
 class ModelMappingInheritanceResolver:
     """
@@ -354,9 +352,7 @@ class ModelMappingInheritanceResolver:
             )
 
             cycle = (
-                *resolving[
-                    cycle_start:
-                ],
+                *resolving[cycle_start:],
                 model_id,
             )
 
@@ -368,17 +364,11 @@ class ModelMappingInheritanceResolver:
             )
 
         try:
-            child = self.mappings[
-                model_id
-            ]
+            child = self.mappings[model_id]
         except KeyError as exception:
-            raise KeyError(
-                f"Unknown model mapping {model_id!r}."
-            ) from exception
+            raise KeyError(f"Unknown model mapping {model_id!r}.") from exception
 
-        parent_id = (
-            child.defaults.inherit_from
-        )
+        parent_id = child.defaults.inherit_from
 
         if parent_id is None:
             resolved = self._without_inheritance(
@@ -387,8 +377,7 @@ class ModelMappingInheritanceResolver:
         else:
             if parent_id not in self.mappings:
                 raise KeyError(
-                    f"Model mapping {model_id!r} inherits "
-                    f"unknown model {parent_id!r}."
+                    f"Model mapping {model_id!r} inherits unknown model {parent_id!r}."
                 )
 
             parent = self._resolve(
@@ -405,9 +394,7 @@ class ModelMappingInheritanceResolver:
                 child=child,
             )
 
-        cache[
-            model_id
-        ] = resolved
+        cache[model_id] = resolved
 
         return resolved
 
@@ -435,11 +422,7 @@ class ModelMappingInheritanceResolver:
             defaults=defaults,
             classes=classes,
             is_ssot=child.is_ssot,
-            languages=(
-                child.languages
-                if child.languages
-                else parent.languages
-            ),
+            languages=(child.languages if child.languages else parent.languages),
         )
 
     def _merge_defaults(
