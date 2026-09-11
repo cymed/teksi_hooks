@@ -337,9 +337,7 @@ def test_sia405_mapping_parser_imports_provider_relation(
 ) -> None:
     relation = sia405_mapping.defaults.relations["fk_provider"]
 
-    assert "fk_provider" in (
-        sia405_mapping.defaults.relations
-    )
+    assert "fk_provider" in (sia405_mapping.defaults.relations)
     assert relation.referenced_class_id == "organisation"
     assert relation.referenced_attribute_id == "obj_id"
     assert relation.localisations == {
@@ -352,10 +350,7 @@ def test_sia405_mapping_parser_imports_owner_relation(
 ) -> None:
     relation = sia405_mapping.defaults.relations["fk_owner"]
 
-
-    assert "fk_owner" in (
-        sia405_mapping.defaults.relations
-    )
+    assert "fk_owner" in (sia405_mapping.defaults.relations)
     assert relation.referenced_class_id == "organisation"
     assert relation.referenced_attribute_id == "obj_id"
     assert relation.localisations == {
@@ -381,9 +376,7 @@ def test_sia405_mapping_parser_imports_reach_point_from_relation(
 ) -> None:
     relation = sia405_mapping.classes["reach"].relations["fk_reach_point_from"]
 
-    assert "fk_reach_point_from" in (
-        sia405_mapping.defaults.relations
-    )
+    assert "fk_reach_point_from" in (sia405_mapping.defaults.relations)
     assert relation.referenced_class_id == "reach_point"
     assert relation.referenced_attribute_id == "obj_id"
     assert relation.localisations == {
@@ -396,9 +389,7 @@ def test_sia405_mapping_parser_imports_reach_point_to_relation(
 ) -> None:
     relation = sia405_mapping.classes["reach"].relations["fk_reach_point_to"]
 
-    assert "fk_reach_point_to" in (
-        sia405_mapping.defaults.relations
-    )
+    assert "fk_reach_point_to" in (sia405_mapping.defaults.relations)
     assert relation.referenced_class_id == "reach_point"
     assert relation.referenced_attribute_id == "obj_id"
     assert relation.localisations == {
