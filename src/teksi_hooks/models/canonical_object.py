@@ -56,9 +56,7 @@ class TeksiModelNamespaces(Enum):
             if model.identifier == identifier:
                 return model
 
-        raise ValueError(
-            f"Unknown canonical model identifier: {identifier!r}."
-        )
+        raise ValueError(f"Unknown canonical model identifier: {identifier!r}.")
 
 
 @dataclass(slots=True, frozen=True)
