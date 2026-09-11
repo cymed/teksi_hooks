@@ -421,18 +421,20 @@ class RightsEvaluator:
 
         remote_objects: list[CanonicalObjectIdentity] = []
 
-        for local_attribute, relation in definitions.items():
+        for relation in definitions:
             try:
-                value = local_object.attributes[local_attribute]
+                value = local_object.attributes[
+                    relation.local_attribute
+                ]
             except KeyError:
                 continue
 
             remote_objects.extend(
                 self.relation_lookup.canonical_objects(
                     local_class_id=class_id,
-                    related_class_id=relation.referenced_class_id,
-                    local_attribute=local_attribute,
-                    related_attribute=relation.referenced_attribute_id,
+                    related_class_id=relation.class_id,
+                    local_attribute=relation.local_attribute,
+                    related_attribute=relation.remote_attribute,
                     value=value,
                 )
             )

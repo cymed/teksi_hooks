@@ -192,14 +192,6 @@ class RelationMapping:
     source-model element identifiers and are not display labels.
     """
 
-    canonical_relation_id: str = field(
-        metadata={
-            "doc": (
-                "Stable canonical identifier of the relation or foreign-key "
-                "attribute. Example: `fk_provider`."
-            )
-        },
-    )
     referenced_class_id: str = field(
         metadata={
             "doc": (
