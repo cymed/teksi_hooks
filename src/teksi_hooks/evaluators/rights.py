@@ -423,9 +423,7 @@ class RightsEvaluator:
 
         for relation in definitions:
             try:
-                value = local_object.attributes[
-                    relation.local_attribute
-                ]
+                value = local_object.attributes[relation.local_attribute]
             except KeyError:
                 continue
 
