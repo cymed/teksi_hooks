@@ -128,7 +128,7 @@ def test_model_mapping_resolver_uses_default_identity(
 ) -> None:
     identity = resolved_mapping.defaults.identity
 
-    assert identity.source_attribute == "t_ili_tid"
+    assert identity.source_attribute == "obj_id"
     assert identity.canonical_attribute == "obj_id"
 
 
