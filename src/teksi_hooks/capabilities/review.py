@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
 from collections.abc import Mapping, Sequence
@@ -14,6 +13,7 @@ from ..models.review import ReviewFeature
 from teksi_hooks.models.review import (
     PreparedSource,
 )
+
 
 class ChangeObjectProvider(Protocol):
     """
@@ -67,6 +67,7 @@ class ReviewArtifactWriter(Protocol):
         Write layers to the given path.
         """
 
+
 class SourcePreparer(Protocol):
     def prepare_source(
         self,
@@ -82,7 +83,6 @@ class SourcePreparer(Protocol):
         """
         ...
 
-
     def prepared_source(
         self,
         *,
@@ -97,7 +97,6 @@ class SourcePreparer(Protocol):
             If no prepared source exists for the job identifier.
         """
         ...
-
 
     def clear_prepared_source(
         self,
