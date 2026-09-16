@@ -154,15 +154,11 @@ class EffectDocumentValidator:
         - assigning different values to the same attribute of the same object.
         """
 
-        findings: list[
-            ValidationFinding,
-        ] = []
+        findings: list[ValidationFinding,] = []
 
         effects_by_identity: dict[
             tuple,
-            list[
-                Effect,
-            ],
+            list[Effect,],
         ] = defaultdict(
             list,
         )
@@ -172,9 +168,7 @@ class EffectDocumentValidator:
                 effect.identity,
             )
 
-            effects_by_identity[
-                identity_key
-            ].append(
+            effects_by_identity[identity_key].append(
                 effect,
             )
 
@@ -256,9 +250,7 @@ class EffectDocumentValidator:
                 ):
                     findings.append(
                         ValidationFinding(
-                            code=(
-                                "contradicting_attribute_updates"
-                            ),
+                            code=("contradicting_attribute_updates"),
                             attribute_name=attribute_id,
                             severity=Severity.ERROR,
                             message=(
