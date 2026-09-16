@@ -8,6 +8,7 @@ from enum import StrEnum
 from .canonical_object import CanonicalObjectIdentity
 from .validation import ValidationFinding
 
+
 class EffectKind(StrEnum):
     UPDATE_ATTRIBUTE = "update_attribute"
     ENFORCE_EXISTS = "enforce_exists"
@@ -111,6 +112,7 @@ class EnforceNotExistsEffect(Effect):
             "doc": ("Canonical object identity used to locate the target object.")
         },
     )
+
 
 class EffectEvaluationStatus(
     StrEnum,
