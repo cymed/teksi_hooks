@@ -144,22 +144,44 @@ class EffectDocumentValidator:
         ValidationFinding,
         ...,
     ]:
-        findings: list[ValidationFinding,] = []
+        """
+        Validate that effects for the same identity do not contradict each other.
+
+        The following combinations are invalid:
+
+        - requiring one object both to exist and not exist;
+        - updating an object while requiring it not to exist;
+        - assigning different values to the same attribute of the same object.
+        """
+
+        findings: list[
+            ValidationFinding,
+        ] = []
 
         effects_by_identity: dict[
             tuple,
-            list[Effect,],
-        ]
+            list[
+                Effect,
+            ],
+        ] = defaultdict(
+            list,
+        )
+
         for effect in document.effects:
+            identity_key = self._identity_key(
+                effect.identity,
+            )
+
             effects_by_identity[
-                self._identity_key(
-                    effect.identity,
-                )
+                identity_key
             ].append(
                 effect,
             )
 
-        for identity, effects in effects_by_identity.items():
+        for (
+            identity_key,
+            effects,
+        ) in effects_by_identity.items():
             has_exists = any(
                 isinstance(
                     effect,
@@ -234,13 +256,16 @@ class EffectDocumentValidator:
                 ):
                     findings.append(
                         ValidationFinding(
-                            code="contradicting_attribute_updates",
+                            code=(
+                                "contradicting_attribute_updates"
+                            ),
                             attribute_name=attribute_id,
                             severity=Severity.ERROR,
                             message=(
-                                "Multiple update effects assign different "
-                                f"values to attribute {attribute_id!r} "
-                                "for the same canonical object."
+                                "Multiple update effects assign "
+                                "different values to attribute "
+                                f"{attribute_id!r} for the same "
+                                "canonical object."
                             ),
                         )
                     )
