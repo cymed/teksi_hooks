@@ -29,8 +29,6 @@ from ..exceptions import EffectValidationError, Severity
 DOCUMENT_MAX_VERSION = 1
 
 
-
-
 @dataclass(slots=True)
 class EffectDocumentValidator:
     """
@@ -139,7 +137,6 @@ class EffectDocumentValidator:
             ),
         )
 
- 
     def _validate_conflicting_effects(
         self,
         document: EffectDocument,
@@ -147,15 +144,11 @@ class EffectDocumentValidator:
         ValidationFinding,
         ...,
     ]:
-        findings: list[
-            ValidationFinding,
-        ] = []
+        findings: list[ValidationFinding,] = []
 
         effects_by_identity: dict[
             tuple,
-            list[
-                Effect,
-            ],
+            list[Effect,],
         ]
         for effect in document.effects:
             effects_by_identity[
@@ -192,10 +185,7 @@ class EffectDocumentValidator:
                 )
             )
 
-            if (
-                has_exists
-                and has_not_exists
-            ):
+            if has_exists and has_not_exists:
                 findings.append(
                     ValidationFinding(
                         code="contradicting_effects",
@@ -208,10 +198,7 @@ class EffectDocumentValidator:
                     )
                 )
 
-            if (
-                update_effects
-                and has_not_exists
-            ):
+            if update_effects and has_not_exists:
                 findings.append(
                     ValidationFinding(
                         code="contradicting_effects",
@@ -226,17 +213,13 @@ class EffectDocumentValidator:
 
             updates_by_attribute: dict[
                 str,
-                list[
-                    UpdateAttributeEffect,
-                ],
+                list[UpdateAttributeEffect,],
             ] = defaultdict(
                 list,
             )
 
             for effect in update_effects:
-                updates_by_attribute[
-                    effect.attribute_id
-                ].append(
+                updates_by_attribute[effect.attribute_id].append(
                     effect,
                 )
 
@@ -244,10 +227,7 @@ class EffectDocumentValidator:
                 attribute_id,
                 attribute_effects,
             ) in updates_by_attribute.items():
-                values = [
-                    effect.value
-                    for effect in attribute_effects
-                ]
+                values = [effect.value for effect in attribute_effects]
 
                 if not self._all_values_equal(
                     values,
@@ -269,7 +249,6 @@ class EffectDocumentValidator:
             findings,
         )
 
-
     def _all_values_equal(
         self,
         values: list,
@@ -281,17 +260,9 @@ class EffectDocumentValidator:
         if not values:
             return True
 
-        first_value = values[
-            0
-        ]
+        first_value = values[0]
 
-        return all(
-            value == first_value
-            for value in values[
-                1:
-            ]
-        )
-
+        return all(value == first_value for value in values[1:])
 
 
 @dataclass(
@@ -324,9 +295,7 @@ class EffectEvaluator:
         Returns exactly one evaluation result per effect.
         """
 
-        results: list[
-            EffectEvaluationResult,
-        ] = []
+        results: list[EffectEvaluationResult,] = []
 
         for effect_index, effect in enumerate(
             document.effects,
@@ -354,10 +323,8 @@ class EffectEvaluator:
         Evaluate one desired-state effect.
         """
 
-        current_object = (
-            self.object_lookup.canonical_object(
-                effect.identity,
-            )
+        current_object = self.object_lookup.canonical_object(
+            effect.identity,
         )
 
         if isinstance(
@@ -524,7 +491,8 @@ class EffectEvaluator:
         metadata: dict[
             str,
             Any,
-        ] | None = None,
+        ]
+        | None = None,
     ) -> EffectEvaluationResult:
         """
         Ask the model-specific policy to classify an unsatisfied effect.
@@ -560,10 +528,7 @@ class EffectEvaluator:
         Model-specific normalization must occur before effect evaluation.
         """
 
-        return (
-            actual_value
-            == expected_value
-        )
+        return actual_value == expected_value
 
 
 @dataclass(
@@ -605,13 +570,7 @@ class BlockingEffectEvaluationPolicy:
                 "effect_type": type(
                     effect,
                 ).__name__,
-                "target_class_id": (
-                    effect.identity.class_id
-                ),
-                "target_exists": (
-                    current_object is not None
-                ),
+                "target_class_id": (effect.identity.class_id),
+                "target_exists": (current_object is not None),
             },
         )
-
-
