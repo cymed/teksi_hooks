@@ -193,7 +193,6 @@ class ChangeClassifier:
             ),
         )
 
-
     def _context_for_change(
         self,
         base_context: RightsEvaluationBaseContext,
@@ -215,20 +214,19 @@ class ChangeClassifier:
             new_values=change.new_values,
             context_values=base_context.context_values,
         )
-    
+
     def _is_permitted(
         self,
         change: Change,
         context: RightsEvaluationContext,
     ) -> bool:
-
         if context.operation != change.operation:
             raise RuntimeError(
                 "Rights evaluation operation does not match the "
                 "classified change operation: "
                 f"{context.operation!r} != {change.operation!r}."
             )
-        
+
         if change.operation == ChangeOperation.INSERT:
             return self.rights_evaluator.can_create(
                 change.table_name,

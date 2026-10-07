@@ -47,6 +47,7 @@ class RightsEvaluationBaseContext:
         default_factory=dict,
     )
 
+
 @dataclass(slots=True, frozen=True)
 class RightsEvaluationContext:
     """
