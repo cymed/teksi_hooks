@@ -396,7 +396,15 @@ class ChangeClassifier:
         """
 
         return (
-            change.table_name,
-            change.object_id,
+            change.identity.class_id,
+            tuple(
+                (
+                    attribute_name,
+                    change.identity.attributes[attribute_name],
+                )
+                for attribute_name in sorted(
+                    change.identity.attributes,
+                )
+            ),
             change.operation,
         )

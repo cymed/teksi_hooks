@@ -134,14 +134,8 @@ class Change:
     `changed_attributes`.
     """
 
-    table_name: str = field(
-        metadata={
-            "doc": ("Canonical table or class identifier affected by the change.")
-        },
-    )
-
-    object_id: str = field(
-        metadata={"doc": ("Object identifier of the changed row.")},
+    identity: CanonicalObjectIdentity = field(
+        metadata={"doc": ("Complete canonical identity of the changed object.")},
     )
 
     operation: ChangeOperation = field(
@@ -186,14 +180,83 @@ class Change:
         )
 
     @property
-    def identity(
+    def table_name(
         self,
-    ) -> CanonicalObjectIdentity:
-        return CanonicalObjectIdentity(
-            class_id=self.table_name,
-            attributes={
-                "obj_id": self.object_id,
-            },
+    ) -> str:
+        """
+        Return the canonical class identifier.
+
+        This property preserves the existing Change API while the canonical
+        identity remains authoritative.
+        """
+
+        return self.identity.class_id
+
+    @property
+    def object_id(
+        self,
+    ) -> str:
+        """
+        Return the scalar value of a single-attribute identity.
+
+        The identity attribute is not assumed to be ``obj_id``. For example,
+        ``agxx_last_modification`` is identified through ``fk_element``.
+
+        Code that needs the identity attribute name must use ``identity``
+        directly.
+        """
+
+        if (
+            len(
+                self.identity.attributes,
+            )
+            != 1
+        ):
+            raise ValueError(
+                "A scalar object_id is unavailable for canonical "
+                f"class {self.identity.class_id!r} because its "
+                "identity does not contain exactly one attribute: "
+                f"{tuple(self.identity.attributes)!r}."
+            )
+
+        value = next(
+            iter(
+                self.identity.attributes.values(),
+            )
+        )
+
+        return str(
+            value,
+        )
+
+    @property
+    def identity_attribute(
+        self,
+    ) -> str:
+        """
+        Return the attribute name of a single-attribute identity.
+
+        This compatibility helper supports persistence code that stores a
+        scalar object identifier while still needing to know its canonical
+        attribute.
+        """
+
+        if (
+            len(
+                self.identity.attributes,
+            )
+            != 1
+        ):
+            raise ValueError(
+                "A scalar identity attribute is unavailable for "
+                f"canonical class {self.identity.class_id!r}: "
+                f"{tuple(self.identity.attributes)!r}."
+            )
+
+        return next(
+            iter(
+                self.identity.attributes,
+            )
         )
 
 

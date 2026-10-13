@@ -134,7 +134,9 @@ class ChangeReviewExportService:
         change = classified_change.change
 
         return {
-            "obj_id": change.object_id,
+            "identity": self._identity(
+                change,
+            ),
             "is_created": self._is_created(
                 change,
             ),
@@ -436,6 +438,24 @@ class ChangeReviewExportService:
                 (),
             )
         )
+
+    def _identity(
+        self,
+        change: Change,
+    ) -> dict[
+        str,
+        Any,
+    ]:
+        """
+        Return the complete canonical identity as structured data.
+        """
+
+        return {
+            "class_id": change.identity.class_id,
+            "attributes": dict(
+                change.identity.attributes,
+            ),
+        }
 
     def _is_created(
         self,
