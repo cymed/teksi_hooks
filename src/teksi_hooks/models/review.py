@@ -399,7 +399,7 @@ class ChangeCreationResult:
     )
 
     classified_changes: ClassifiedChanges | None = field(
-        default_factory=None,
+        default=None,
         metadata={
             "doc": (
                 "Classified Changes of the corresponding workflow."
@@ -420,7 +420,7 @@ class ChangeCreationResult:
     )
 
     diff_schema_result: DiffSchemaWriteResult | None =  field(
-        default_factory=None,
+        default=None,
         metadata={
             "doc": (
                 "Result of the Diff Schema Writer."

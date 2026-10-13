@@ -61,10 +61,7 @@ class ChangeBuilder:
         )
 
         return Change(
-            table_name=reference.class_id,
-            object_id=self._object_id(
-                reference.attributes,
-            ),
+            identity=reference,
             operation=operation,
             old_values=old_values,
             new_values=new_values,
