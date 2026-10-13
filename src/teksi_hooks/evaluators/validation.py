@@ -142,14 +142,11 @@ class ValidationEvaluator:
         context_values: Mapping[
             str,
             Any,
-        ] | None = None,
+        ]
+        | None = None,
     ) -> tuple[ValidationFinding, ...]:
 
-        context_values = (
-            {}
-            if context_values is None
-            else context_values
-        )
+        context_values = {} if context_values is None else context_values
         validations = self.rights.try_validations(
             class_id,
             attribute_name,

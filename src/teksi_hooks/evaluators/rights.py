@@ -312,14 +312,11 @@ class RightsEvaluator:
         privileges are checked.
         """
 
-        if (
-            rule.when is not None
-            and not self.conditions.evaluate(
-                rule.when,
-                self._condition_context(
-                    context,
-                ),
-            )
+        if rule.when is not None and not self.conditions.evaluate(
+            rule.when,
+            self._condition_context(
+                context,
+            ),
         ):
             return False
 
