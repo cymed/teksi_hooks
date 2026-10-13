@@ -509,10 +509,7 @@ def test_validation_evaluator_rejects_insert_context_value_mismatch(
         },
     )
 
-    assert {
-        attribute.attribute_name
-        for attribute in change.changed_attributes
-    } == {
+    assert {attribute.attribute_name for attribute in change.changed_attributes} == {
         "fk_provider",
         "fk_dataowner",
     }
@@ -538,9 +535,12 @@ def test_validation_evaluator_rejects_insert_context_value_mismatch(
         },
     )
 
-    assert len(
-        findings,
-    ) == 1
+    assert (
+        len(
+            findings,
+        )
+        == 1
+    )
 
     assert findings[0].code == "equals_context_value"
     assert findings[0].severity == Severity.ERROR
