@@ -25,6 +25,26 @@ from ..models.rulesets import (
 from ..models.validation import ChangeOperation
 
 
+@dataclass(
+    slots=True,
+    frozen=True,
+)
+class RightsEvaluationBaseContext:
+    """
+    Rights context shared by every change in one workflow.
+    """
+
+    dataowner_oid: Oid
+    provider_oid: Oid
+
+    context_values: Mapping[
+        str,
+        Any,
+    ] = field(
+        default_factory=dict,
+    )
+
+
 @dataclass(slots=True, frozen=True)
 class RightsEvaluationContext:
     """
