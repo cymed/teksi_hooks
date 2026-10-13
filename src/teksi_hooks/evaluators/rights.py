@@ -312,12 +312,16 @@ class RightsEvaluator:
         privileges are checked.
         """
 
-        if rule.when is not None:
-            if not self.conditions.evaluate(
+        if (
+            rule.when is not None
+            and not self.conditions.evaluate(
                 rule.when,
-                self._condition_context(context),
-            ):
-                return False
+                self._condition_context(
+                    context,
+                ),
+            )
+        ):
+            return False
 
         return any(
             self.provider.has_privilege(

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Generate dataclass API documentation from field metadata.
 
 The dataclass field metadata is the source of truth for field-level
