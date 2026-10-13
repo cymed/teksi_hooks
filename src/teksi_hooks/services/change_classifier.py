@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Mapping, Sequence
 
 from ..evaluators.rights import (
+    RightsEvaluationBaseContext,
     RightsEvaluationContext,
     RightsEvaluator,
 )
@@ -19,11 +20,6 @@ from ..models.validation import (
     ClassifiedChanges,
     Severity,
     ValidationFinding,
-)
-from ..evaluators.rights import (
-    RightsEvaluator,
-    RightsEvaluationBaseContext,
-    RightsEvaluationContext,
 )
 
 ChangeKey = tuple[
