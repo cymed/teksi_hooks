@@ -372,11 +372,7 @@ class ChangeCreationResult:
 
     classified_changes: ClassifiedChanges | None = field(
         default=None,
-        metadata={
-            "doc": (
-                "Classified Changes of the corresponding workflow."
-            )
-        },
+        metadata={"doc": ("Classified Changes of the corresponding workflow.")},
     )
 
     features_by_class: dict[
@@ -387,13 +383,9 @@ class ChangeCreationResult:
         metadata={"doc": ("List of review features by class.")},
     )
 
-    diff_schema_result: DiffSchemaWriteResult | None =  field(
+    diff_schema_result: DiffSchemaWriteResult | None = field(
         default=None,
-        metadata={
-            "doc": (
-                "Result of the Diff Schema Writer."
-            )
-        },
+        metadata={"doc": ("Result of the Diff Schema Writer.")},
     )
 
 

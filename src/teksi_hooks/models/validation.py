@@ -134,13 +134,8 @@ class Change:
     `changed_attributes`.
     """
 
-
     identity: CanonicalObjectIdentity = field(
-        metadata={
-            "doc": (
-                "Complete canonical identity of the changed object."
-            )
-        },
+        metadata={"doc": ("Complete canonical identity of the changed object.")},
     )
 
     operation: ChangeOperation = field(
@@ -197,7 +192,6 @@ class Change:
 
         return self.identity.class_id
 
-
     @property
     def object_id(
         self,
@@ -212,9 +206,12 @@ class Change:
         directly.
         """
 
-        if len(
-            self.identity.attributes,
-        ) != 1:
+        if (
+            len(
+                self.identity.attributes,
+            )
+            != 1
+        ):
             raise ValueError(
                 "A scalar object_id is unavailable for canonical "
                 f"class {self.identity.class_id!r} because its "
@@ -244,9 +241,12 @@ class Change:
         attribute.
         """
 
-        if len(
-            self.identity.attributes,
-        ) != 1:
+        if (
+            len(
+                self.identity.attributes,
+            )
+            != 1
+        ):
             raise ValueError(
                 "A scalar identity attribute is unavailable for "
                 f"canonical class {self.identity.class_id!r}: "
@@ -258,6 +258,7 @@ class Change:
                 self.identity.attributes,
             )
         )
+
 
 class ChangeOperation(StrEnum):
     """
