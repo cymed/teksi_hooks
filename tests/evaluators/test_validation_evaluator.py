@@ -495,8 +495,12 @@ def test_validation_evaluator_rejects_insert_context_value_mismatch(
     )
 
     change = Change(
-        table_name="wastewater_structure",
-        object_id="ch987654WS123456",
+        identity=CanonicalObjectIdentity(
+            class_id="wastewater_structure",
+            attributes={
+                "obj_id": "ch987654WS123456",
+            },
+        ),
         operation=ChangeOperation.INSERT,
         old_values={},
         new_values={
@@ -505,10 +509,16 @@ def test_validation_evaluator_rejects_insert_context_value_mismatch(
         },
     )
 
-    assert {attribute.attribute_name for attribute in change.changed_attributes} == {
+    assert {
+        attribute.attribute_name
+        for attribute in change.changed_attributes
+    } == {
         "fk_provider",
         "fk_dataowner",
     }
+
+    assert change.table_name == "wastewater_structure"
+    assert change.object_id == "ch987654WS123456"
 
     validations = RightsCapability(
         rights=resolved_rights,
@@ -528,12 +538,9 @@ def test_validation_evaluator_rejects_insert_context_value_mismatch(
         },
     )
 
-    assert (
-        len(
-            findings,
-        )
-        == 1
-    )
+    assert len(
+        findings,
+    ) == 1
 
     assert findings[0].code == "equals_context_value"
     assert findings[0].severity == Severity.ERROR
@@ -552,8 +559,12 @@ def test_validation_evaluator_accepts_matching_insert_context_values(
     )
 
     change = Change(
-        table_name="wastewater_structure",
-        object_id="ch987654WS123456",
+        identity=CanonicalObjectIdentity(
+            class_id="wastewater_structure",
+            attributes={
+                "obj_id": "ch987654WS123456",
+            },
+        ),
         operation=ChangeOperation.INSERT,
         old_values={},
         new_values={
@@ -561,6 +572,9 @@ def test_validation_evaluator_accepts_matching_insert_context_values(
             "fk_dataowner": "ch000000awgde001",
         },
     )
+
+    assert change.table_name == "wastewater_structure"
+    assert change.object_id == "ch987654WS123456"
 
     findings = evaluator.validate_change(
         class_id="wastewater_structure",
