@@ -467,7 +467,10 @@ class RightsEvaluator:
         required: frozenset[PrivilegeId],
         context: RightsEvaluationContext,
     ) -> bool:
-        if ALL_PRIVILEGES in required:
+        if self.provider.has_privilege(
+            context.dataowner_oid,
+            ALL_PRIVILEGES,
+        ):
             return True
 
         return any(
