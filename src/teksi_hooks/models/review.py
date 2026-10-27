@@ -12,6 +12,7 @@ from .persistence import (
 )
 from .validation import Change, ClassifiedChanges, ValidationFinding
 
+from .canonical_object import CanonicalGeometryFamily
 
 @dataclass(
     slots=True,
