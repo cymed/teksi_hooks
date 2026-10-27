@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
-from typing import Any, Mapping, Sequence
 from enum import StrEnum
+from typing import Any
 from uuid import UUID
 
+from .effects import EffectDocument
 from .persistence import (
     PersistenceResult,
 )
-from .effects import EffectDocument
 from .validation import Change, ClassifiedChanges, ValidationFinding
 
 
@@ -21,7 +21,7 @@ class ReviewGeometryFamily(
 
     The family describes the storage and rendering category, not the exact
     geometry subtype. For example, ``LINESTRING``, ``CIRCULARSTRING``,
-    ``COMPOUNDCURVE``, and ``MULTICURVE`` as well as their counterparts 
+    ``COMPOUNDCURVE``, and ``MULTICURVE`` as well as their counterparts
     with Z or M values all belong to ``LINE``. Module-specific interpreters
     may limit the allowed inputs by i.e. dropping M support.
     """
@@ -105,24 +105,19 @@ class ReviewGeometry:
             bytes,
         ):
             raise TypeError(
-                "ReviewGeometry.ewkb must be bytes, "
-                f"received {type(self.ewkb)!r}."
+                f"ReviewGeometry.ewkb must be bytes, received {type(self.ewkb)!r}."
             )
 
         if not self.ewkb:
-            raise ValueError(
-                "ReviewGeometry.ewkb must not be empty."
-            )
+            raise ValueError("ReviewGeometry.ewkb must not be empty.")
 
         if not isinstance(
             self.family,
             ReviewGeometryFamily,
         ):
             try:
-                normalized_family = (
-                    ReviewGeometryFamily(
-                        self.family,
-                    )
+                normalized_family = ReviewGeometryFamily(
+                    self.family,
                 )
 
             except (
@@ -465,74 +460,42 @@ class ChangeCreationResult:
     )
 
     import_model: str | None = field(
-        metadata={
-            "doc": (
-                "Name of the import model."
-            )
-        },
+        metadata={"doc": ("Name of the import model.")},
     )
 
     incremental_import_model: str | None = field(
         default=None,
-        metadata={
-            "doc": (
-                "Name of the incremental import model."
-            )
-        },
+        metadata={"doc": ("Name of the incremental import model.")},
     )
 
     created_models: list[str] = field(
         default_factory=list,
-        metadata={
-            "doc": (
-                "List of created models."
-            )
-        },
+        metadata={"doc": ("List of created models.")},
     )
 
     incremental_created_models: list[str] = field(
         default_factory=list,
-        metadata={
-            "doc": (
-                "List of created incremental models."
-            )
-        },
+        metadata={"doc": ("List of created incremental models.")},
     )
 
     effect_document: EffectDocument | None = field(
         default=None,
-        metadata={
-            "doc": (
-                "Effect Document of the corresponding workflow."
-            )
-        },
+        metadata={"doc": ("Effect Document of the corresponding workflow.")},
     )
 
     changes: list[Change] = field(
         default_factory=list,
-        metadata={
-            "doc": (
-                "Changes of the corresponding workflow."
-            )
-        },
+        metadata={"doc": ("Changes of the corresponding workflow.")},
     )
 
     validation_findings: list[ValidationFinding] = field(
         default_factory=list,
-        metadata={
-            "doc": (
-                "Validation findings of the corresponding workflow."
-            )
-        },
+        metadata={"doc": ("Validation findings of the corresponding workflow.")},
     )
 
     classified_changes: ClassifiedChanges | None = field(
         default=None,
-        metadata={
-            "doc": (
-                "Classified Changes of the corresponding workflow."
-            )
-        },
+        metadata={"doc": ("Classified Changes of the corresponding workflow.")},
     )
 
     features_by_class: dict[
@@ -540,20 +503,12 @@ class ChangeCreationResult:
         list[ReviewFeature],
     ] = field(
         default_factory=dict,
-        metadata={
-            "doc": (
-                "List of review features by class."
-            )
-        },
+        metadata={"doc": ("List of review features by class.")},
     )
 
-    diff_schema_result: DiffSchemaWriteResult | None =  field(
+    diff_schema_result: DiffSchemaWriteResult | None = field(
         default=None,
-        metadata={
-            "doc": (
-                "Result of the Diff Schema Writer."
-            )
-        },
+        metadata={"doc": ("Result of the Diff Schema Writer.")},
     )
 
 

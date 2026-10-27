@@ -1,16 +1,16 @@
 from __future__ import annotations
 
+from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Any, Protocol, Mapping, Sequence
-
-from ..models.validation import (
-    Change,
-)
+from typing import Any, Protocol
 
 from ..models.review import (
     PreparedSource,
     ReviewFeature,
     ReviewGeometry,
+)
+from ..models.validation import (
+    Change,
 )
 
 
@@ -67,7 +67,6 @@ class ReviewArtifactWriter(Protocol):
         """
 
 
-
 class ReviewGeometryConverter(
     Protocol,
 ):
@@ -82,6 +81,7 @@ class ReviewGeometryConverter(
         """
         Return the portable review representation of one geometry.
         """
+
 
 class SourcePreparer(Protocol):
     def prepare_source(

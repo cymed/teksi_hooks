@@ -13,6 +13,7 @@ from ..models.canonical_object import (
 )
 from ..models.review import (
     ReviewFeature,
+    ReviewGeometry,
 )
 from ..models.validation import (
     Change,
@@ -20,10 +21,7 @@ from ..models.validation import (
     ClassifiedChange,
     ClassifiedChanges,
 )
-from ..models.review import (
-    ReviewFeature,
-    ReviewGeometry,
-)
+
 
 @dataclass(slots=True)
 class ChangeReviewExportService:
@@ -258,12 +256,10 @@ class ChangeReviewExportService:
 
         attribute_names = {
             finding.attribute_name
-            for finding
-            in classified_change.metadata.findings
+            for finding in classified_change.metadata.findings
             if (
                 finding.attribute_name is not None
-                and finding.attribute_name
-                not in geometry_attribute_names
+                and finding.attribute_name not in geometry_attribute_names
             )
         }
 
@@ -274,20 +270,12 @@ class ChangeReviewExportService:
 
         for attribute_name in attribute_names:
             if attribute_name in change.new_values:
-                values[
-                    attribute_name
-                ] = change.new_values[
-                    attribute_name
-                ]
+                values[attribute_name] = change.new_values[attribute_name]
 
                 continue
 
             if attribute_name in change.old_values:
-                values[
-                    attribute_name
-                ] = change.old_values[
-                    attribute_name
-                ]
+                values[attribute_name] = change.old_values[attribute_name]
 
         return values
 
@@ -319,19 +307,12 @@ class ChangeReviewExportService:
         ] = []
 
         for attribute in change.changed_attributes:
-            attribute_name = (
-                attribute.attribute_name
-            )
+            attribute_name = attribute.attribute_name
 
-            if (
-                attribute_name
-                in geometry_attribute_names
-            ):
+            if attribute_name in geometry_attribute_names:
                 payload.append(
                     {
-                        "attribute_name": (
-                            attribute_name
-                        ),
+                        "attribute_name": (attribute_name),
                         "is_geometry": True,
                     }
                 )
@@ -340,9 +321,7 @@ class ChangeReviewExportService:
 
             payload.append(
                 {
-                    "attribute_name": (
-                        attribute_name
-                    ),
+                    "attribute_name": (attribute_name),
                     "old_value": (
                         change.old_values.get(
                             attribute_name,
@@ -428,11 +407,7 @@ class ChangeReviewExportService:
         Return converted geometries representing the old object state.
         """
 
-        values = (
-            old_object.values
-            if old_object is not None
-            else change.old_values
-        )
+        values = old_object.values if old_object is not None else change.old_values
 
         return self._geometry_values_from_mapping(
             class_id=change.table_name,
@@ -452,11 +427,7 @@ class ChangeReviewExportService:
         Return converted geometries representing the new object state.
         """
 
-        values = (
-            new_object.values
-            if new_object is not None
-            else change.new_values
-        )
+        values = new_object.values if new_object is not None else change.new_values
 
         return self._geometry_values_from_mapping(
             class_id=change.table_name,
@@ -517,9 +488,7 @@ class ChangeReviewExportService:
                     "ReviewGeometry."
                 )
 
-            geometries[
-                attribute_id
-            ] = geometry
+            geometries[attribute_id] = geometry
 
         return geometries
 
@@ -597,8 +566,7 @@ class ChangeReviewExportService:
                 attribute_name,
                 value,
             ) in values.items()
-            if attribute_name
-            not in geometry_attribute_names
+            if attribute_name not in geometry_attribute_names
         }
 
     def _geometry_attribute_names(

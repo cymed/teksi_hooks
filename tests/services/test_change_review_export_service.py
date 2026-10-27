@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import pytest
 from dataclasses import dataclass, field
 from typing import Any
 
+import pytest
 
 from teksi_hooks.capabilities.review import (
     ChangeObjectProvider,
@@ -65,9 +65,7 @@ class FakeReviewGeometryConverter(
             value,
             bytes,
         ):
-            raise TypeError(
-                "Test geometry values must be EWKB bytes."
-            )
+            raise TypeError("Test geometry values must be EWKB bytes.")
 
         return ReviewGeometry(
             ewkb=value,
@@ -79,6 +77,7 @@ class FakeReviewGeometryConverter(
             ],
         )
 
+
 def _geometry_converter() -> FakeReviewGeometryConverter:
     return FakeReviewGeometryConverter(
         families={
@@ -88,6 +87,7 @@ def _geometry_converter() -> FakeReviewGeometryConverter:
             ): ReviewGeometryFamily.LINE,
         },
     )
+
 
 def _identity(
     *,
@@ -508,12 +508,7 @@ def test_change_review_export_service_marks_rejected_geometry_change() -> None:
 
     feature = features_by_class["reach"][0]
 
-    assert (
-        feature.attributes[
-            "unpermitted_values"
-        ]
-        == {}
-    )
+    assert feature.attributes["unpermitted_values"] == {}
 
     assert feature.attributes["progression_geometry_changed"] is True
 
@@ -603,15 +598,15 @@ def test_change_review_export_service_falls_back_to_change_values_when_provider_
         operation=ChangeOperation.UPDATE,
         old_values={
             "progression_geometry": ReviewGeometry(
-            ewkb_from_wkt("LINESTRING(0 0, 1 1)"),
-            family=ReviewGeometryFamily.LINE,
-        )
+                ewkb_from_wkt("LINESTRING(0 0, 1 1)"),
+                family=ReviewGeometryFamily.LINE,
+            )
         },
         new_values={
             "progression_geometry": ReviewGeometry(
-            ewkb_from_wkt("LINESTRING(0 0, 2 2)"),
-            family=ReviewGeometryFamily.LINE,
-        )
+                ewkb_from_wkt("LINESTRING(0 0, 2 2)"),
+                family=ReviewGeometryFamily.LINE,
+            )
         },
     )
 
@@ -643,9 +638,7 @@ def test_change_review_export_service_falls_back_to_change_values_when_provider_
 
     assert feature.geometries == {
         "progression_geometry": ReviewGeometry(
-            ewkb=ewkb_from_wkt(
-                "LINESTRING(0 0, 2 2)"
-            ),
+            ewkb=ewkb_from_wkt("LINESTRING(0 0, 2 2)"),
             family=ReviewGeometryFamily.LINE,
         ),
     }
@@ -761,9 +754,7 @@ def test_change_review_export_service_preserves_relation_backed_identity() -> No
 
 
 def test_review_geometry_accepts_ewkb_and_family() -> None:
-    ewkb = ewkb_from_wkt(
-        "LINESTRING(0 0, 1 1)"
-    )
+    ewkb = ewkb_from_wkt("LINESTRING(0 0, 1 1)")
 
     geometry = ReviewGeometry(
         ewkb=ewkb,
@@ -771,16 +762,11 @@ def test_review_geometry_accepts_ewkb_and_family() -> None:
     )
 
     assert geometry.ewkb == ewkb
-    assert (
-        geometry.family
-        == ReviewGeometryFamily.LINE
-    )
+    assert geometry.family == ReviewGeometryFamily.LINE
 
 
 def test_review_geometry_normalizes_bytearray() -> None:
-    ewkb = ewkb_from_wkt(
-        "POINT(1 2)"
-    )
+    ewkb = ewkb_from_wkt("POINT(1 2)")
 
     geometry = ReviewGeometry(
         ewkb=bytearray(
@@ -794,10 +780,7 @@ def test_review_geometry_normalizes_bytearray() -> None:
         bytes,
     )
 
-    assert (
-        geometry.family
-        == ReviewGeometryFamily.POINT
-    )
+    assert geometry.family == ReviewGeometryFamily.POINT
 
 
 def test_review_geometry_rejects_empty_ewkb() -> None:
@@ -807,9 +790,7 @@ def test_review_geometry_rejects_empty_ewkb() -> None:
     ):
         ReviewGeometry(
             ewkb=b"",
-            family=(
-                ReviewGeometryFamily.POINT
-            ),
+            family=(ReviewGeometryFamily.POINT),
         )
 
 
@@ -819,8 +800,6 @@ def test_review_geometry_rejects_unknown_family() -> None:
         match="family",
     ):
         ReviewGeometry(
-            ewkb=ewkb_from_wkt(
-                "POINT(1 2)"
-            ),
+            ewkb=ewkb_from_wkt("POINT(1 2)"),
             family="volume",
         )

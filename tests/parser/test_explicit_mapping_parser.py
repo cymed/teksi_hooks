@@ -22,6 +22,7 @@ def test_mapping_parser_imports_all_models(
         "vsa_kek",
     }
 
+
 def test_mapping_parser_requires_model_id_for_multi_model_file(
     parser: ModelMappingParser,
 ) -> None:

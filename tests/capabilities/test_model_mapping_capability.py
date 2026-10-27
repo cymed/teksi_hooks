@@ -1,10 +1,10 @@
 import pytest
 
-from teksi_hooks.models.mapping import (
-    ModelMapping,
-)
 from teksi_hooks.capabilities.mapping import (
     ModelMappingCapability,
+)
+from teksi_hooks.models.mapping import (
+    ModelMapping,
 )
 
 
@@ -44,14 +44,11 @@ def test_model_mapping_capability_returns_same_projection_mapping(
         "GepKnoten",
     )
 
-    expected = agxx_mapping.classes[
-        "GepKnoten"
-    ]
+    expected = agxx_mapping.classes["GepKnoten"]
 
     assert class_mapping is expected
-    assert class_mapping.projection is (
-        expected.projection
-    )
+    assert class_mapping.projection is (expected.projection)
+
 
 def test_model_mapping_capability_rejects_unknown_class(
     capability: ModelMappingCapability,
@@ -64,6 +61,7 @@ def test_model_mapping_capability_rejects_unknown_class(
             "GepKnotenUnbekannt",
         )
 
+
 def test_model_mapping_capability_returns_none_for_unknown_class(
     capability: ModelMappingCapability,
 ) -> None:
@@ -73,6 +71,7 @@ def test_model_mapping_capability_returns_none_for_unknown_class(
         )
         is None
     )
+
 
 def test_model_mapping_capability_returns_attribute_backed_class(
     capability: ModelMappingCapability,
