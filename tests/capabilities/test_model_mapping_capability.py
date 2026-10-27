@@ -1,5 +1,8 @@
 import pytest
 
+from teksi_hooks.models.mapping import (
+    ModelMapping,
+)
 from teksi_hooks.capabilities.mapping import (
     ModelMappingCapability,
 )
@@ -14,24 +17,62 @@ def capability(
     )
 
 
-def test_model_mapping_capability_returns_function_backed_class(
+def test_model_mapping_capability_returns_projection_backed_class(
     capability: ModelMappingCapability,
 ) -> None:
-    cls = capability.class_definition(
+    class_mapping = capability.class_definition(
         "GepKnoten",
     )
 
-    assert cls.function is not None
-    assert cls.function.schema == "tww_app"
-    assert cls.function.name == "fct_agxx_gepknoten_mapping_jsonb"
-    assert cls.function.parameters == {
-        "row": "$row",
-    }
+    assert class_mapping.is_projection_backed
+    assert not class_mapping.is_attribute_backed
 
-    assert cls.identities == {}
-    assert cls.attributes == {}
-    assert cls.relations == {}
+    assert class_mapping.projection is not None
 
+    assert class_mapping.canonical_class_id is None
+    assert class_mapping.identity is None
+    assert class_mapping.identities == {}
+    assert class_mapping.attributes == {}
+    assert class_mapping.relations == {}
+
+
+def test_model_mapping_capability_returns_same_projection_mapping(
+    capability: ModelMappingCapability,
+    agxx_mapping: ModelMapping,
+) -> None:
+    class_mapping = capability.class_definition(
+        "GepKnoten",
+    )
+
+    expected = agxx_mapping.classes[
+        "GepKnoten"
+    ]
+
+    assert class_mapping is expected
+    assert class_mapping.projection is (
+        expected.projection
+    )
+
+def test_model_mapping_capability_rejects_unknown_class(
+    capability: ModelMappingCapability,
+) -> None:
+    with pytest.raises(
+        KeyError,
+        match="GepKnotenUnbekannt",
+    ):
+        capability.class_definition(
+            "GepKnotenUnbekannt",
+        )
+
+def test_model_mapping_capability_returns_none_for_unknown_class(
+    capability: ModelMappingCapability,
+) -> None:
+    assert (
+        capability.try_class_definition(
+            "GepKnotenUnbekannt",
+        )
+        is None
+    )
 
 def test_model_mapping_capability_returns_attribute_backed_class(
     capability: ModelMappingCapability,
@@ -40,7 +81,7 @@ def test_model_mapping_capability_returns_attribute_backed_class(
         "VersickerungsbereichAG",
     )
 
-    assert cls.function is None
+    assert cls.projection is None
     assert "q_check" in cls.attributes
     assert "versickerungsmoeglichkeitag" in cls.attributes
 

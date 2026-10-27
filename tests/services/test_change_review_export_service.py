@@ -1,9 +1,13 @@
 from __future__ import annotations
 
+import pytest
 from dataclasses import dataclass, field
+from typing import Any
+
 
 from teksi_hooks.capabilities.review import (
     ChangeObjectProvider,
+    ReviewGeometryConverter,
 )
 from teksi_hooks.exceptions import (
     Severity,
@@ -11,6 +15,10 @@ from teksi_hooks.exceptions import (
 from teksi_hooks.models.canonical_object import (
     CanonicalObject,
     CanonicalObjectIdentity,
+)
+from teksi_hooks.models.review import (
+    ReviewGeometry,
+    ReviewGeometryFamily,
 )
 from teksi_hooks.models.validation import (
     Change,
@@ -27,6 +35,59 @@ from teksi_hooks.services.change_review_export import (
 
 from ..helpers import ewkb_from_wkt
 
+
+@dataclass(
+    slots=True,
+)
+class FakeReviewGeometryConverter(
+    ReviewGeometryConverter,
+):
+    """
+    Convert test EWKB values using configured geometry families.
+    """
+
+    families: Mapping[
+        tuple[
+            str,
+            str,
+        ],
+        ReviewGeometryFamily,
+    ]
+
+    def review_geometry(
+        self,
+        *,
+        class_id: str,
+        attribute_id: str,
+        value: Any,
+    ) -> ReviewGeometry:
+        if not isinstance(
+            value,
+            bytes,
+        ):
+            raise TypeError(
+                "Test geometry values must be EWKB bytes."
+            )
+
+        return ReviewGeometry(
+            ewkb=value,
+            family=self.families[
+                (
+                    class_id,
+                    attribute_id,
+                )
+            ],
+        )
+
+def _geometry_converter() -> FakeReviewGeometryConverter:
+    return FakeReviewGeometryConverter(
+        families={
+            (
+                "reach",
+                "progression_geometry",
+            ): ReviewGeometryFamily.LINE,
+        },
+    )
 
 def _identity(
     *,
@@ -135,6 +196,7 @@ def test_change_review_export_service_groups_features_by_class() -> None:
 
     service = ChangeReviewExportService(
         object_provider=FakeChangeObjectProvider(),
+        geometry_converter=_geometry_converter(),
         geometry_attribute_names_by_class={},
     )
 
@@ -213,6 +275,7 @@ def test_change_review_export_service_created_feature_uses_import_values() -> No
 
     service = ChangeReviewExportService(
         object_provider=FakeChangeObjectProvider(),
+        geometry_converter=_geometry_converter(),
         geometry_attribute_names_by_class={},
     )
 
@@ -269,6 +332,7 @@ def test_change_review_export_service_deleted_feature_uses_old_values() -> None:
 
     service = ChangeReviewExportService(
         object_provider=FakeChangeObjectProvider(),
+        geometry_converter=_geometry_converter(),
         geometry_attribute_names_by_class={},
     )
 
@@ -299,11 +363,17 @@ def test_change_review_export_service_uses_metadata_driven_geometry_attributes()
         object_id="ch000000re000003",
         operation=ChangeOperation.UPDATE,
         old_values={
-            "progression_geometry": ewkb_from_wkt("LINESTRING(0 0, 1 1)"),
+            "progression_geometry": ReviewGeometry(
+                ewkb=ewkb_from_wkt("LINESTRING(0 0, 1 1)"),
+                family=ReviewGeometryFamily.LINE,
+            ),
             "status": "old",
         },
         new_values={
-            "progression_geometry": ewkb_from_wkt("LINESTRING(0 0, 2 2)"),
+            "progression_geometry": ReviewGeometry(
+                ewkb=ewkb_from_wkt("LINESTRING(0 0, 2 2)"),
+                family=ReviewGeometryFamily.LINE,
+            ),
             "status": "new",
         },
     )
@@ -322,6 +392,7 @@ def test_change_review_export_service_uses_metadata_driven_geometry_attributes()
 
     service = ChangeReviewExportService(
         object_provider=FakeChangeObjectProvider(),
+        geometry_converter=_geometry_converter(),
         geometry_attribute_names_by_class={
             "reach": ("progression_geometry",),
         },
@@ -373,6 +444,7 @@ def test_change_review_export_service_ignores_geometry_like_names_not_in_metadat
 
     service = ChangeReviewExportService(
         object_provider=FakeChangeObjectProvider(),
+        geometry_converter=_geometry_converter(),
         geometry_attribute_names_by_class={
             "reach": (),
         },
@@ -424,6 +496,7 @@ def test_change_review_export_service_marks_rejected_geometry_change() -> None:
 
     service = ChangeReviewExportService(
         object_provider=FakeChangeObjectProvider(),
+        geometry_converter=_geometry_converter(),
         geometry_attribute_names_by_class={
             "reach": ("progression_geometry",),
         },
@@ -435,9 +508,12 @@ def test_change_review_export_service_marks_rejected_geometry_change() -> None:
 
     feature = features_by_class["reach"][0]
 
-    assert feature.attributes["unpermitted_values"] == {
-        "progression_geometry": ewkb_from_wkt("LINESTRING(0 0, 2 2)"),
-    }
+    assert (
+        feature.attributes[
+            "unpermitted_values"
+        ]
+        == {}
+    )
 
     assert feature.attributes["progression_geometry_changed"] is True
 
@@ -498,6 +574,7 @@ def test_change_review_export_service_prefers_provider_objects_for_geometries() 
                 identity.key(): new_object,
             },
         ),
+        geometry_converter=_geometry_converter(),
         geometry_attribute_names_by_class={
             "reach": ("progression_geometry",),
         },
@@ -510,7 +587,10 @@ def test_change_review_export_service_prefers_provider_objects_for_geometries() 
     feature = features_by_class["reach"][0]
 
     assert feature.geometries == {
-        "progression_geometry": ewkb_from_wkt("LINESTRING(20 20, 21 21)"),
+        "progression_geometry": ReviewGeometry(
+            ewkb_from_wkt("LINESTRING(20 20, 21 21)"),
+            family=ReviewGeometryFamily.LINE,
+        )
     }
 
 
@@ -522,10 +602,16 @@ def test_change_review_export_service_falls_back_to_change_values_when_provider_
         object_id="ch000000re000007",
         operation=ChangeOperation.UPDATE,
         old_values={
-            "progression_geometry": ewkb_from_wkt("LINESTRING(0 0, 1 1)"),
+            "progression_geometry": ReviewGeometry(
+            ewkb_from_wkt("LINESTRING(0 0, 1 1)"),
+            family=ReviewGeometryFamily.LINE,
+        )
         },
         new_values={
-            "progression_geometry": ewkb_from_wkt("LINESTRING(0 0, 2 2)"),
+            "progression_geometry": ReviewGeometry(
+            ewkb_from_wkt("LINESTRING(0 0, 2 2)"),
+            family=ReviewGeometryFamily.LINE,
+        )
         },
     )
 
@@ -543,6 +629,7 @@ def test_change_review_export_service_falls_back_to_change_values_when_provider_
 
     service = ChangeReviewExportService(
         object_provider=FakeChangeObjectProvider(),
+        geometry_converter=_geometry_converter(),
         geometry_attribute_names_by_class={
             "reach": ("progression_geometry",),
         },
@@ -555,7 +642,12 @@ def test_change_review_export_service_falls_back_to_change_values_when_provider_
     feature = features_by_class["reach"][0]
 
     assert feature.geometries == {
-        "progression_geometry": ewkb_from_wkt("LINESTRING(0 0, 2 2)"),
+        "progression_geometry": ReviewGeometry(
+            ewkb=ewkb_from_wkt(
+                "LINESTRING(0 0, 2 2)"
+            ),
+            family=ReviewGeometryFamily.LINE,
+        ),
     }
 
 
@@ -599,6 +691,7 @@ def test_change_review_export_service_deleted_feature_uses_provider_old_geometry
                 identity.key(): old_object,
             },
         ),
+        geometry_converter=_geometry_converter(),
         geometry_attribute_names_by_class={
             "reach": ("progression_geometry",),
         },
@@ -645,6 +738,7 @@ def test_change_review_export_service_preserves_relation_backed_identity() -> No
 
     service = ChangeReviewExportService(
         object_provider=FakeChangeObjectProvider(),
+        geometry_converter=_geometry_converter(),
         geometry_attribute_names_by_class={},
     )
 
@@ -664,3 +758,69 @@ def test_change_review_export_service_preserves_relation_backed_identity() -> No
     assert feature.attributes["canonical_values"] == {
         "ag96_last_modification": "2026-01-01",
     }
+
+
+def test_review_geometry_accepts_ewkb_and_family() -> None:
+    ewkb = ewkb_from_wkt(
+        "LINESTRING(0 0, 1 1)"
+    )
+
+    geometry = ReviewGeometry(
+        ewkb=ewkb,
+        family=ReviewGeometryFamily.LINE,
+    )
+
+    assert geometry.ewkb == ewkb
+    assert (
+        geometry.family
+        == ReviewGeometryFamily.LINE
+    )
+
+
+def test_review_geometry_normalizes_bytearray() -> None:
+    ewkb = ewkb_from_wkt(
+        "POINT(1 2)"
+    )
+
+    geometry = ReviewGeometry(
+        ewkb=bytearray(
+            ewkb,
+        ),
+        family="point",
+    )
+
+    assert isinstance(
+        geometry.ewkb,
+        bytes,
+    )
+
+    assert (
+        geometry.family
+        == ReviewGeometryFamily.POINT
+    )
+
+
+def test_review_geometry_rejects_empty_ewkb() -> None:
+    with pytest.raises(
+        ValueError,
+        match="must not be empty",
+    ):
+        ReviewGeometry(
+            ewkb=b"",
+            family=(
+                ReviewGeometryFamily.POINT
+            ),
+        )
+
+
+def test_review_geometry_rejects_unknown_family() -> None:
+    with pytest.raises(
+        ValueError,
+        match="family",
+    ):
+        ReviewGeometry(
+            ewkb=ewkb_from_wkt(
+                "POINT(1 2)"
+            ),
+            family="volume",
+        )

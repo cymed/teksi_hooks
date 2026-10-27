@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Protocol
+from typing import Any, Protocol, Mapping, Sequence
 
-from teksi_hooks.models.review import (
-    PreparedSource,
-)
-
-from ..models.review import ReviewFeature
 from ..models.validation import (
     Change,
+)
+
+from ..models.review import (
+    PreparedSource,
+    ReviewFeature,
+    ReviewGeometry,
 )
 
 
@@ -66,6 +66,22 @@ class ReviewArtifactWriter(Protocol):
         Write layers to the given path.
         """
 
+
+
+class ReviewGeometryConverter(
+    Protocol,
+):
+    """
+    Convert provider-specific geometry values to review geometry values.
+    """
+
+    def review_geometry(
+        self,
+        value: Any,
+    ) -> ReviewGeometry:
+        """
+        Return the portable review representation of one geometry.
+        """
 
 class SourcePreparer(Protocol):
     def prepare_source(

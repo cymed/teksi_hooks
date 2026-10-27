@@ -1,16 +1,145 @@
 from __future__ import annotations
 
-from collections.abc import Mapping, Sequence
+
 from dataclasses import dataclass, field
+from typing import Any, Mapping, Sequence
 from enum import StrEnum
-from typing import Any
 from uuid import UUID
 
-from .effects import EffectDocument
 from .persistence import (
     PersistenceResult,
 )
+from .effects import EffectDocument
 from .validation import Change, ClassifiedChanges, ValidationFinding
+
+
+class ReviewGeometryFamily(
+    StrEnum,
+):
+    """
+    Broad geometry families supported by review artifacts.
+
+    The family describes the storage and rendering category, not the exact
+    geometry subtype. For example, ``LINESTRING``, ``CIRCULARSTRING``,
+    ``COMPOUNDCURVE``, and ``MULTICURVE`` as well as their counterparts 
+    with Z or M values all belong to ``LINE``. Module-specific interpreters
+    may limit the allowed inputs by i.e. dropping M support.
+    """
+
+    POINT = "point"
+
+    LINE = "line"
+
+    POLYGON = "polygon"
+
+
+@dataclass(
+    slots=True,
+    frozen=True,
+)
+class ReviewGeometry:
+    """
+    Geometry transported between review creation and review persistence.
+
+    The geometry is represented as Extended Well-Known Binary so its exact
+    PostGIS-compatible representation can be transferred without converting
+    it through WKT, OGR, QGIS, Shapely, or another geometry model.
+
+    EWKB may preserve:
+
+    - the exact geometry subtype;
+    - curved geometry types;
+    - coordinate dimensions such as XY and XYZ;
+    - the spatial reference identifier;
+    - coordinate values and geometry structure.
+
+    ``family`` provides the broad geometry category required by review
+    writers that separate point, line, and polygon features into different
+    storage columns or layers.
+    """
+
+    ewkb: bytes = field(
+        metadata={
+            "doc": (
+                "Extended Well-Known Binary representation of the geometry. "
+                "The payload should include the spatial reference identifier "
+                "and preserve the original geometry subtype and coordinate "
+                "dimensions."
+            )
+        },
+    )
+
+    family: ReviewGeometryFamily = field(
+        metadata={
+            "doc": (
+                "Broad geometry family used to select the corresponding "
+                "point, line, or polygon review storage."
+            )
+        },
+    )
+
+    def __post_init__(
+        self,
+    ) -> None:
+        """
+        Validate and normalize the immutable geometry transport value.
+        """
+
+        if isinstance(
+            self.ewkb,
+            (
+                bytearray,
+                memoryview,
+            ),
+        ):
+            object.__setattr__(
+                self,
+                "ewkb",
+                bytes(
+                    self.ewkb,
+                ),
+            )
+
+        if not isinstance(
+            self.ewkb,
+            bytes,
+        ):
+            raise TypeError(
+                "ReviewGeometry.ewkb must be bytes, "
+                f"received {type(self.ewkb)!r}."
+            )
+
+        if not self.ewkb:
+            raise ValueError(
+                "ReviewGeometry.ewkb must not be empty."
+            )
+
+        if not isinstance(
+            self.family,
+            ReviewGeometryFamily,
+        ):
+            try:
+                normalized_family = (
+                    ReviewGeometryFamily(
+                        self.family,
+                    )
+                )
+
+            except (
+                TypeError,
+                ValueError,
+            ) as exception:
+                raise ValueError(
+                    "ReviewGeometry.family must be one of "
+                    f"{tuple(item.value for item in ReviewGeometryFamily)!r}; "
+                    f"received {self.family!r}."
+                ) from exception
+
+            object.__setattr__(
+                self,
+                "family",
+                normalized_family,
+            )
 
 
 @dataclass(slots=True)
@@ -52,7 +181,7 @@ class ReviewFeature:
 
     geometries: dict[
         str,
-        Any,
+        ReviewGeometry,
     ] = field(
         default_factory=dict,
         metadata={
@@ -336,42 +465,74 @@ class ChangeCreationResult:
     )
 
     import_model: str | None = field(
-        metadata={"doc": ("Name of the import model.")},
+        metadata={
+            "doc": (
+                "Name of the import model."
+            )
+        },
     )
 
     incremental_import_model: str | None = field(
         default=None,
-        metadata={"doc": ("Name of the incremental import model.")},
+        metadata={
+            "doc": (
+                "Name of the incremental import model."
+            )
+        },
     )
 
     created_models: list[str] = field(
         default_factory=list,
-        metadata={"doc": ("List of created models.")},
+        metadata={
+            "doc": (
+                "List of created models."
+            )
+        },
     )
 
     incremental_created_models: list[str] = field(
         default_factory=list,
-        metadata={"doc": ("List of created incremental models.")},
+        metadata={
+            "doc": (
+                "List of created incremental models."
+            )
+        },
     )
 
     effect_document: EffectDocument | None = field(
         default=None,
-        metadata={"doc": ("Effect Document of the corresponding workflow.")},
+        metadata={
+            "doc": (
+                "Effect Document of the corresponding workflow."
+            )
+        },
     )
 
     changes: list[Change] = field(
         default_factory=list,
-        metadata={"doc": ("Changes of the corresponding workflow.")},
+        metadata={
+            "doc": (
+                "Changes of the corresponding workflow."
+            )
+        },
     )
 
     validation_findings: list[ValidationFinding] = field(
         default_factory=list,
-        metadata={"doc": ("Validation findings of the corresponding workflow.")},
+        metadata={
+            "doc": (
+                "Validation findings of the corresponding workflow."
+            )
+        },
     )
 
     classified_changes: ClassifiedChanges | None = field(
         default=None,
-        metadata={"doc": ("Classified Changes of the corresponding workflow.")},
+        metadata={
+            "doc": (
+                "Classified Changes of the corresponding workflow."
+            )
+        },
     )
 
     features_by_class: dict[
@@ -379,12 +540,20 @@ class ChangeCreationResult:
         list[ReviewFeature],
     ] = field(
         default_factory=dict,
-        metadata={"doc": ("List of review features by class.")},
+        metadata={
+            "doc": (
+                "List of review features by class."
+            )
+        },
     )
 
-    diff_schema_result: DiffSchemaWriteResult | None = field(
+    diff_schema_result: DiffSchemaWriteResult | None =  field(
         default=None,
-        metadata={"doc": ("Result of the Diff Schema Writer.")},
+        metadata={
+            "doc": (
+                "Result of the Diff Schema Writer."
+            )
+        },
     )
 
 

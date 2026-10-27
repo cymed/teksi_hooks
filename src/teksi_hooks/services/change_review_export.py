@@ -6,6 +6,7 @@ from typing import Any
 
 from ..capabilities.review import (
     ChangeObjectProvider,
+    ReviewGeometryConverter,
 )
 from ..models.canonical_object import (
     CanonicalObject,
@@ -19,7 +20,10 @@ from ..models.validation import (
     ClassifiedChange,
     ClassifiedChanges,
 )
-
+from ..models.review import (
+    ReviewFeature,
+    ReviewGeometry,
+)
 
 @dataclass(slots=True)
 class ChangeReviewExportService:
@@ -37,6 +41,8 @@ class ChangeReviewExportService:
     """
 
     object_provider: ChangeObjectProvider
+
+    geometry_converter: ReviewGeometryConverter
 
     geometry_attribute_names_by_class: Mapping[
         str,
@@ -173,13 +179,18 @@ class ChangeReviewExportService:
         str,
         Any,
     ]:
+        """
+        Return non-geometry imported values for review persistence.
+        """
+
         if self._is_deleted(
             change,
         ):
             return {}
 
-        return dict(
-            change.new_values,
+        return self._non_geometry_values(
+            class_id=change.table_name,
+            values=change.new_values,
         )
 
     def _canonical_values(
@@ -189,18 +200,24 @@ class ChangeReviewExportService:
         str,
         Any,
     ]:
+        """
+        Return non-geometry canonical values for review persistence.
+        """
+
         if self._is_created(
             change,
         ):
-            return dict(
-                change.new_values,
+            return self._non_geometry_values(
+                class_id=change.table_name,
+                values=change.new_values,
             )
 
         if self._is_deleted(
             change,
         ):
-            return dict(
-                change.old_values,
+            return self._non_geometry_values(
+                class_id=change.table_name,
+                values=change.old_values,
             )
 
         values = dict(
@@ -211,7 +228,10 @@ class ChangeReviewExportService:
             change.new_values,
         )
 
-        return values
+        return self._non_geometry_values(
+            class_id=change.table_name,
+            values=values,
+        )
 
     def _unpermitted_values(
         self,
@@ -220,26 +240,54 @@ class ChangeReviewExportService:
         str,
         Any,
     ]:
+        """
+        Return unpermitted non-geometry values.
+
+        Geometry findings remain represented through geometry change flags and
+        finding metadata. The geometry payload itself is stored in
+        ``ReviewFeature.geometries``.
+        """
+
         change = classified_change.change
+
+        geometry_attribute_names = set(
+            self._geometry_attribute_names(
+                change.table_name,
+            )
+        )
 
         attribute_names = {
             finding.attribute_name
-            for finding in classified_change.metadata.findings
-            if finding.attribute_name is not None
+            for finding
+            in classified_change.metadata.findings
+            if (
+                finding.attribute_name is not None
+                and finding.attribute_name
+                not in geometry_attribute_names
+            )
         }
 
-        if not attribute_names:
-            return {}
-
-        values = {}
+        values: dict[
+            str,
+            Any,
+        ] = {}
 
         for attribute_name in attribute_names:
             if attribute_name in change.new_values:
-                values[attribute_name] = change.new_values[attribute_name]
+                values[
+                    attribute_name
+                ] = change.new_values[
+                    attribute_name
+                ]
+
                 continue
 
             if attribute_name in change.old_values:
-                values[attribute_name] = change.old_values[attribute_name]
+                values[
+                    attribute_name
+                ] = change.old_values[
+                    attribute_name
+                ]
 
         return values
 
@@ -253,20 +301,59 @@ class ChangeReviewExportService:
         ],
         ...,
     ]:
-        payload = []
+        """
+        Return changed-attribute metadata without embedding geometry payloads.
+        """
+
+        geometry_attribute_names = set(
+            self._geometry_attribute_names(
+                change.table_name,
+            )
+        )
+
+        payload: list[
+            dict[
+                str,
+                Any,
+            ],
+        ] = []
 
         for attribute in change.changed_attributes:
-            attribute_name = attribute.attribute_name
+            attribute_name = (
+                attribute.attribute_name
+            )
+
+            if (
+                attribute_name
+                in geometry_attribute_names
+            ):
+                payload.append(
+                    {
+                        "attribute_name": (
+                            attribute_name
+                        ),
+                        "is_geometry": True,
+                    }
+                )
+
+                continue
 
             payload.append(
                 {
-                    "attribute_name": attribute_name,
-                    "old_value": change.old_values.get(
-                        attribute_name,
+                    "attribute_name": (
+                        attribute_name
                     ),
-                    "new_value": change.new_values.get(
-                        attribute_name,
+                    "old_value": (
+                        change.old_values.get(
+                            attribute_name,
+                        )
                     ),
+                    "new_value": (
+                        change.new_values.get(
+                            attribute_name,
+                        )
+                    ),
+                    "is_geometry": False,
                 }
             )
 
@@ -282,8 +369,15 @@ class ChangeReviewExportService:
         new_object: CanonicalObject | None,
     ) -> dict[
         str,
-        Any,
+        ReviewGeometry,
     ]:
+        """
+        Return the review geometries applicable to one change.
+
+        Created and altered objects use their new geometry where available.
+        Deleted objects use their old geometry.
+        """
+
         if self._is_created(
             change,
         ):
@@ -300,7 +394,10 @@ class ChangeReviewExportService:
                 old_object=old_object,
             )
 
-        geometries = {}
+        geometries: dict[
+            str,
+            ReviewGeometry,
+        ] = {}
 
         geometries.update(
             self._old_geometries(
@@ -325,17 +422,21 @@ class ChangeReviewExportService:
         old_object: CanonicalObject | None,
     ) -> dict[
         str,
-        Any,
+        ReviewGeometry,
     ]:
-        if old_object is not None:
-            return self._geometry_values_from_mapping(
-                class_id=change.table_name,
-                values=old_object.values,
-            )
+        """
+        Return converted geometries representing the old object state.
+        """
+
+        values = (
+            old_object.values
+            if old_object is not None
+            else change.old_values
+        )
 
         return self._geometry_values_from_mapping(
             class_id=change.table_name,
-            values=change.old_values,
+            values=values,
         )
 
     def _new_geometries(
@@ -345,18 +446,82 @@ class ChangeReviewExportService:
         new_object: CanonicalObject | None,
     ) -> dict[
         str,
-        Any,
+        ReviewGeometry,
     ]:
-        if new_object is not None:
-            return self._geometry_values_from_mapping(
-                class_id=change.table_name,
-                values=new_object.values,
-            )
+        """
+        Return converted geometries representing the new object state.
+        """
+
+        values = (
+            new_object.values
+            if new_object is not None
+            else change.new_values
+        )
 
         return self._geometry_values_from_mapping(
             class_id=change.table_name,
-            values=change.new_values,
+            values=values,
         )
+
+    def _geometry_values_from_mapping(
+        self,
+        *,
+        class_id: str,
+        values: Mapping[
+            str,
+            Any,
+        ],
+    ) -> dict[
+        str,
+        ReviewGeometry,
+    ]:
+        """
+        Convert configured non-null geometry values to review geometries.
+        """
+
+        geometry_attribute_names = set(
+            self._geometry_attribute_names(
+                class_id,
+            )
+        )
+
+        geometries: dict[
+            str,
+            ReviewGeometry,
+        ] = {}
+
+        for (
+            attribute_id,
+            value,
+        ) in values.items():
+            if attribute_id not in geometry_attribute_names:
+                continue
+
+            if value is None:
+                continue
+
+            geometry = self.geometry_converter.review_geometry(
+                class_id=class_id,
+                attribute_id=attribute_id,
+                value=value,
+            )
+
+            if not isinstance(
+                geometry,
+                ReviewGeometry,
+            ):
+                raise TypeError(
+                    "Review geometry converter returned "
+                    f"{type(geometry)!r} for "
+                    f"{class_id!r}.{attribute_id!r}; expected "
+                    "ReviewGeometry."
+                )
+
+            geometries[
+                attribute_id
+            ] = geometry
+
+        return geometries
 
     def _add_geometry_changed_flags(
         self,
@@ -404,7 +569,7 @@ class ChangeReviewExportService:
             if attribute.attribute_name in geometry_attribute_names
         )
 
-    def _geometry_values_from_mapping(
+    def _non_geometry_values(
         self,
         *,
         class_id: str,
@@ -416,6 +581,10 @@ class ChangeReviewExportService:
         str,
         Any,
     ]:
+        """
+        Return values excluding configured geometry attributes.
+        """
+
         geometry_attribute_names = set(
             self._geometry_attribute_names(
                 class_id,
@@ -423,9 +592,13 @@ class ChangeReviewExportService:
         )
 
         return {
-            key: value
-            for key, value in values.items()
-            if key in geometry_attribute_names
+            attribute_name: value
+            for (
+                attribute_name,
+                value,
+            ) in values.items()
+            if attribute_name
+            not in geometry_attribute_names
         }
 
     def _geometry_attribute_names(
