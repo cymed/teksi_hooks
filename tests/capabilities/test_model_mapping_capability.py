@@ -199,7 +199,7 @@ def test_model_mapping_capability_exposes_default_last_modification_identity(
 ) -> None:
     identity = capability.mapping.defaults.identities["agxx_last_modification"]
 
-    assert identity.source_attribute == "obj_id"
+    assert identity.source_attribute == "t_ili_tid"
     assert identity.canonical_attribute == "fk_element"
 
 

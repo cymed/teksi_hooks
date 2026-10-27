@@ -129,7 +129,7 @@ def test_explicit_mapping_parser_imports_projection(
     assert cls.projection.canonical_view.identity_attribute == "obj_id"
 
     assert (
-        cls.projection.value_lists.istschnittstelle.relation
+        cls.projection.value_lists['istschnittstelle'].relation
         == "tww_vl.wastewater_node_ag96_is_gateway"
     )
 
@@ -184,10 +184,10 @@ def test_explicit_mapping_parser_imports_building_group_identities(
 ) -> None:
     identities = agxx_mapping.classes["BautenAusserhalbBaugebiet"].identities
 
-    assert identities["building_group"].source_attribute == "obj_id"
+    assert identities["building_group"].source_attribute == "t_ili_tid"
     assert identities["building_group"].canonical_attribute == "obj_id"
 
-    assert identities["agxx_building_group"].source_attribute == "obj_id"
+    assert identities["agxx_building_group"].source_attribute == "t_ili_tid"
     assert identities["agxx_building_group"].canonical_attribute == "fk_building_group"
 
 

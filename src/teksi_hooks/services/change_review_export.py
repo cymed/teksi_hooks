@@ -447,7 +447,11 @@ class ChangeReviewExportService:
         ReviewGeometry,
     ]:
         """
-        Convert configured non-null geometry values to review geometries.
+        Return configured geometry values as portable review geometries.
+
+        Values already represented as ``ReviewGeometry`` are retained. Other
+        provider-specific geometry values are passed through the configured
+        geometry converter.
         """
 
         geometry_attribute_names = set(
@@ -465,30 +469,45 @@ class ChangeReviewExportService:
             attribute_id,
             value,
         ) in values.items():
-            if attribute_id not in geometry_attribute_names:
+            if (
+                attribute_id
+                not in geometry_attribute_names
+            ):
                 continue
 
             if value is None:
                 continue
 
-            geometry = self.geometry_converter.review_geometry(
-                class_id=class_id,
-                attribute_id=attribute_id,
-                value=value,
-            )
+            if isinstance(
+                value,
+                ReviewGeometry,
+            ):
+                geometry = value
+
+            else:
+                geometry = (
+                    self.geometry_converter
+                    .review_geometry(
+                        class_id=class_id,
+                        attribute_id=attribute_id,
+                        value=value,
+                    )
+                )
 
             if not isinstance(
                 geometry,
                 ReviewGeometry,
             ):
                 raise TypeError(
-                    "Review geometry converter returned "
+                    "Review geometry conversion returned "
                     f"{type(geometry)!r} for "
-                    f"{class_id!r}.{attribute_id!r}; expected "
-                    "ReviewGeometry."
+                    f"{class_id!r}.{attribute_id!r}; "
+                    "expected ReviewGeometry."
                 )
 
-            geometries[attribute_id] = geometry
+            geometries[
+                attribute_id
+            ] = geometry
 
         return geometries
 
