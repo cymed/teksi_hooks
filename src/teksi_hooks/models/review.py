@@ -13,7 +13,6 @@ from .persistence import (
 from .validation import Change, ClassifiedChanges, ValidationFinding
 
 
-
 @dataclass(
     slots=True,
     frozen=True,

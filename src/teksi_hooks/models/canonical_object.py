@@ -58,6 +58,7 @@ class TeksiModelNamespaces(Enum):
 
         raise ValueError(f"Unknown canonical model identifier: {identifier!r}.")
 
+
 class CanonicalGeometryFamily(
     StrEnum,
 ):
@@ -76,6 +77,7 @@ class CanonicalGeometryFamily(
     LINE = "line"
 
     POLYGON = "polygon"
+
 
 @dataclass(slots=True, frozen=True)
 class CanonicalObjectIdentity:
@@ -306,6 +308,7 @@ class CanonicalAttributeMetadata(CanonicalModelElementMetadata):
         },
     )
 
+
 @dataclass(slots=True, frozen=True)
 class CanonicalGeometryMetadata(
     CanonicalAttributeMetadata,
@@ -367,13 +370,14 @@ class CanonicalGeometryMetadata(
         Validate and normalize geometry metadata.
         """
 
-        if not isinstance(
-            self.geometry_type,
-            str,
-        ) or not self.geometry_type.strip():
-            raise ValueError(
-                "Canonical geometry type must be a non-empty string."
+        if (
+            not isinstance(
+                self.geometry_type,
+                str,
             )
+            or not self.geometry_type.strip()
+        ):
+            raise ValueError("Canonical geometry type must be a non-empty string.")
 
         object.__setattr__(
             self,
@@ -395,8 +399,7 @@ class CanonicalGeometryMetadata(
                 ValueError,
             ) as exception:
                 raise ValueError(
-                    "Unsupported canonical geometry family "
-                    f"{self.family!r}."
+                    f"Unsupported canonical geometry family {self.family!r}."
                 ) from exception
 
             object.__setattr__(
@@ -413,23 +416,16 @@ class CanonicalGeometryMetadata(
             or self.coordinate_dimension <= 0
         ):
             raise ValueError(
-                "Canonical geometry coordinate dimension must be "
-                "a positive integer."
+                "Canonical geometry coordinate dimension must be a positive integer."
             )
 
         if not isinstance(
             self.srid,
             int,
         ):
-            raise TypeError(
-                "Canonical geometry SRID must be an integer."
-            )
+            raise TypeError("Canonical geometry SRID must be an integer.")
 
-        expected_datatype = (
-            "geometry("
-            f"{self.geometry_type.lower()}"
-            ")"
-        )
+        expected_datatype = f"geometry({self.geometry_type.lower()})"
 
         if self.field_datatype is None:
             object.__setattr__(
@@ -437,6 +433,7 @@ class CanonicalGeometryMetadata(
                 "field_datatype",
                 expected_datatype,
             )
+
 
 @dataclass(slots=True, frozen=True)
 class CanonicalValueMetadata(CanonicalModelElementMetadata):

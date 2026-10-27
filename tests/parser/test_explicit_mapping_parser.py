@@ -128,13 +128,14 @@ def test_explicit_mapping_parser_imports_projection(
     assert cls.projection.canonical_view.name == "vw_agxx_gepknoten"
     assert cls.projection.canonical_view.identity_attribute == "obj_id"
 
-
-    assert cls.projection.value_lists.istschnittstelle.relation == "tww_vl.wastewater_node_ag96_is_gateway"
+    assert (
+        cls.projection.value_lists.istschnittstelle.relation
+        == "tww_vl.wastewater_node_ag96_is_gateway"
+    )
 
     assert cls.identities == {}
     assert cls.attributes == {}
     assert cls.relations == {}
-
 
 
 def test_explicit_mapping_parser_imports_attribute_backed_class(
@@ -438,9 +439,9 @@ def test_mapping_parser_rejects_projection_and_attributes(
                                 "projection": {
                                     "kind": "canonical_view",
                                     "canonical_view": {
-                                        "schema":"foo",
-                                        "name":"bar",
-                                        "identity_attribute":"baz",
+                                        "schema": "foo",
+                                        "name": "bar",
+                                        "identity_attribute": "baz",
                                     },
                                 },
                                 "attributes": {

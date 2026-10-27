@@ -13,9 +13,9 @@ from teksi_hooks.exceptions import (
     Severity,
 )
 from teksi_hooks.models.canonical_object import (
+    CanonicalGeometryFamily,
     CanonicalObject,
     CanonicalObjectIdentity,
-    CanonicalGeometryFamily,
 )
 from teksi_hooks.models.review import (
     ReviewGeometry,
