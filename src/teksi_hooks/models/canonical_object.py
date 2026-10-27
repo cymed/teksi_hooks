@@ -296,8 +296,7 @@ class CanonicalAttributeMetadata(CanonicalModelElementMetadata):
         txx_sys.dictionary_od_field.field_name
     """
 
-    field_datatype: str | None = field(
-        default=None,
+    field_datatype: str = field(
         metadata={
             "doc": (
                 "Source field datatype from canonical metadata. For TEKSI "
