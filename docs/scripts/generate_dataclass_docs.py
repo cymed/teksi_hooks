@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Generate dataclass API documentation from field metadata.
 
 The dataclass field metadata is the source of truth for field-level
@@ -19,7 +18,6 @@ import sys
 from pathlib import Path
 from types import ModuleType
 from typing import Any
-
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC_ROOT = REPO_ROOT / "src"
