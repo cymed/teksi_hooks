@@ -126,7 +126,7 @@ def test_model_mapping_capability_returns_class_identity(
 
     identity = cls.identities["agxx_infiltration_zone"]
 
-    assert identity.source_attribute == "obj_id"
+    assert identity.source_attribute == "t_ili_tid"
     assert identity.canonical_attribute == "fk_infiltration_zone"
 
 
@@ -139,7 +139,7 @@ def test_model_mapping_capability_returns_defaulted_class_identity(
 
     identity = cls.identities["infiltration_zone"]
 
-    assert identity.source_attribute == "obj_id"
+    assert identity.source_attribute == "t_ili_tid"
     assert identity.canonical_attribute == "obj_id"
 
 
@@ -159,12 +159,12 @@ def test_model_mapping_capability_returns_multiple_target_identities(
 
     extension_identity = cls.identities["agxx_building_group"]
 
-    assert extension_identity.source_attribute == "obj_id"
+    assert extension_identity.source_attribute == "t_ili_tid"
     assert extension_identity.canonical_attribute == "fk_building_group"
 
     base_identity = cls.identities["building_group"]
 
-    assert base_identity.source_attribute == "obj_id"
+    assert base_identity.source_attribute == "t_ili_tid"
     assert base_identity.canonical_attribute == "obj_id"
 
 
@@ -177,7 +177,7 @@ def test_model_mapping_capability_returns_sbw_identity(
 
     identity = cls.identities["agxx_catchment_area_totals"]
 
-    assert identity.source_attribute == "obj_id"
+    assert identity.source_attribute == "t_ili_tid"
     assert identity.canonical_attribute == "fk_catchment_area_totals"
 
 
@@ -186,7 +186,7 @@ def test_model_mapping_capability_exposes_mapping_defaults(
 ) -> None:
     defaults = capability.mapping.defaults
 
-    assert defaults.identity.source_attribute == "obj_id"
+    assert defaults.identity.source_attribute == "t_ili_tid"
     assert defaults.identity.canonical_attribute == "obj_id"
 
     assert "agxx_last_modification" in defaults.identities

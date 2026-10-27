@@ -15,10 +15,10 @@ from teksi_hooks.exceptions import (
 from teksi_hooks.models.canonical_object import (
     CanonicalObject,
     CanonicalObjectIdentity,
+    CanonicalGeometryFamily,
 )
 from teksi_hooks.models.review import (
     ReviewGeometry,
-    ReviewGeometryFamily,
 )
 from teksi_hooks.models.validation import (
     Change,
@@ -51,7 +51,7 @@ class FakeReviewGeometryConverter(
             str,
             str,
         ],
-        ReviewGeometryFamily,
+        CanonicalGeometryFamily,
     ]
 
     def review_geometry(
@@ -84,7 +84,7 @@ def _geometry_converter() -> FakeReviewGeometryConverter:
             (
                 "reach",
                 "progression_geometry",
-            ): ReviewGeometryFamily.LINE,
+            ): CanonicalGeometryFamily.LINE,
         },
     )
 
@@ -365,14 +365,14 @@ def test_change_review_export_service_uses_metadata_driven_geometry_attributes()
         old_values={
             "progression_geometry": ReviewGeometry(
                 ewkb=ewkb_from_wkt("LINESTRING(0 0, 1 1)"),
-                family=ReviewGeometryFamily.LINE,
+                family=CanonicalGeometryFamily.LINE,
             ),
             "status": "old",
         },
         new_values={
             "progression_geometry": ReviewGeometry(
                 ewkb=ewkb_from_wkt("LINESTRING(0 0, 2 2)"),
-                family=ReviewGeometryFamily.LINE,
+                family=CanonicalGeometryFamily.LINE,
             ),
             "status": "new",
         },
@@ -584,7 +584,7 @@ def test_change_review_export_service_prefers_provider_objects_for_geometries() 
     assert feature.geometries == {
         "progression_geometry": ReviewGeometry(
             ewkb_from_wkt("LINESTRING(20 20, 21 21)"),
-            family=ReviewGeometryFamily.LINE,
+            family=CanonicalGeometryFamily.LINE,
         )
     }
 
@@ -599,13 +599,13 @@ def test_change_review_export_service_falls_back_to_change_values_when_provider_
         old_values={
             "progression_geometry": ReviewGeometry(
                 ewkb_from_wkt("LINESTRING(0 0, 1 1)"),
-                family=ReviewGeometryFamily.LINE,
+                family=CanonicalGeometryFamily.LINE,
             )
         },
         new_values={
             "progression_geometry": ReviewGeometry(
                 ewkb_from_wkt("LINESTRING(0 0, 2 2)"),
-                family=ReviewGeometryFamily.LINE,
+                family=CanonicalGeometryFamily.LINE,
             )
         },
     )
@@ -639,7 +639,7 @@ def test_change_review_export_service_falls_back_to_change_values_when_provider_
     assert feature.geometries == {
         "progression_geometry": ReviewGeometry(
             ewkb=ewkb_from_wkt("LINESTRING(0 0, 2 2)"),
-            family=ReviewGeometryFamily.LINE,
+            family=CanonicalGeometryFamily.LINE,
         ),
     }
 
@@ -758,11 +758,11 @@ def test_review_geometry_accepts_ewkb_and_family() -> None:
 
     geometry = ReviewGeometry(
         ewkb=ewkb,
-        family=ReviewGeometryFamily.LINE,
+        family=CanonicalGeometryFamily.LINE,
     )
 
     assert geometry.ewkb == ewkb
-    assert geometry.family == ReviewGeometryFamily.LINE
+    assert geometry.family == CanonicalGeometryFamily.LINE
 
 
 def test_review_geometry_normalizes_bytearray() -> None:
@@ -780,7 +780,7 @@ def test_review_geometry_normalizes_bytearray() -> None:
         bytes,
     )
 
-    assert geometry.family == ReviewGeometryFamily.POINT
+    assert geometry.family == CanonicalGeometryFamily.POINT
 
 
 def test_review_geometry_rejects_empty_ewkb() -> None:
@@ -790,7 +790,7 @@ def test_review_geometry_rejects_empty_ewkb() -> None:
     ):
         ReviewGeometry(
             ewkb=b"",
-            family=(ReviewGeometryFamily.POINT),
+            family=(CanonicalGeometryFamily.POINT),
         )
 
 

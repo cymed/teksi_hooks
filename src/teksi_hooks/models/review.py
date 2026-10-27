@@ -13,25 +13,6 @@ from .persistence import (
 from .validation import Change, ClassifiedChanges, ValidationFinding
 
 
-class ReviewGeometryFamily(
-    StrEnum,
-):
-    """
-    Broad geometry families supported by review artifacts.
-
-    The family describes the storage and rendering category, not the exact
-    geometry subtype. For example, ``LINESTRING``, ``CIRCULARSTRING``,
-    ``COMPOUNDCURVE``, and ``MULTICURVE`` as well as their counterparts
-    with Z or M values all belong to ``LINE``. Module-specific interpreters
-    may limit the allowed inputs by i.e. dropping M support.
-    """
-
-    POINT = "point"
-
-    LINE = "line"
-
-    POLYGON = "polygon"
-
 
 @dataclass(
     slots=True,
@@ -69,7 +50,7 @@ class ReviewGeometry:
         },
     )
 
-    family: ReviewGeometryFamily = field(
+    family: CanonicalGeometryFamily = field(
         metadata={
             "doc": (
                 "Broad geometry family used to select the corresponding "
@@ -113,10 +94,10 @@ class ReviewGeometry:
 
         if not isinstance(
             self.family,
-            ReviewGeometryFamily,
+            CanonicalGeometryFamily,
         ):
             try:
-                normalized_family = ReviewGeometryFamily(
+                normalized_family = CanonicalGeometryFamily(
                     self.family,
                 )
 
@@ -126,7 +107,7 @@ class ReviewGeometry:
             ) as exception:
                 raise ValueError(
                     "ReviewGeometry.family must be one of "
-                    f"{tuple(item.value for item in ReviewGeometryFamily)!r}; "
+                    f"{tuple(item.value for item in CanonicalGeometryFamily)!r}; "
                     f"received {self.family!r}."
                 ) from exception
 
