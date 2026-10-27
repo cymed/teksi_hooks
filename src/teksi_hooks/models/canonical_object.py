@@ -296,7 +296,8 @@ class CanonicalAttributeMetadata(CanonicalModelElementMetadata):
         txx_sys.dictionary_od_field.field_name
     """
 
-    field_datatype: str = field(
+    field_datatype: str | None = field(
+        default=None,
         metadata={
             "doc": (
                 "Source field datatype from canonical metadata. For TEKSI "
@@ -308,7 +309,7 @@ class CanonicalAttributeMetadata(CanonicalModelElementMetadata):
     )
 
 
-@dataclass(slots=True, frozen=True)
+@dataclass(slots=True, frozen=True, kw_only=True)
 class CanonicalGeometryMetadata(
     CanonicalAttributeMetadata,
 ):
