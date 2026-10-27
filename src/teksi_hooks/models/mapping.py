@@ -85,6 +85,7 @@ class ValueListMapping:
 
         return value in self.ignored_values
 
+
 @dataclass(slots=True, frozen=True)
 class ForeignKeyMapping:
     """
@@ -127,21 +128,11 @@ class CanonicalViewMapping:
     """
 
     schema: str = field(
-        metadata={
-            "doc": (
-                "Database schema containing the canonical "
-                "comparison view."
-            )
-        },
+        metadata={"doc": ("Database schema containing the canonical comparison view.")},
     )
 
     name: str = field(
-        metadata={
-            "doc": (
-                "Database relation name of the canonical "
-                "comparison view."
-            )
-        },
+        metadata={"doc": ("Database relation name of the canonical comparison view.")},
     )
 
     identity_attribute: str = field(
@@ -153,7 +144,6 @@ class CanonicalViewMapping:
             )
         },
     )
-
 
 
 @dataclass(
@@ -171,16 +161,11 @@ class CanonicalViewProjectionMapping:
 
     canonical_view: CanonicalViewMapping = field(
         metadata={
-            "doc": (
-                "Read-only canonical comparison view used by "
-                "the effect projector."
-            )
+            "doc": ("Read-only canonical comparison view used by the effect projector.")
         },
     )
 
-    kind: Literal[
-        "canonical_view",
-    ] = field(
+    kind: Literal["canonical_view",] = field(
         default="canonical_view",
         metadata={
             "doc": (
@@ -189,7 +174,6 @@ class CanonicalViewProjectionMapping:
             )
         },
     )
-
 
     references: Mapping[
         str,
@@ -208,11 +192,11 @@ class CanonicalViewProjectionMapping:
     value_lists: Mapping[
         str,
         ValueListMapping,
-        ] = field(
+    ] = field(
         default_factory=dict,
         metadata={
             "doc": (
-               "Projection value-list lookups keyed by runtime source "
+                "Projection value-list lookups keyed by runtime source "
                 "attribute. These mappings resolve source-facing values but "
                 "do not determine canonical effect targets."
             )
@@ -239,8 +223,7 @@ class ProjectionReferenceMapping:
     source_class_id: str = field(
         metadata={
             "doc": (
-                "Logical source-model class referenced by the local source "
-                "attribute."
+                "Logical source-model class referenced by the local source attribute."
             )
         },
     )
@@ -264,6 +247,7 @@ class ProjectionReferenceMapping:
             )
         },
     )
+
 
 @dataclass(slots=True, frozen=True)
 class AttributeMapping:
@@ -501,7 +485,7 @@ class ClassMapping:
             )
         },
     )
-    projection: CanonicalViewProjectionMapping  | None = field(
+    projection: CanonicalViewProjectionMapping | None = field(
         default=None,
         metadata={
             "doc": (
@@ -661,8 +645,6 @@ class ProjectionReferenceDiscriminator:
 
     value: str = field(
         metadata={
-            "doc": (
-                "Required discriminator value on the referenced source row."
-            )
+            "doc": ("Required discriminator value on the referenced source row.")
         },
     )
