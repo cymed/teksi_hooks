@@ -6,13 +6,13 @@ from enum import StrEnum
 from typing import Any
 from uuid import UUID
 
+from .canonical_object import CanonicalGeometryFamily
 from .effects import EffectDocument
 from .persistence import (
     PersistenceResult,
 )
 from .validation import Change, ClassifiedChanges, ValidationFinding
 
-from .canonical_object import CanonicalGeometryFamily
 
 @dataclass(
     slots=True,
