@@ -10,6 +10,8 @@ class Condition:
     compared during rule evaluation.
     """
 
+    pass
+
 
 @dataclass(slots=True, frozen=True)
 class AnyOfCondition(Condition):

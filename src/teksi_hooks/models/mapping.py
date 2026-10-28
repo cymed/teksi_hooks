@@ -85,7 +85,6 @@ class ValueListMapping:
 
         return value in self.ignored_values
 
-
 @dataclass(slots=True, frozen=True)
 class ForeignKeyMapping:
     """
@@ -128,11 +127,21 @@ class CanonicalViewMapping:
     """
 
     schema: str = field(
-        metadata={"doc": ("Database schema containing the canonical comparison view.")},
+        metadata={
+            "doc": (
+                "Database schema containing the canonical "
+                "comparison view."
+            )
+        },
     )
 
     name: str = field(
-        metadata={"doc": ("Database relation name of the canonical comparison view.")},
+        metadata={
+            "doc": (
+                "Database relation name of the canonical "
+                "comparison view."
+            )
+        },
     )
 
     identity_attribute: str = field(
@@ -145,108 +154,6 @@ class CanonicalViewMapping:
         },
     )
 
-
-@dataclass(
-    slots=True,
-    frozen=True,
-)
-class CanonicalViewProjectionMapping:
-    """
-    Configure class-level effect projection against a canonical view.
-
-    The canonical view exposes the current live state using source-model
-    semantics. The configured projector compares a complete source class
-    against that state and produces canonical effect documents.
-    """
-
-    canonical_view: CanonicalViewMapping = field(
-        metadata={
-            "doc": ("Read-only canonical comparison view used by the effect projector.")
-        },
-    )
-
-    kind: Literal["canonical_view",] = field(
-        default="canonical_view",
-        metadata={
-            "doc": (
-                "Projection mechanism. Canonical-view projections compare "
-                "source rows with a read-only canonical comparison view."
-            )
-        },
-    )
-
-    references: Mapping[
-        str,
-        ProjectionReferenceMapping,
-    ] = field(
-        default_factory=dict,
-        metadata={
-            "doc": (
-                "Source-reference mappings keyed by runtime source attribute. "
-                "Each mapping describes how an internal source reference is "
-                "resolved to an external source identity."
-            )
-        },
-    )
-
-    value_lists: Mapping[
-        str,
-        ValueListMapping,
-    ] = field(
-        default_factory=dict,
-        metadata={
-            "doc": (
-                "Projection value-list lookups keyed by runtime source "
-                "attribute. These mappings resolve source-facing values but "
-                "do not determine canonical effect targets."
-            )
-        },
-    )
-
-
-@dataclass(
-    slots=True,
-    frozen=True,
-)
-class ProjectionReferenceMapping:
-    """
-    Describe one source-model reference required by a projection.
-
-    The mapping resolves an internal source reference, such as an ili2pg
-    ``t_id``, to the external identity of the referenced source object.
-
-    It does not identify a canonical target class or target attribute.
-    Canonical target disambiguation remains the responsibility of the
-    semantic effect projector.
-    """
-
-    source_class_id: str = field(
-        metadata={
-            "doc": (
-                "Logical source-model class referenced by the local source attribute."
-            )
-        },
-    )
-
-    identity_attribute: str = field(
-        default="t_ili_tid",
-        metadata={
-            "doc": (
-                "Attribute on the referenced source row containing its "
-                "external source-model identity."
-            )
-        },
-    )
-
-    discriminator: ProjectionReferenceDiscriminator | None = field(
-        default=None,
-        metadata={
-            "doc": (
-                "Optional discriminator used when several logical source "
-                "classes share one physical source-model relation."
-            )
-        },
-    )
 
 
 @dataclass(slots=True, frozen=True)
@@ -410,6 +317,171 @@ class MappingDefaults:
     )
 
 
+@dataclass(
+    slots=True,
+    frozen=True,
+)
+class ProjectionReferenceDiscriminator:
+    """
+    Restrict a projection reference to one logical source type.
+
+    A discriminator is needed when several logical source classes share one
+    physical source-model relation. The attribute and value are interpreted
+    by the source-reference lookup capability and are not SQL fragments.
+    """
+
+    attribute: str = field(
+        metadata={
+            "doc": (
+                "Runtime attribute on the referenced source row containing "
+                "the logical source-type discriminator."
+            )
+        },
+    )
+
+    value: str = field(
+        metadata={
+            "doc": (
+                "Required discriminator value on the referenced source row."
+            )
+        },
+    )
+
+
+@dataclass(frozen=True)
+class RelationContext:
+    """
+    Provide runtime context for one mapped relation.
+
+    The context links a concrete SQLAlchemy ORM relation with the resolved
+    semantic class mapping used by the diff and validation pipeline.
+    """
+
+    relation: type = field(
+        metadata={"doc": ("SQLAlchemy ORM relation generated for the source model.")},
+    )
+    class_mapping: ClassMapping = field(
+        metadata={
+            "doc": (
+                "Resolved mapping for the source-model class represented by "
+                "the ORM relation."
+            )
+        },
+    )
+
+
+@dataclass(
+    slots=True,
+    frozen=True,
+)
+class ProjectionReferenceMapping:
+    """
+    Describe one source-model reference required by a projection.
+
+    The mapping resolves an internal source reference, such as an ili2pg
+    ``t_id``, to the external identity of the referenced source object.
+
+    It does not identify a canonical target class or target attribute.
+    Canonical target disambiguation remains the responsibility of the
+    semantic effect projector.
+    """
+
+    source_class_id: str = field(
+        metadata={
+            "doc": (
+                "Logical source-model class referenced by the local source "
+                "attribute."
+            )
+        },
+    )
+
+    identity_attribute: str = field(
+        default="t_ili_tid",
+        metadata={
+            "doc": (
+                "Attribute on the referenced source row containing its "
+                "external source-model identity."
+            )
+        },
+    )
+
+    discriminator: ProjectionReferenceDiscriminator | None = field(
+        default=None,
+        metadata={
+            "doc": (
+                "Optional discriminator used when several logical source "
+                "classes share one physical source-model relation."
+            )
+        },
+    )
+
+
+@dataclass(
+    slots=True,
+    frozen=True,
+)
+class CanonicalViewProjectionMapping:
+    """
+    Configure class-level effect projection against a canonical view.
+
+    The canonical view exposes the current live state using source-model
+    semantics. The configured projector compares a complete source class
+    against that state and produces canonical effect documents.
+    """
+
+    canonical_view: CanonicalViewMapping = field(
+        metadata={
+            "doc": (
+                "Read-only canonical comparison view used by "
+                "the effect projector."
+            )
+        },
+    )
+
+    kind: Literal[
+        "canonical_view",
+    ] = field(
+        default="canonical_view",
+        metadata={
+            "doc": (
+                "Projection mechanism. Canonical-view projections compare "
+                "source rows with a read-only canonical comparison view."
+            )
+        },
+    )
+
+
+    references: Mapping[
+        str,
+        ProjectionReferenceMapping,
+    ] = field(
+        default_factory=dict,
+        metadata={
+            "doc": (
+                "Source-reference mappings keyed by runtime source attribute. "
+                "Each mapping describes how an internal source reference is "
+                "resolved to an external source identity."
+            )
+        },
+    )
+
+    value_lists: Mapping[
+        str,
+        ValueListMapping,
+        ] = field(
+        default_factory=dict,
+        metadata={
+            "doc": (
+               "Projection value-list lookups keyed by runtime source "
+                "attribute. These mappings resolve source-facing values but "
+                "do not determine canonical effect targets."
+            )
+        },
+    )
+
+
+
+
 @dataclass(slots=True, frozen=True)
 class ClassMapping:
     """
@@ -485,7 +557,7 @@ class ClassMapping:
             )
         },
     )
-    projection: CanonicalViewProjectionMapping | None = field(
+    projection: CanonicalViewProjectionMapping  | None = field(
         default=None,
         metadata={
             "doc": (
@@ -595,56 +667,5 @@ class ModelMappings:
                 "identifier. Example identifiers include `agxx`, "
                 "`sia405_abwasser`, `dss` and `vsa_kek`."
             )
-        },
-    )
-
-
-@dataclass(frozen=True)
-class RelationContext:
-    """
-    Provide runtime context for one mapped relation.
-
-    The context links a concrete SQLAlchemy ORM relation with the resolved
-    semantic class mapping used by the diff and validation pipeline.
-    """
-
-    relation: type = field(
-        metadata={"doc": ("SQLAlchemy ORM relation generated for the source model.")},
-    )
-    class_mapping: ClassMapping = field(
-        metadata={
-            "doc": (
-                "Resolved mapping for the source-model class represented by "
-                "the ORM relation."
-            )
-        },
-    )
-
-
-@dataclass(
-    slots=True,
-    frozen=True,
-)
-class ProjectionReferenceDiscriminator:
-    """
-    Restrict a projection reference to one logical source type.
-
-    A discriminator is needed when several logical source classes share one
-    physical source-model relation. The attribute and value are interpreted
-    by the source-reference lookup capability and are not SQL fragments.
-    """
-
-    attribute: str = field(
-        metadata={
-            "doc": (
-                "Runtime attribute on the referenced source row containing "
-                "the logical source-type discriminator."
-            )
-        },
-    )
-
-    value: str = field(
-        metadata={
-            "doc": ("Required discriminator value on the referenced source row.")
         },
     )
