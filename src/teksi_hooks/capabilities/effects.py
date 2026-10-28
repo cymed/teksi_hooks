@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Mapping, Protocol, Sequence, runtime_checkable
+from collections.abc import Mapping, Sequence
+from typing import Any, Protocol, runtime_checkable
 
 from ..models.canonical_object import (
     CanonicalObject,
@@ -18,6 +19,7 @@ from ..models.mapping import (
     CanonicalViewMapping,
     CanonicalViewProjectionMapping,
 )
+
 
 class CanonicalObjectLookupCapability(
     Protocol,
@@ -69,22 +71,21 @@ class CanonicalViewLookupCapability(
     """
 
     def rows_by_identity(
-            self,
-            *,
-            session: Any,
-            view: CanonicalViewMapping,
-            identities: Sequence[
-                str,
-            ],
-        ) -> Mapping[
-            str,
-            Any,
-        ]:
-            """
-            Return canonical-view rows indexed by configured view identity.
+        self,
+        *,
+        session: Any,
+        view: CanonicalViewMapping,
+        identities: Sequence[str,],
+    ) -> Mapping[
+        str,
+        Any,
+    ]:
+        """
+        Return canonical-view rows indexed by configured view identity.
 
-            The result must contain at most one row per requested identity.
-            """
+        The result must contain at most one row per requested identity.
+        """
+
 
 class EffectEvaluationPolicy(
     Protocol,
@@ -160,9 +161,7 @@ class CanonicalViewEffectProjector(
         *,
         source_model: str,
         source_class_id: str,
-        source_rows: Sequence[
-            Any,
-        ],
+        source_rows: Sequence[Any,],
         quarantine_session: Any,
         live_session: Any,
         projection: CanonicalViewProjectionMapping,
@@ -206,6 +205,7 @@ class CanonicalViewEffectProjector(
 
         ...
 
+
 @runtime_checkable
 class QuarantineEffectProjectorCapability(
     Protocol,
@@ -229,9 +229,7 @@ class QuarantineEffectProjectorCapability(
         self,
         *,
         source_model: str,
-        source_class_ids: Sequence[
-            str,
-        ],
+        source_class_ids: Sequence[str,],
     ) -> EffectProjectionResult:
         """
         Project selected quarantine source classes to canonical effects.

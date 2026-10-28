@@ -499,7 +499,7 @@ class ImplicitModelMappingCapability(
         ...
 
 
-@dataclass(slots=True,frozen=True)
+@dataclass(slots=True, frozen=True)
 class EffectiveModelMappingCapability:
     """
     Resolve effective source-to-canonical mappings.
@@ -516,6 +516,7 @@ class EffectiveModelMappingCapability:
     implicit mapping provider and may safely outlive the operation scope in
     which that provider was created.
     """
+
     explicit_mapping: ModelMappingCapability
 
     implicit_mapping: ModelMappingLookupCapability | None = None
@@ -530,11 +531,10 @@ class EffectiveModelMappingCapability:
         return cls(
             explicit_mapping=explicit_mapping,
             implicit_mapping=(
-                implicit_mapping.materialize()
-                if implicit_mapping is not None
-                else None
+                implicit_mapping.materialize() if implicit_mapping is not None else None
             ),
         )
+
     def class_definition(
         self,
         class_id: str,
