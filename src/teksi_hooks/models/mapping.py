@@ -574,12 +574,32 @@ class ClassMapping:
     def is_attribute_backed(
         self,
     ) -> bool:
-        """
-        Return whether the class declares attribute mappings.
-        """
+        return (
+            self.projection is None
+            and (
+                self.canonical_class_id is not None
+                or bool(
+                    self.identities
+                )
+                or bool(
+                    self.attributes
+                )
+                or bool(
+                    self.relations
+                )
+            )
+        )
 
-        return bool(
-            self.attributes,
+
+    @property
+    def is_source_lookup(
+        self,
+    ) -> bool:
+        return (
+            self.source_identity_attribute
+            is not None
+            and not self.is_projection_backed
+            and not self.is_attribute_backed
         )
 
     def source_identifier(
