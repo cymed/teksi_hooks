@@ -50,7 +50,7 @@ models:
     classes:
       Metainformation:
         source_identity_attribute: t_ili_tid
-        
+
       GepKnoten:
         projection:
           kind: canonical_view
