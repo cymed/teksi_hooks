@@ -211,10 +211,12 @@ class RightsEvaluator:
         privileges are checked.
         """
 
-        if rule.when is not None:
-            if not self.conditions.evaluate(
-                rule.when,
-                self._condition_context(context),
+        if (
+                rule.when is not None 
+                and not self.conditions.evaluate(
+                    rule.when,
+                    self._condition_context(context),
+                )
             ):
                 return False
 
@@ -444,7 +446,10 @@ class RightsEvaluator:
         self,
         context: RightsEvaluationContext,
     ) -> bool:
-        return self.provider.has_all_privileges(context.dataowner_oid)
+        return self.provider.has_privilege(
+            context.dataowner_oid,
+            ALL_PRIVILEGES,
+        )
 
     def _resolve_derived_rights(
         self,
