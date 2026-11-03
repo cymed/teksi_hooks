@@ -1,30 +1,27 @@
-from dataclasses import dataclass, field
 from collections.abc import Mapping
+from dataclasses import dataclass, field
 from typing import Any
 
-from ..models.oid import Oid
-
 from ..capabilities.conditions import (
-    ConditionsCapability,
     ConditionEvaluationContext,
+    ConditionsCapability,
 )
 from ..capabilities.privilege import ResolvedProviderCapability
+from ..capabilities.relation_lookup import RelationLookupCapability
 from ..capabilities.rights import (
-    RightsCapability,
     DerivedRightsCapability,
+    RightsCapability,
     SubclassRightsCapability,
 )
-from ..capabilities.relation_lookup import RelationLookupCapability
-
-
-from ..models.rights import CanonicalDerivedRights
 from ..models.canonical_object import CanonicalObjectIdentity
+from ..models.oid import Oid
+from ..models.privilege import ALL_PRIVILEGES, PrivilegeId
+from ..models.rights import CanonicalDerivedRights
 from ..models.rulesets import (
-    Rule,
-    PrivilegeRule,
     OwnershipRule,
+    PrivilegeRule,
+    Rule,
 )
-from ..models.privilege import PrivilegeId, ALL_PRIVILEGES
 from ..models.validation import ChangeOperation
 
 
@@ -447,9 +444,7 @@ class RightsEvaluator:
         self,
         context: RightsEvaluationContext,
     ) -> bool:
-        return self.provider.has_all_privileges(
-            context.dataowner_oid
-        )
+        return self.provider.has_all_privileges(context.dataowner_oid)
 
     def _resolve_derived_rights(
         self,
