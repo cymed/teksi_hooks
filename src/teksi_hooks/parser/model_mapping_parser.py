@@ -1574,6 +1574,130 @@ class ModelMappingParser:
             ) in mappings.items()
         }
 
+    def _resolve_model_projection_references(
+        self,
+        *,
+        model_id: str,
+        classes: Mapping[
+            str,
+            ClassMapping,
+        ],
+    ) -> dict[
+        str,
+        ClassMapping,
+    ]:
+        """
+        Resolve projection-reference source identities within one model.
+
+        An explicit reference identity takes precedence. Otherwise, the reference
+        inherits ``source_identity_attribute`` from the referenced
+        projection-backed class.
+        """
+        resolved_classes: dict[
+            str,
+            ClassMapping,
+        ] = {}
+
+        for (
+            source_class_id,
+            class_mapping,
+        ) in classes.items():
+            projection = class_mapping.projection
+
+            if projection is None:
+                resolved_classes[
+                    source_class_id
+                ] = class_mapping
+
+                continue
+
+            resolved_references: dict[
+                str,
+                ProjectionReferenceMapping,
+            ] = {}
+
+            for (
+                source_attribute,
+                reference,
+            ) in projection.references.items():
+                identity_attribute = (
+                    reference.identity_attribute
+                )
+
+                if identity_attribute is None:
+                    referenced_class_mapping = (
+                        classes.get(
+                            reference.source_class_id,
+                        )
+                    )
+
+                    if referenced_class_mapping is None:
+                        raise ValueError(
+                            "Projection reference "
+                            f"{model_id!r}."
+                            f"{source_class_id!r}."
+                            f"{source_attribute!r} refers to "
+                            "unknown source class "
+                            f"{reference.source_class_id!r}."
+                        )
+
+                    referenced_projection = (
+                        referenced_class_mapping.projection
+                    )
+
+                    if referenced_projection is None:
+                        raise ValueError(
+                            "Projection reference "
+                            f"{model_id!r}."
+                            f"{source_class_id!r}."
+                            f"{source_attribute!r} refers to "
+                            f"{reference.source_class_id!r}, "
+                            "which is not projection-backed and "
+                            "does not define a projection source "
+                            "identity."
+                        )
+
+                    identity_attribute = (
+                        referenced_projection
+                        .source_identity_attribute
+                    )
+
+                if (
+                    not isinstance(
+                        identity_attribute,
+                        str,
+                    )
+                    or not identity_attribute.strip()
+                ):
+                    raise ValueError(
+                        "Projection reference "
+                        f"{model_id!r}."
+                        f"{source_class_id!r}."
+                        f"{source_attribute!r} does not resolve "
+                        "to a valid source identity attribute."
+                    )
+
+                resolved_references[
+                    source_attribute
+                ] = replace(
+                    reference,
+                    identity_attribute=(
+                        identity_attribute.strip()
+                    ),
+                )
+
+            resolved_classes[
+                source_class_id
+            ] = replace(
+                class_mapping,
+                projection=replace(
+                    projection,
+                    references=resolved_references,
+                ),
+            )
+
+        return resolved_classes
+
     def _validate_inheritance(
         self,
         *,
