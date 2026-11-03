@@ -1635,21 +1635,7 @@ class ModelMappingParser:
                             f"{reference.source_class_id!r}."
                         )
 
-                    referenced_projection = referenced_class_mapping.projection
-
-                    if referenced_projection is None:
-                        raise ValueError(
-                            "Projection reference "
-                            f"{model_id!r}."
-                            f"{source_class_id!r}."
-                            f"{source_attribute!r} refers to "
-                            f"{reference.source_class_id!r}, "
-                            "which is not projection-backed and "
-                            "does not define a projection source "
-                            "identity."
-                        )
-
-                    identity_attribute = referenced_projection.source_identity_attribute
+                    identity_attribute = referenced_class_mapping.projection.source_identity_attribute
 
                 if (
                     not isinstance(
