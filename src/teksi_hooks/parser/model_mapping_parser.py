@@ -1635,7 +1635,9 @@ class ModelMappingParser:
                             f"{reference.source_class_id!r}."
                         )
 
-                    identity_attribute = referenced_class_mapping.projection.source_identity_attribute
+                    identity_attribute = (
+                        referenced_class_mapping.projection.source_identity_attribute
+                    )
 
                 if (
                     not isinstance(
