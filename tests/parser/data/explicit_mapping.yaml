@@ -51,11 +51,11 @@ models:
       GepKnoten:
         projection:
           kind: canonical_view
+          target_identity_attribute: obj_id
 
           canonical_view:
             schema: tww_app
             name: vw_agxx_gepknoten
-            target_identity_attribute: obj_id
 
           value_lists:
             istschnittstelle:
@@ -90,11 +90,11 @@ models:
       GepHaltung:
         projection:
           kind: canonical_view
+          target_identity_attribute: obj_id
 
           canonical_view:
             schema: tww_app
             name: vw_agxx_gephaltung
-            target_identity_attribute: obj_id
 
           references:
             startknoten:
@@ -118,11 +118,11 @@ models:
       Ueberlauf_Foerderaggregat:
         projection:
           kind: canonical_view
+          target_identity_attribute: obj_id
 
           canonical_view:
             schema: tww_app
             name: vw_agxx_ueberlauf_foerderaggregat
-            target_identity_attribute: obj_id
 
           references:
             knotenref:
@@ -286,11 +286,11 @@ models:
       Organisation:
         projection:
           kind: canonical_view
-          source_attribute: obj_id
+          source_identity_attribute: obj_id
+          target_identity_attribute: obj_id
           canonical_view:
             schema: tww_app
             name: vw_agxx_organisation
-            target_identity_attribute: obj_id
 
   sia405_abwasser:
     declarative_defaults:
