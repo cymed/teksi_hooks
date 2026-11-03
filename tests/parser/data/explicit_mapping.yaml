@@ -1,6 +1,6 @@
 models:
   agxx:
-    defaults:
+    declarative_defaults:
       target_attribute: obj_id
       source_attribute: t_ili_tid
       identities:
@@ -293,7 +293,7 @@ models:
             identity_attribute: obj_id
 
   sia405_abwasser:
-    defaults:
+    declarative_defaults:
       relations:
         fk_provider:
           target:
@@ -336,7 +336,7 @@ models:
                 fr: point_troncon_versref
 
   dss:
-    defaults:
+    declarative_defaults:
       inherit_from: sia405_abwasser
     classes:
       catchment_area:
@@ -459,5 +459,5 @@ models:
                 fr: deversement_versref
 
   vsa_kek:
-    defaults:
+    declarative_defaults:
       inherit_from: sia405_abwasser
