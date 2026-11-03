@@ -1605,9 +1605,7 @@ class ModelMappingParser:
             projection = class_mapping.projection
 
             if projection is None:
-                resolved_classes[
-                    source_class_id
-                ] = class_mapping
+                resolved_classes[source_class_id] = class_mapping
 
                 continue
 
@@ -1620,15 +1618,11 @@ class ModelMappingParser:
                 source_attribute,
                 reference,
             ) in projection.references.items():
-                identity_attribute = (
-                    reference.identity_attribute
-                )
+                identity_attribute = reference.identity_attribute
 
                 if identity_attribute is None:
-                    referenced_class_mapping = (
-                        classes.get(
-                            reference.source_class_id,
-                        )
+                    referenced_class_mapping = classes.get(
+                        reference.source_class_id,
                     )
 
                     if referenced_class_mapping is None:
@@ -1641,9 +1635,7 @@ class ModelMappingParser:
                             f"{reference.source_class_id!r}."
                         )
 
-                    referenced_projection = (
-                        referenced_class_mapping.projection
-                    )
+                    referenced_projection = referenced_class_mapping.projection
 
                     if referenced_projection is None:
                         raise ValueError(
@@ -1657,10 +1649,7 @@ class ModelMappingParser:
                             "identity."
                         )
 
-                    identity_attribute = (
-                        referenced_projection
-                        .source_identity_attribute
-                    )
+                    identity_attribute = referenced_projection.source_identity_attribute
 
                 if (
                     not isinstance(
@@ -1677,18 +1666,12 @@ class ModelMappingParser:
                         "to a valid source identity attribute."
                     )
 
-                resolved_references[
-                    source_attribute
-                ] = replace(
+                resolved_references[source_attribute] = replace(
                     reference,
-                    identity_attribute=(
-                        identity_attribute.strip()
-                    ),
+                    identity_attribute=(identity_attribute.strip()),
                 )
 
-            resolved_classes[
-                source_class_id
-            ] = replace(
+            resolved_classes[source_class_id] = replace(
                 class_mapping,
                 projection=replace(
                     projection,
