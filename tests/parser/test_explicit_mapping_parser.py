@@ -312,6 +312,7 @@ def test_sia405_mapping_parser_imports_provider_relation(
     assert relation.referenced_attribute_id == "obj_id"
     assert relation.localisations == {
         "de": "DatenbewirtschafterRef",
+        "fr": "fournisseur_des_donneesref",
     }
 
 
@@ -325,6 +326,7 @@ def test_sia405_mapping_parser_imports_owner_relation(
     assert relation.referenced_attribute_id == "obj_id"
     assert relation.localisations == {
         "de": "EigentuemerRef",
+        "fr": "proprietaireref",
     }
 
 
@@ -349,7 +351,8 @@ def test_sia405_mapping_parser_imports_reach_point_from_relation(
     assert relation.referenced_class_id == "reach_point"
     assert relation.referenced_attribute_id == "obj_id"
     assert relation.localisations == {
-        "de": "HaltungspunktVonRef",
+        "de": "vonhaltungspunktref",
+        "fr": "point_troncon_deref",
     }
 
 
@@ -361,7 +364,8 @@ def test_sia405_mapping_parser_imports_reach_point_to_relation(
     assert relation.referenced_class_id == "reach_point"
     assert relation.referenced_attribute_id == "obj_id"
     assert relation.localisations == {
-        "de": "HaltungspunktNachRef",
+        "de": "nachhaltungspunktref",
+        "fr": "point_troncon_versref",
     }
 
 
