@@ -65,12 +65,12 @@ class ValueListMapping:
         },
     )
 
-    ignored_values: list = field(
-        default_factory=list,
+    ignored_values: tuple = field(
+        default_factory=tuple,
         metadata={
             "doc": (
                 "Optional list of values that are to be ignored on mapping."
-                " Defaults to an empty list`."
+                " Defaults to an empty tuple`."
             )
         },
     )
@@ -373,8 +373,6 @@ class ProjectionReferenceMapping:
     ``t_id``, to the external identity of the referenced source object.
 
     It does not identify a canonical target class or target attribute.
-    Canonical target disambiguation remains the responsibility of the
-    semantic effect projector.
     """
 
     source_class_id: str = field(
@@ -385,12 +383,15 @@ class ProjectionReferenceMapping:
         },
     )
 
-    identity_attribute: str = field(
-        default="t_ili_tid",
+    identity_attribute: str | None = field(
+        default=None,
         metadata={
             "doc": (
-                "Attribute on the referenced source row containing its "
-                "external source-model identity."
+                "Optional explicit identity attribute on the referenced "
+                "source row. When omitted, the mapping resolver inherits "
+                "the source identity from the referenced projection-backed "
+                "class. References to unmapped quarantine relations must "
+                "declare this attribute explicitly."
             )
         },
     )
@@ -439,8 +440,10 @@ class CanonicalViewProjectionMapping:
         default="t_ili_tid",
         metadata={
             "doc": (
-                "Attribute on the referenced source row containing its "
-                "external source-model identity."
+                "Attribute containing the external source-model identity on "
+                "rows of this projection-backed source class. Projection "
+                "references to this class inherit this attribute unless they "
+                "declare an explicit reference identity."
             )
         },
     )
@@ -477,11 +480,15 @@ class CanonicalViewProjectionMapping:
 @dataclass(slots=True, frozen=True)
 class ClassMapping:
     """
-    Map one source-model class to the canonical internal model.
+    Map one source-model class to canonical behavior.
 
-    A class may use either a class-level projection mapping or declarative
-    attribute mappings. Function-backed mappings return a complete JSONB
-    effect document.
+    A class may use exactly one of two executable mapping strategies:
+
+    - a class-level canonical-view projection;
+    - declarative identities, attributes and relations.
+
+    Projection-backed classes do not define declarative canonical identities,
+    attributes or relations. Declarative classes do not define a projection.
     """
 
     canonical_class_id: str | None = field(
@@ -579,16 +586,6 @@ class ClassMapping:
             or bool(self.identities)
             or bool(self.attributes)
             or bool(self.relations)
-        )
-
-    @property
-    def is_source_lookup(
-        self,
-    ) -> bool:
-        return (
-            self.source_identity_attribute is not None
-            and not self.is_projection_backed
-            and not self.is_attribute_backed
         )
 
     def source_identifier(

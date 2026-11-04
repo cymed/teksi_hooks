@@ -323,6 +323,26 @@ class ModelMappingParser:
             path=path,
         )
 
+        unknown_keys = (
+            set(
+                raw,
+            )
+            - {
+                "inherit_from",
+                "source_attribute",
+                "target_attribute",
+                "identities",
+                "attributes",
+                "relations",
+            }
+        )
+
+        if unknown_keys:
+            raise ValueError(
+                f"{path} contains unsupported keys: "
+                f"{tuple(sorted(unknown_keys))!r}."
+            )
+        
         source_attribute = self._optional_string(
             raw.get(
                 "source_attribute",
@@ -569,16 +589,15 @@ class ModelMappingParser:
         path: str,
     ) -> ClassMapping:
         """
-        Parse one source-class mapping.
+        Parse one executable source-class mapping.
 
-        A class may be:
+        A class must be either:
 
-        - projection-backed;
-        - declaratively mapped;
-        - lookup-only.
+        - projection-backed; or
+        - declaratively mapped.
 
-        Projection-backed classes remain non-declarative. Lookup-only classes
-        declare only ``source_identity_attribute`` and optional localisations.
+        Quarantine-only relations used by projection references are not class
+        mappings. Their identities must be declared explicitly on the reference.
         """
         del class_id
 
@@ -588,13 +607,6 @@ class ModelMappingParser:
             ),
             defaults=projection_defaults,
             path=f"{path}.projection",
-        )
-
-        source_identity_attribute = self._optional_string(
-            raw.get(
-                "source_identity_attribute",
-            ),
-            path=(f"{path}.source_identity_attribute"),
         )
 
         raw_identities = self._mapping(
@@ -664,22 +676,39 @@ class ModelMappingParser:
                     "for the complete class mapping."
                 )
 
-            unsupported_projection_keys = set(
-                raw,
-            ) & {
-                "class",
-                "source_attribute",
-                "target_attribute",
-                "source_identity_attribute",
-            }
+            unsupported_projection_keys = (
+                set(
+                    raw,
+                )
+                & {
+                    "class",
+                    "source_attribute",
+                    "target_attribute",
+                }
+            )
 
             if unsupported_projection_keys:
                 raise ValueError(
                     f"{path} defines a canonical-view projection "
-                    "together with unsupported class-level keys "
-                    f"{tuple(sorted(unsupported_projection_keys))!r}. "
-                    "Projection source identity must be declared "
-                    "inside `projection`."
+                    "together with declarative class keys "
+                    f"{tuple(sorted(unsupported_projection_keys))!r}."
+                )
+
+            unknown_projection_class_keys = (
+                set(
+                    raw,
+                )
+                - {
+                    "projection",
+                    "localisations",
+                }
+            )
+
+            if unknown_projection_class_keys:
+                raise ValueError(
+                    f"{path} contains unsupported projection-backed "
+                    "class keys: "
+                    f"{tuple(sorted(unknown_projection_class_keys))!r}."
                 )
 
             return ClassMapping(
@@ -690,61 +719,27 @@ class ModelMappingParser:
                 relations={},
                 localisations=localisations,
                 projection=projection,
-                source_identity_attribute=None,
             )
 
-        is_lookup_only = (
-            source_identity_attribute is not None
-            and not raw_identities
-            and not raw_attributes
-            and not raw_relations
-            and raw.get(
-                "class",
-            )
-            is None
-            and raw.get(
-                "source_attribute",
-            )
-            is None
-            and raw.get(
-                "target_attribute",
-            )
-            is None
-        )
-
-        if is_lookup_only:
-            unsupported_lookup_keys = set(
+        unknown_declarative_keys = (
+            set(
                 raw,
-            ) - {
-                "source_identity_attribute",
+            )
+            - {
+                "class",
+                "source_attribute",
+                "target_attribute",
+                "identities",
+                "attributes",
+                "relations",
                 "localisations",
             }
+        )
 
-            if unsupported_lookup_keys:
-                raise ValueError(
-                    f"{path} defines a lookup-only source class "
-                    "together with unsupported keys "
-                    f"{tuple(sorted(unsupported_lookup_keys))!r}."
-                )
-
-            return ClassMapping(
-                canonical_class_id=None,
-                identity=None,
-                identities={},
-                attributes={},
-                relations={},
-                localisations=localisations,
-                projection=None,
-                source_identity_attribute=(source_identity_attribute),
-            )
-
-        if source_identity_attribute is not None:
+        if unknown_declarative_keys:
             raise ValueError(
-                f"{path}.source_identity_attribute is valid only "
-                "for a lookup-only source class. Declarative classes "
-                "must use `source_attribute`, while projection-backed "
-                "classes must declare `projection."
-                "source_identity_attribute`."
+                f"{path} contains unsupported declarative class keys: "
+                f"{tuple(sorted(unknown_declarative_keys))!r}."
             )
 
         class_identity = CanonicalIdentityMapping(
@@ -753,14 +748,20 @@ class ModelMappingParser:
                     "source_attribute",
                 ),
                 path=f"{path}.source_attribute",
-                default=(default_identity.source_attribute or "obj_id"),
+                default=(
+                    default_identity.source_attribute
+                    or "obj_id"
+                ),
             ),
             canonical_attribute=self._optional_string(
                 raw.get(
                     "target_attribute",
                 ),
                 path=f"{path}.target_attribute",
-                default=(default_identity.canonical_attribute or "obj_id"),
+                default=(
+                    default_identity.canonical_attribute
+                    or "obj_id"
+                ),
             ),
         )
 
@@ -777,17 +778,23 @@ class ModelMappingParser:
 
         relations = self._parse_relations(
             raw_relations,
-            default_target_attribute=(class_identity.canonical_attribute),
+            default_target_attribute=(
+                class_identity.canonical_attribute
+            ),
             path=f"{path}.relations",
         )
 
         target_classes = frozenset(
             attribute.canonical_class_id
             for attribute in attributes.values()
-            if attribute.canonical_class_id is not None
+            if attribute.canonical_class_id
+            is not None
         )
 
-        missing_identities = target_classes - identities.keys()
+        missing_identities = (
+            target_classes
+            - identities.keys()
+        )
 
         if missing_identities:
             raise ValueError(
@@ -803,11 +810,35 @@ class ModelMappingParser:
             path=f"{path}.class",
         )
 
-        if canonical_class_id is not None and canonical_class_id not in identities:
+        if (
+            canonical_class_id is not None
+            and canonical_class_id
+            not in identities
+        ):
             raise ValueError(
                 f"{path}.class refers to canonical class "
                 f"{canonical_class_id!r}, but no identity is "
                 "declared for that class."
+            )
+
+        is_executable = (
+            canonical_class_id is not None
+            or bool(
+                identities
+            )
+            or bool(
+                attributes
+            )
+            or bool(
+                relations
+            )
+        )
+
+        if not is_executable:
+            raise ValueError(
+                f"{path} does not define an executable mapping. "
+                "Declare a canonical-view projection or declarative "
+                "identities, attributes or relations."
             )
 
         return ClassMapping(
@@ -818,7 +849,6 @@ class ModelMappingParser:
             relations=relations,
             localisations=localisations,
             projection=None,
-            source_identity_attribute=None,
         )
 
     def _parse_identities(
@@ -1654,13 +1684,16 @@ class ModelMappingParser:
         ClassMapping,
     ]:
         """
-        Resolve projection-reference source identities within one model.
+        Resolve effective identities for projection source references.
 
         Resolution order:
 
-        1. Explicit ``source.identity_attribute`` on the reference.
-        2. ``projection.source_identity_attribute`` on a projection-backed class.
-        3. ``source_identity_attribute`` on a lookup-only source class.
+        1. Use an explicitly declared reference identity.
+        2. Otherwise inherit the source identity from a referenced
+        projection-backed class.
+
+        References to unmapped quarantine relations must declare
+        ``source.identity_attribute`` explicitly.
         """
         resolved_classes: dict[
             str,
@@ -1674,7 +1707,9 @@ class ModelMappingParser:
             projection = class_mapping.projection
 
             if projection is None:
-                resolved_classes[source_class_id] = class_mapping
+                resolved_classes[
+                    source_class_id
+                ] = class_mapping
 
                 continue
 
@@ -1687,11 +1722,15 @@ class ModelMappingParser:
                 source_attribute,
                 reference,
             ) in projection.references.items():
-                identity_attribute = reference.identity_attribute
+                identity_attribute = (
+                    reference.identity_attribute
+                )
 
                 if identity_attribute is None:
-                    referenced_class_mapping = classes.get(
-                        reference.source_class_id,
+                    referenced_class_mapping = (
+                        classes.get(
+                            reference.source_class_id,
+                        )
                     )
 
                     if referenced_class_mapping is None:
@@ -1700,24 +1739,33 @@ class ModelMappingParser:
                             f"{model_id!r}."
                             f"{source_class_id!r}."
                             f"{source_attribute!r} refers to "
-                            "unknown source class "
-                            f"{reference.source_class_id!r}."
+                            "an unknown or quarantine-only source "
+                            f"class {reference.source_class_id!r}, "
+                            "but `source.identity_attribute` is "
+                            "not declared."
                         )
 
-                    identity_attribute = self._class_source_identity_attribute(
-                        class_mapping=(referenced_class_mapping),
+                    referenced_projection = (
+                        referenced_class_mapping.projection
                     )
 
-                    if identity_attribute is None:
+                    if referenced_projection is None:
                         raise ValueError(
                             "Projection reference "
                             f"{model_id!r}."
                             f"{source_class_id!r}."
                             f"{source_attribute!r} refers to "
-                            f"{reference.source_class_id!r}, "
-                            "which does not declare a source "
-                            "identity."
+                            f"{reference.source_class_id!r}, which "
+                            "is declaratively mapped rather than "
+                            "projection-backed. Declare "
+                            "`source.identity_attribute` explicitly "
+                            "if that reference is intentional."
                         )
+
+                    identity_attribute = (
+                        referenced_projection
+                        .source_identity_attribute
+                    )
 
                 if (
                     not isinstance(
@@ -1734,12 +1782,18 @@ class ModelMappingParser:
                         "to a valid source identity attribute."
                     )
 
-                resolved_references[source_attribute] = replace(
+                resolved_references[
+                    source_attribute
+                ] = replace(
                     reference,
-                    identity_attribute=(identity_attribute.strip()),
+                    identity_attribute=(
+                        identity_attribute.strip()
+                    ),
                 )
 
-            resolved_classes[source_class_id] = replace(
+            resolved_classes[
+                source_class_id
+            ] = replace(
                 class_mapping,
                 projection=replace(
                     projection,
@@ -1748,7 +1802,7 @@ class ModelMappingParser:
             )
 
         return resolved_classes
-
+    
     def _validate_inheritance(
         self,
         *,
@@ -1968,21 +2022,3 @@ class ModelMappingParser:
             raise TypeError(f"{path} must be a sequence, got {type(value)!r}.")
 
         return value
-
-    def _class_source_identity_attribute(
-        self,
-        *,
-        class_mapping: ClassMapping,
-    ) -> str | None:
-        """
-        Return the source identity declared by one source-class mapping.
-
-        Projection-backed classes declare it on their projection. Lookup-only
-        classes declare it directly on ``ClassMapping``.
-        """
-        projection = class_mapping.projection
-
-        if projection is not None:
-            return projection.source_identity_attribute
-
-        return class_mapping.source_identity_attribute
