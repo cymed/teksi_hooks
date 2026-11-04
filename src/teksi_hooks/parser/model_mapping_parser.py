@@ -323,26 +323,22 @@ class ModelMappingParser:
             path=path,
         )
 
-        unknown_keys = (
-            set(
-                raw,
-            )
-            - {
-                "inherit_from",
-                "source_attribute",
-                "target_attribute",
-                "identities",
-                "attributes",
-                "relations",
-            }
-        )
+        unknown_keys = set(
+            raw,
+        ) - {
+            "inherit_from",
+            "source_attribute",
+            "target_attribute",
+            "identities",
+            "attributes",
+            "relations",
+        }
 
         if unknown_keys:
             raise ValueError(
-                f"{path} contains unsupported keys: "
-                f"{tuple(sorted(unknown_keys))!r}."
+                f"{path} contains unsupported keys: {tuple(sorted(unknown_keys))!r}."
             )
-        
+
         source_attribute = self._optional_string(
             raw.get(
                 "source_attribute",
@@ -676,16 +672,13 @@ class ModelMappingParser:
                     "for the complete class mapping."
                 )
 
-            unsupported_projection_keys = (
-                set(
-                    raw,
-                )
-                & {
-                    "class",
-                    "source_attribute",
-                    "target_attribute",
-                }
-            )
+            unsupported_projection_keys = set(
+                raw,
+            ) & {
+                "class",
+                "source_attribute",
+                "target_attribute",
+            }
 
             if unsupported_projection_keys:
                 raise ValueError(
@@ -694,15 +687,12 @@ class ModelMappingParser:
                     f"{tuple(sorted(unsupported_projection_keys))!r}."
                 )
 
-            unknown_projection_class_keys = (
-                set(
-                    raw,
-                )
-                - {
-                    "projection",
-                    "localisations",
-                }
-            )
+            unknown_projection_class_keys = set(
+                raw,
+            ) - {
+                "projection",
+                "localisations",
+            }
 
             if unknown_projection_class_keys:
                 raise ValueError(
@@ -721,20 +711,17 @@ class ModelMappingParser:
                 projection=projection,
             )
 
-        unknown_declarative_keys = (
-            set(
-                raw,
-            )
-            - {
-                "class",
-                "source_attribute",
-                "target_attribute",
-                "identities",
-                "attributes",
-                "relations",
-                "localisations",
-            }
-        )
+        unknown_declarative_keys = set(
+            raw,
+        ) - {
+            "class",
+            "source_attribute",
+            "target_attribute",
+            "identities",
+            "attributes",
+            "relations",
+            "localisations",
+        }
 
         if unknown_declarative_keys:
             raise ValueError(
@@ -748,20 +735,14 @@ class ModelMappingParser:
                     "source_attribute",
                 ),
                 path=f"{path}.source_attribute",
-                default=(
-                    default_identity.source_attribute
-                    or "obj_id"
-                ),
+                default=(default_identity.source_attribute or "obj_id"),
             ),
             canonical_attribute=self._optional_string(
                 raw.get(
                     "target_attribute",
                 ),
                 path=f"{path}.target_attribute",
-                default=(
-                    default_identity.canonical_attribute
-                    or "obj_id"
-                ),
+                default=(default_identity.canonical_attribute or "obj_id"),
             ),
         )
 
@@ -778,23 +759,17 @@ class ModelMappingParser:
 
         relations = self._parse_relations(
             raw_relations,
-            default_target_attribute=(
-                class_identity.canonical_attribute
-            ),
+            default_target_attribute=(class_identity.canonical_attribute),
             path=f"{path}.relations",
         )
 
         target_classes = frozenset(
             attribute.canonical_class_id
             for attribute in attributes.values()
-            if attribute.canonical_class_id
-            is not None
+            if attribute.canonical_class_id is not None
         )
 
-        missing_identities = (
-            target_classes
-            - identities.keys()
-        )
+        missing_identities = target_classes - identities.keys()
 
         if missing_identities:
             raise ValueError(
@@ -810,11 +785,7 @@ class ModelMappingParser:
             path=f"{path}.class",
         )
 
-        if (
-            canonical_class_id is not None
-            and canonical_class_id
-            not in identities
-        ):
+        if canonical_class_id is not None and canonical_class_id not in identities:
             raise ValueError(
                 f"{path}.class refers to canonical class "
                 f"{canonical_class_id!r}, but no identity is "
@@ -823,15 +794,9 @@ class ModelMappingParser:
 
         is_executable = (
             canonical_class_id is not None
-            or bool(
-                identities
-            )
-            or bool(
-                attributes
-            )
-            or bool(
-                relations
-            )
+            or bool(identities)
+            or bool(attributes)
+            or bool(relations)
         )
 
         if not is_executable:
@@ -1707,9 +1672,7 @@ class ModelMappingParser:
             projection = class_mapping.projection
 
             if projection is None:
-                resolved_classes[
-                    source_class_id
-                ] = class_mapping
+                resolved_classes[source_class_id] = class_mapping
 
                 continue
 
@@ -1722,15 +1685,11 @@ class ModelMappingParser:
                 source_attribute,
                 reference,
             ) in projection.references.items():
-                identity_attribute = (
-                    reference.identity_attribute
-                )
+                identity_attribute = reference.identity_attribute
 
                 if identity_attribute is None:
-                    referenced_class_mapping = (
-                        classes.get(
-                            reference.source_class_id,
-                        )
+                    referenced_class_mapping = classes.get(
+                        reference.source_class_id,
                     )
 
                     if referenced_class_mapping is None:
@@ -1745,9 +1704,7 @@ class ModelMappingParser:
                             "not declared."
                         )
 
-                    referenced_projection = (
-                        referenced_class_mapping.projection
-                    )
+                    referenced_projection = referenced_class_mapping.projection
 
                     if referenced_projection is None:
                         raise ValueError(
@@ -1762,10 +1719,7 @@ class ModelMappingParser:
                             "if that reference is intentional."
                         )
 
-                    identity_attribute = (
-                        referenced_projection
-                        .source_identity_attribute
-                    )
+                    identity_attribute = referenced_projection.source_identity_attribute
 
                 if (
                     not isinstance(
@@ -1782,18 +1736,12 @@ class ModelMappingParser:
                         "to a valid source identity attribute."
                     )
 
-                resolved_references[
-                    source_attribute
-                ] = replace(
+                resolved_references[source_attribute] = replace(
                     reference,
-                    identity_attribute=(
-                        identity_attribute.strip()
-                    ),
+                    identity_attribute=(identity_attribute.strip()),
                 )
 
-            resolved_classes[
-                source_class_id
-            ] = replace(
+            resolved_classes[source_class_id] = replace(
                 class_mapping,
                 projection=replace(
                     projection,
@@ -1802,7 +1750,7 @@ class ModelMappingParser:
             )
 
         return resolved_classes
-    
+
     def _validate_inheritance(
         self,
         *,
