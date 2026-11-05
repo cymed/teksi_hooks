@@ -245,7 +245,8 @@ class DiffJobEligibilityError(
                 Finding(
                     severity=Severity.ERROR,
                     message=(
-                        f"Diff review job {job_id!r} is not eligible " f"for acceptance: {reason}"
+                        f"Diff review job {job_id!r} is not eligible "
+                        f"for acceptance: {reason}"
                     ),
                 ),
             ),
@@ -317,6 +318,7 @@ class DiffJobPersistenceError(
                 ),
             ),
         )
+
 
 class Severity(StrEnum):
     """

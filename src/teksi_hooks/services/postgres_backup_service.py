@@ -1,20 +1,19 @@
 from __future__ import annotations
 
-from dataclasses import dataclass, field
 import logging
 import os
-from pathlib import Path
 import re
 import shutil
 import subprocess
 import tempfile
+from collections.abc import Mapping
+from dataclasses import dataclass, field
+from pathlib import Path
 from time import perf_counter
-from typing import Mapping
 
-from ..capabilities.connection  import (
+from ..capabilities.connection import (
     DatabaseConnectionFactory,
 )
-
 
 _SAFE_FILE_COMPONENT = re.compile(
     r"[^A-Za-z0-9_.-]+",
@@ -89,21 +88,16 @@ class PostgresBackupService:
             label="import_schema",
         )
 
-        backup_directory = (
-            self._resolved_backup_directory()
-        )
+        backup_directory = self._resolved_backup_directory()
 
         backup_directory.mkdir(
             parents=True,
             exist_ok=True,
         )
 
-        backup_path = (
-            backup_directory
-            / self._backup_filename(
-                job_id=normalized_job_id,
-                import_schema=normalized_schema,
-            )
+        backup_path = backup_directory / self._backup_filename(
+            job_id=normalized_job_id,
+            import_schema=normalized_schema,
         )
 
         temporary_path = backup_path.with_suffix(
@@ -133,18 +127,11 @@ class PostgresBackupService:
         try:
             self._run(
                 command,
-                operation=(
-                    "PostgreSQL quarantine backup creation"
-                ),
-                timeout_seconds=(
-                    self.dump_timeout_seconds
-                ),
+                operation=("PostgreSQL quarantine backup creation"),
+                timeout_seconds=(self.dump_timeout_seconds),
             )
 
-            if (
-                not temporary_path.is_file()
-                or temporary_path.stat().st_size == 0
-            ):
+            if not temporary_path.is_file() or temporary_path.stat().st_size == 0:
                 raise RuntimeError(
                     "PostgreSQL backup completed without creating "
                     f"a valid archive at {temporary_path!s}."
@@ -166,8 +153,7 @@ class PostgresBackupService:
             raise
 
         self.logger.info(
-            "Created quarantine backup for job %r and schema %r "
-            "at %s.",
+            "Created quarantine backup for job %r and schema %r at %s.",
             normalized_job_id,
             normalized_schema,
             backup_path,
@@ -202,15 +188,11 @@ class PostgresBackupService:
 
         if not resolved_backup_path.is_file():
             raise FileNotFoundError(
-                "Database backup does not exist: "
-                f"{resolved_backup_path!s}"
+                f"Database backup does not exist: {resolved_backup_path!s}"
             )
 
         if resolved_backup_path.stat().st_size == 0:
-            raise RuntimeError(
-                "Database backup is empty: "
-                f"{resolved_backup_path!s}"
-            )
+            raise RuntimeError(f"Database backup is empty: {resolved_backup_path!s}")
 
         self._verify_archive(
             resolved_backup_path,
@@ -236,12 +218,8 @@ class PostgresBackupService:
 
         self._run(
             command,
-            operation=(
-                "PostgreSQL quarantine backup restoration"
-            ),
-            timeout_seconds=(
-                self.restore_timeout_seconds
-            ),
+            operation=("PostgreSQL quarantine backup restoration"),
+            timeout_seconds=(self.restore_timeout_seconds),
             environment_overrides={
                 "PGOPTIONS": self._restore_pgoptions(),
             },
@@ -302,12 +280,8 @@ class PostgresBackupService:
 
         self._run(
             command,
-            operation=(
-                "PostgreSQL backup archive verification"
-            ),
-            timeout_seconds=(
-                self.archive_verification_timeout_seconds
-            ),
+            operation=("PostgreSQL backup archive verification"),
+            timeout_seconds=(self.archive_verification_timeout_seconds),
         )
 
     def _resolved_backup_directory(
@@ -353,27 +327,18 @@ class PostgresBackupService:
         )
 
         if not safe_job_id:
-            raise ValueError(
-                "job_id does not contain any usable filename "
-                "characters."
-            )
+            raise ValueError("job_id does not contain any usable filename characters.")
 
         if not safe_import_schema:
             raise ValueError(
-                "import_schema does not contain any usable filename "
-                "characters."
+                "import_schema does not contain any usable filename characters."
             )
 
-        return (
-            f"tww-diff-{safe_job_id}-"
-            f"{safe_import_schema}.dump"
-        )
+        return f"tww-diff-{safe_job_id}-{safe_import_schema}.dump"
 
     def _connection_arguments(
         self,
-    ) -> list[
-        str,
-    ]:
+    ) -> list[str,]:
         """
         Return PostgreSQL client connection arguments.
 
@@ -419,9 +384,7 @@ class PostgresBackupService:
                 "contain a PostgreSQL database name or service."
             )
 
-        arguments: list[
-            str,
-        ] = []
+        arguments: list[str,] = []
 
         if host is not None:
             arguments.extend(
@@ -462,7 +425,8 @@ class PostgresBackupService:
         overrides: Mapping[
             str,
             str,
-        ] | None = None,
+        ]
+        | None = None,
     ) -> dict[
         str,
         str,
@@ -480,9 +444,7 @@ class PostgresBackupService:
         )
 
         if password is not None:
-            environment[
-                "PGPASSWORD"
-            ] = password
+            environment["PGPASSWORD"] = password
 
         if overrides:
             for key, value in overrides.items():
@@ -492,9 +454,7 @@ class PostgresBackupService:
                         "",
                     ).strip()
 
-                    environment[
-                        key
-                    ] = " ".join(
+                    environment[key] = " ".join(
                         item
                         for item in (
                             existing_value,
@@ -505,9 +465,7 @@ class PostgresBackupService:
 
                     continue
 
-                environment[
-                    key
-                ] = value
+                environment[key] = value
 
         return environment
 
@@ -518,21 +476,13 @@ class PostgresBackupService:
         Return defensive PostgreSQL settings used by ``pg_restore``.
         """
         lock_timeout = self._positive_integer(
-            value=(
-                self.restore_lock_timeout_milliseconds
-            ),
-            label=(
-                "restore_lock_timeout_milliseconds"
-            ),
+            value=(self.restore_lock_timeout_milliseconds),
+            label=("restore_lock_timeout_milliseconds"),
         )
 
         statement_timeout = self._positive_integer(
-            value=(
-                self.restore_statement_timeout_milliseconds
-            ),
-            label=(
-                "restore_statement_timeout_milliseconds"
-            ),
+            value=(self.restore_statement_timeout_milliseconds),
+            label=("restore_statement_timeout_milliseconds"),
         )
 
         return (
@@ -542,16 +492,15 @@ class PostgresBackupService:
 
     def _run(
         self,
-        command: list[
-            str,
-        ],
+        command: list[str,],
         *,
         operation: str,
         timeout_seconds: float,
         environment_overrides: Mapping[
             str,
             str,
-        ] | None = None,
+        ]
+        | None = None,
     ) -> None:
         """
         Execute one PostgreSQL client command with bounded runtime.
@@ -638,8 +587,7 @@ class PostgresBackupService:
 
             if not detail:
                 detail = (
-                    "The PostgreSQL client returned "
-                    f"exit code {exception.returncode}."
+                    f"The PostgreSQL client returned exit code {exception.returncode}."
                 )
 
             self.logger.error(
@@ -653,16 +601,14 @@ class PostgresBackupService:
             )
 
             raise RuntimeError(
-                f"{operation} failed with exit code "
-                f"{exception.returncode}: {detail}"
+                f"{operation} failed with exit code {exception.returncode}: {detail}"
             ) from exception
 
         except OSError as exception:
             elapsed = perf_counter() - started
 
             self.logger.error(
-                "Could not start %s after %.3f seconds. "
-                "Command: %s. Detail: %s",
+                "Could not start %s after %.3f seconds. Command: %s. Detail: %s",
                 operation,
                 elapsed,
                 redacted_command,
@@ -670,16 +616,14 @@ class PostgresBackupService:
             )
 
             raise RuntimeError(
-                f"Could not start {operation} command "
-                f"{command[0]!r}: {exception}"
+                f"Could not start {operation} command {command[0]!r}: {exception}"
             ) from exception
 
         except BaseException:
             elapsed = perf_counter() - started
 
             self.logger.exception(
-                "%s was interrupted after %.3f seconds. "
-                "Command: %s",
+                "%s was interrupted after %.3f seconds. Command: %s",
                 operation,
                 elapsed,
                 redacted_command,
@@ -716,15 +660,10 @@ class PostgresBackupService:
             executable,
         )
 
-        if (
-            configured_path.is_absolute()
-            or configured_path.parent
-            != Path(".")
-        ):
+        if configured_path.is_absolute() or configured_path.parent != Path("."):
             if not configured_path.is_file():
                 raise RuntimeError(
-                    "PostgreSQL client executable does not exist: "
-                    f"{configured_path!s}"
+                    f"PostgreSQL client executable does not exist: {configured_path!s}"
                 )
 
             return str(
@@ -737,8 +676,7 @@ class PostgresBackupService:
 
         if resolved is None:
             raise RuntimeError(
-                "PostgreSQL client executable "
-                f"{executable!r} was not found in PATH."
+                f"PostgreSQL client executable {executable!r} was not found in PATH."
             )
 
         return resolved
@@ -784,9 +722,7 @@ class PostgresBackupService:
             )
             or not value.strip()
         ):
-            raise ValueError(
-                f"{label} must be a non-empty string."
-            )
+            raise ValueError(f"{label} must be a non-empty string.")
 
         return value.strip()
 
@@ -803,9 +739,7 @@ class PostgresBackupService:
             value,
             bool,
         ):
-            raise TypeError(
-                f"{label} must be a positive number."
-            )
+            raise TypeError(f"{label} must be a positive number.")
 
         try:
             normalized_value = float(
@@ -816,14 +750,10 @@ class PostgresBackupService:
             TypeError,
             ValueError,
         ) as exception:
-            raise TypeError(
-                f"{label} must be a positive number."
-            ) from exception
+            raise TypeError(f"{label} must be a positive number.") from exception
 
         if normalized_value <= 0:
-            raise ValueError(
-                f"{label} must be greater than zero."
-            )
+            raise ValueError(f"{label} must be greater than zero.")
 
         return normalized_value
 
@@ -836,24 +766,17 @@ class PostgresBackupService:
         """
         Return one positive integer setting.
         """
-        if (
-            isinstance(
-                value,
-                bool,
-            )
-            or not isinstance(
-                value,
-                int,
-            )
+        if isinstance(
+            value,
+            bool,
+        ) or not isinstance(
+            value,
+            int,
         ):
-            raise TypeError(
-                f"{label} must be a positive integer."
-            )
+            raise TypeError(f"{label} must be a positive integer.")
 
         if value <= 0:
-            raise ValueError(
-                f"{label} must be greater than zero."
-            )
+            raise ValueError(f"{label} must be greater than zero.")
 
         return value
 
@@ -876,9 +799,7 @@ class PostgresBackupService:
 
     def _redacted_command(
         self,
-        command: list[
-            str,
-        ],
+        command: list[str,],
     ) -> str:
         """
         Return a platform-appropriate, log-safe command representation.
@@ -917,10 +838,7 @@ class PostgresBackupService:
         """
         Select the most useful PostgreSQL client output.
         """
-        return (
-            stderr
-            or stdout
-        )
+        return stderr or stdout
 
     def _formatted_detail_suffix(
         self,
