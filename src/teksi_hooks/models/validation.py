@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
+
 from geoalchemy2.elements import WKBElement
 from shapely import wkb
 
@@ -325,7 +326,6 @@ class Change:
             f"{type(comparison)!r}."
         )
 
-
     @staticmethod
     def _spatial_values_equal(
         *,
@@ -351,11 +351,13 @@ class Change:
         )
 
         if (
-            old_srid not in {
+            old_srid
+            not in {
                 None,
                 -1,
             }
-            and new_srid not in {
+            and new_srid
+            not in {
                 None,
                 -1,
             }
