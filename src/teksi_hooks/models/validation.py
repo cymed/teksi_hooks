@@ -5,6 +5,8 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
+from geoalchemy2.elements import WKBElement
+from shapely import wkb
 
 from ..exceptions import Finding, Severity
 from .canonical_object import CanonicalObjectIdentity
@@ -163,8 +165,16 @@ class Change:
         self,
     ) -> frozenset:
         """
-        Return attribute-level changes derived from old and new row values.
-        Attributes whose old and new values are equal are omitted.
+        Return attributes whose old and new values differ.
+
+        Some database-backed values, notably GeoAlchemy ``WKBElement`` values,
+        implement comparison by returning a SQL expression rather than a Python
+        boolean. Such a result cannot be evaluated with ``bool()`` and is treated
+        conservatively as changed.
+
+        Exact spatial equality must be evaluated earlier by the module's effect
+        evaluator. This property only identifies attributes represented in the
+        resulting Change.
         """
 
         attribute_names = set(self.old_values) | set(self.new_values)
@@ -176,7 +186,14 @@ class Change:
                 new_value=self.new_values.get(attribute),
             )
             for attribute in attribute_names
-            if self.old_values.get(attribute) != self.new_values.get(attribute)
+            if self._values_differ(
+                self.old_values.get(
+                    attribute,
+                ),
+                self.new_values.get(
+                    attribute,
+                ),
+            )
         )
 
     @property
@@ -257,6 +274,115 @@ class Change:
             iter(
                 self.identity.attributes,
             )
+        )
+
+    @classmethod
+    def _values_differ(
+        cls,
+        *,
+        attribute_name: str,
+        old_value,
+        new_value,
+    ) -> bool:
+        """
+        Return whether two attribute values differ.
+
+        A comparison result must be a real Python boolean. GeoAlchemy geometry
+        values are handled separately because their equality operators produce
+        SQLAlchemy expressions.
+        """
+        if old_value is new_value:
+            return False
+
+        if old_value is None or new_value is None:
+            return True
+
+        comparison = old_value != new_value
+
+        if isinstance(
+            comparison,
+            bool,
+        ):
+            return comparison
+
+        if isinstance(
+            old_value,
+            WKBElement,
+        ) and isinstance(
+            new_value,
+            WKBElement,
+        ):
+            return not cls._spatial_values_equal(
+                old_value=old_value,
+                new_value=new_value,
+            )
+
+        raise TypeError(
+            "Attribute comparison returned a non-boolean result "
+            f"for {attribute_name!r}. Old value type: "
+            f"{type(old_value)!r}; new value type: "
+            f"{type(new_value)!r}; comparison type: "
+            f"{type(comparison)!r}."
+        )
+
+
+    @staticmethod
+    def _spatial_values_equal(
+        *,
+        old_value: WKBElement,
+        new_value: WKBElement,
+    ) -> bool:
+        """
+        Compare two EWKB values using topological geometry equality.
+
+        SRID equality is checked separately because Shapely geometry equality
+        does not include the coordinate reference system.
+        """
+        old_srid = getattr(
+            old_value,
+            "srid",
+            None,
+        )
+
+        new_srid = getattr(
+            new_value,
+            "srid",
+            None,
+        )
+
+        if (
+            old_srid not in {
+                None,
+                -1,
+            }
+            and new_srid not in {
+                None,
+                -1,
+            }
+            and old_srid != new_srid
+        ):
+            return False
+
+        try:
+            old_geometry = wkb.loads(
+                bytes(
+                    old_value.data,
+                )
+            )
+
+            new_geometry = wkb.loads(
+                bytes(
+                    new_value.data,
+                )
+            )
+
+        except Exception as exception:
+            raise ValueError(
+                "Could not deserialize EWKB values for spatial comparison."
+            ) from exception
+
+        return old_geometry.equals(
+            new_geometry,
         )
 
 
