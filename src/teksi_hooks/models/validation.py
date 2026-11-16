@@ -182,17 +182,18 @@ class Change:
 
         return frozenset(
             AttributeChange(
-                attribute_name=attribute,
-                old_value=self.old_values.get(attribute),
-                new_value=self.new_values.get(attribute),
+                attribute_name=attribute_name,
+                old_value=self.old_values.get(attribute_name),
+                new_value=self.new_values.get(attribute_name),
             )
-            for attribute in attribute_names
+            for attribute_name in attribute_names
             if self._values_differ(
-                self.old_values.get(
-                    attribute,
+                attribute_name=attribute_name,
+                old_value=self.old_values.get(
+                    attribute_name,
                 ),
-                self.new_values.get(
-                    attribute,
+                new_value=self.new_values.get(
+                    attribute_name,
                 ),
             )
         )
