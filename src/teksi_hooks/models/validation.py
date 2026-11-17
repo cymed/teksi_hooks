@@ -7,7 +7,6 @@ from enum import StrEnum
 from typing import Any
 
 from geoalchemy2.elements import WKBElement
-from shapely import wkb
 
 from ..exceptions import Finding, Severity
 from .canonical_object import CanonicalObjectIdentity
@@ -339,54 +338,17 @@ class Change:
         SRID equality is checked separately because Shapely geometry equality
         does not include the coordinate reference system.
         """
-        old_srid = getattr(
-            old_value,
-            "srid",
-            None,
-        )
-
-        new_srid = getattr(
-            new_value,
-            "srid",
-            None,
-        )
+        old_srid = getattr(old_value, "srid", None)
+        new_srid = getattr(new_value, "srid", None)
 
         if (
-            old_srid
-            not in {
-                None,
-                -1,
-            }
-            and new_srid
-            not in {
-                None,
-                -1,
-            }
+            old_srid not in {None, -1}
+            and new_srid not in {None, -1}
             and old_srid != new_srid
         ):
             return False
 
-        try:
-            old_geometry = wkb.loads(
-                bytes(
-                    old_value.data,
-                )
-            )
-
-            new_geometry = wkb.loads(
-                bytes(
-                    new_value.data,
-                )
-            )
-
-        except Exception as exception:
-            raise ValueError(
-                "Could not deserialize EWKB values for spatial comparison."
-            ) from exception
-
-        return old_geometry.equals(
-            new_geometry,
-        )
+        return bytes(old_value.data) == bytes(new_value.data)
 
 
 class ChangeOperation(StrEnum):
