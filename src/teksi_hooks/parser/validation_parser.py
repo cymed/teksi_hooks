@@ -57,6 +57,31 @@ class ValidationParser:
             ),
         )
 
+    def parse_file(
+        self,
+        path: str | Path,
+    ) -> ValidationDefinition:
+        """
+        Parse validation configuration from a YAML file.
+        """
+
+        with open(
+            path,
+            encoding="utf-8",
+        ) as file:
+            data = yaml.safe_load(
+                file,
+            )
+
+        return self._parse_dict(
+            self._mapping(
+                data,
+                location=str(
+                    path,
+                ),
+            ),
+        )
+
     def _parse_dict(
         self,
         data: Mapping[
