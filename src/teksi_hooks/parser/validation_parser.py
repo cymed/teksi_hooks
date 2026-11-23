@@ -410,7 +410,8 @@ class ValidationParser:
         raw: Any,
         *,
         location: str,
-    ) -> frozenset"""
+    ) -> frozenset:
+        """
         Parse canonical class identifiers in a default-exclusion list.
         """
         values = self._sequence(
@@ -463,7 +464,8 @@ class ValidationParser:
         raw: Any,
         *,
         location: str,
-    ) -> frozenset"""
+    ) -> frozenset:
+        """
         Parse mandatory canonical attribute identifiers.
         """
         values = self._sequence(
@@ -590,7 +592,8 @@ class ValidationParser:
         raw_group: Any,
         *,
         location: str,
-    ) -> Sequence"""
+    ) -> Sequence:
+        """
         Return the raw rules contained in one validation group.
         """
         group = self._mapping(
@@ -979,7 +982,8 @@ class ValidationParser:
         value: Any,
         *,
         location: str,
-    ) -> Sequence"""
+    ) -> Sequence:
+        """
         Return a non-string sequence or raise a configuration error.
         """
         if value is None:
