@@ -875,11 +875,7 @@ class ValidationDefinition:
         if class_definition is None:
             return mandatory_attributes
 
-        return (
-            mandatory_attributes
-            | class_definition.mandatory_attributes
-        )
-
+        return mandatory_attributes | class_definition.mandatory_attributes
 
     def attribute_validations_for_class(
         self,
@@ -899,10 +895,7 @@ class ValidationDefinition:
         entries always apply and replace applicable defaults with the same
         attribute identifier.
         """
-        if (
-            class_id
-            in self.attribute_validation_excluded_classes
-        ):
+        if class_id in self.attribute_validation_excluded_classes:
             validations: dict[
                 str,
                 tuple[
@@ -925,7 +918,6 @@ class ValidationDefinition:
             )
 
         return validations
-
 
     def object_validations_for_class(
         self,
