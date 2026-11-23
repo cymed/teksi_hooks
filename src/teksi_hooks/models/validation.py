@@ -765,8 +765,9 @@ class ValidationDefinition:
     """
     Parsed canonical validation configuration.
 
-    Default definitions apply to every configured class unless replaced or
-    extended by a class-specific definition.
+    Default definitions apply to every configured class unless that class
+    is excluded from the corresponding default category. Class-specific
+    definitions are applied after the applicable defaults.
     """
 
     mandatory_attributes: frozenset[str] = field(
@@ -818,22 +819,63 @@ class ValidationDefinition:
         },
     )
 
+    mandatory_excluded_classes: frozenset[str] = field(
+        default_factory=frozenset,
+        metadata={
+            "doc": (
+                "Canonical class identifiers for which default mandatory "
+                "attributes do not apply. Class-specific mandatory "
+                "attributes remain effective."
+            )
+        },
+    )
+
+    attribute_validation_excluded_classes: frozenset[str] = field(
+        default_factory=frozenset,
+        metadata={
+            "doc": (
+                "Canonical class identifiers for which default attribute "
+                "validation rules do not apply. Class-specific attribute "
+                "validation rules remain effective."
+            )
+        },
+    )
+
+    object_validation_excluded_classes: frozenset[str] = field(
+        default_factory=frozenset,
+        metadata={
+            "doc": (
+                "Canonical class identifiers for which default object "
+                "validation groups do not apply. Class-specific object "
+                "validation groups remain effective."
+            )
+        },
+    )
+
     def mandatory_for_class(
         self,
         class_id: str,
-    ) -> frozenset[str]:
+    ) -> frozenset:
         """
         Return effective mandatory attributes for one canonical class.
+
+        Default mandatory attributes are omitted when the class is listed in
+        ``mandatory_excluded_classes``. Class-specific mandatory attributes
+        always apply.
         """
+        if class_id in self.mandatory_excluded_classes:
+            mandatory_attributes = frozenset()
+        else:
+            mandatory_attributes = self.mandatory_attributes
 
         class_definition = self.classes.get(
             class_id,
         )
 
         if class_definition is None:
-            return self.mandatory_attributes
+            return mandatory_attributes
 
-        return self.mandatory_attributes | class_definition.mandatory_attributes
+        return mandatory_attributes | class_definition.mandatory_attributes
 
     def attribute_validations_for_class(
         self,
@@ -848,13 +890,23 @@ class ValidationDefinition:
         """
         Return effective attribute validations for one canonical class.
 
-        Class-specific entries replace default entries with the same
+        Default attribute-validation groups are omitted when the class is
+        listed in ``attribute_validation_excluded_classes``. Class-specific
+        entries always apply and replace applicable defaults with the same
         attribute identifier.
         """
-
-        validations = dict(
-            self.attribute_validations,
-        )
+        if class_id in self.attribute_validation_excluded_classes:
+            validations: dict[
+                str,
+                tuple[
+                    AttributeValidation,
+                    ...,
+                ],
+            ] = {}
+        else:
+            validations = dict(
+                self.attribute_validations,
+            )
 
         class_definition = self.classes.get(
             class_id,
@@ -880,13 +932,23 @@ class ValidationDefinition:
         """
         Return effective object validations for one canonical class.
 
-        Class-specific groups replace default groups with the same
-        configuration identifier.
+        Default object-validation groups are omitted when the class is listed
+        in ``object_validation_excluded_classes``. Class-specific groups always
+        apply and replace applicable defaults with the same configuration
+        identifier.
         """
-
-        validations = dict(
-            self.object_validations,
-        )
+        if class_id in self.object_validation_excluded_classes:
+            validations: dict[
+                str,
+                tuple[
+                    ObjectValidation,
+                    ...,
+                ],
+            ] = {}
+        else:
+            validations = dict(
+                self.object_validations,
+            )
 
         class_definition = self.classes.get(
             class_id,
