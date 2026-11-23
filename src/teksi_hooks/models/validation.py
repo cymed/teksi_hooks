@@ -772,11 +772,7 @@ class ValidationDefinition:
 
     mandatory_attributes: frozenset[str] = field(
         default_factory=frozenset,
-        metadata={
-            "doc": (
-                "Canonical attributes considered mandatory by default."
-            )
-        },
+        metadata={"doc": ("Canonical attributes considered mandatory by default.")},
     )
 
     attribute_validations: Mapping[
@@ -805,8 +801,7 @@ class ValidationDefinition:
         default_factory=dict,
         metadata={
             "doc": (
-                "Default object validation groups keyed by configuration "
-                "identifier."
+                "Default object validation groups keyed by configuration identifier."
             )
         },
     )
@@ -894,10 +889,7 @@ class ValidationDefinition:
         if class_definition is None:
             return mandatory_attributes
 
-        return (
-            mandatory_attributes
-            | class_definition.mandatory_attributes
-        )
+        return mandatory_attributes | class_definition.mandatory_attributes
 
     def attribute_validations_for_class(
         self,
@@ -919,10 +911,7 @@ class ValidationDefinition:
         """
         validations = (
             {}
-            if (
-                class_id
-                in self.attribute_validation_excluded_classes
-            )
+            if (class_id in self.attribute_validation_excluded_classes)
             else dict(
                 self.attribute_validations,
             )
@@ -959,10 +948,7 @@ class ValidationDefinition:
         """
         validations = (
             {}
-            if (
-                class_id
-                in self.object_validation_excluded_classes
-            )
+            if (class_id in self.object_validation_excluded_classes)
             else dict(
                 self.object_validations,
             )
