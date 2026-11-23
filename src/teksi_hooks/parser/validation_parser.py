@@ -182,9 +182,7 @@ class ValidationParser:
                         "attributes",
                         (),
                     ),
-                    location=(
-                        "defaults.mandatory.attributes"
-                    ),
+                    location=("defaults.mandatory.attributes"),
                 )
             ),
             mandatory_excluded_classes=(
@@ -193,10 +191,7 @@ class ValidationParser:
                         self._EXCLUDED_CLASSES_KEY,
                         (),
                     ),
-                    location=(
-                        "defaults.mandatory."
-                        "excluded_classes"
-                    ),
+                    location=("defaults.mandatory.excluded_classes"),
                 )
             ),
             attribute_validations=(
@@ -204,9 +199,7 @@ class ValidationParser:
                     self._without_excluded_classes(
                         attribute_validation_defaults,
                     ),
-                    location=(
-                        "defaults.validation_rules"
-                    ),
+                    location=("defaults.validation_rules"),
                 )
             ),
             attribute_validation_excluded_classes=(
@@ -215,10 +208,7 @@ class ValidationParser:
                         self._EXCLUDED_CLASSES_KEY,
                         (),
                     ),
-                    location=(
-                        "defaults.validation_rules."
-                        "excluded_classes"
-                    ),
+                    location=("defaults.validation_rules.excluded_classes"),
                 )
             ),
             object_validations=(
@@ -226,9 +216,7 @@ class ValidationParser:
                     self._without_excluded_classes(
                         object_validation_defaults,
                     ),
-                    location=(
-                        "defaults.object_validation_rules"
-                    ),
+                    location=("defaults.object_validation_rules"),
                 )
             ),
             object_validation_excluded_classes=(
@@ -237,15 +225,11 @@ class ValidationParser:
                         self._EXCLUDED_CLASSES_KEY,
                         (),
                     ),
-                    location=(
-                        "defaults.object_validation_rules."
-                        "excluded_classes"
-                    ),
+                    location=("defaults.object_validation_rules.excluded_classes"),
                 )
             ),
             classes={
-                class_definition.class_id:
-                    class_definition
+                class_definition.class_id: class_definition
                 for class_definition in classes
             },
         )
@@ -286,9 +270,7 @@ class ValidationParser:
             )
             or not class_id
         ):
-            raise ValueError(
-                f"{location}.id must be a non-empty string."
-            )
+            raise ValueError(f"{location}.id must be a non-empty string.")
 
         return ClassValidationDefinition(
             class_id=class_id,
@@ -298,9 +280,7 @@ class ValidationParser:
                         "mandatory",
                         (),
                     ),
-                    location=(
-                        f"{location}.mandatory"
-                    ),
+                    location=(f"{location}.mandatory"),
                 )
             ),
             attribute_validations=(
@@ -309,9 +289,7 @@ class ValidationParser:
                         "validation_rules",
                         {},
                     ),
-                    location=(
-                        f"{location}.validation_rules"
-                    ),
+                    location=(f"{location}.validation_rules"),
                 )
             ),
             object_validations=(
@@ -320,10 +298,7 @@ class ValidationParser:
                         "object_validation_rules",
                         {},
                     ),
-                    location=(
-                        f"{location}."
-                        "object_validation_rules"
-                    ),
+                    location=(f"{location}.object_validation_rules"),
                 )
             ),
         )
@@ -347,9 +322,7 @@ class ValidationParser:
             self._parse_class(
                 self._mapping(
                     raw_class,
-                    location=(
-                        f"classes[{index}]"
-                    ),
+                    location=(f"classes[{index}]"),
                 ),
                 index=index,
             )
@@ -358,11 +331,7 @@ class ValidationParser:
             )
         )
 
-        class_ids = [
-            class_definition.class_id
-            for class_definition
-            in parsed_classes
-        ]
+        class_ids = [class_definition.class_id for class_definition in parsed_classes]
 
         duplicate_class_ids = {
             class_id
@@ -431,10 +400,7 @@ class ValidationParser:
                 )
                 or not value
             ):
-                raise TypeError(
-                    f"{location}[{index}] must be a "
-                    "non-empty string."
-                )
+                raise TypeError(f"{location}[{index}] must be a non-empty string.")
 
             class_ids.append(
                 value,
@@ -485,10 +451,7 @@ class ValidationParser:
                 )
                 or not value
             ):
-                raise TypeError(
-                    f"{location}[{index}] must be a "
-                    "non-empty string."
-                )
+                raise TypeError(f"{location}[{index}] must be a non-empty string.")
 
             mandatory_attributes.append(
                 value,
@@ -538,13 +501,9 @@ class ValidationParser:
                 self._parse_attribute_validations(
                     self._group_rules(
                         raw_group,
-                        location=(
-                            f"{location}.{attribute_id}"
-                        ),
+                        location=(f"{location}.{attribute_id}"),
                     ),
-                    location=(
-                        f"{location}.{attribute_id}.rules"
-                    ),
+                    location=(f"{location}.{attribute_id}.rules"),
                 )
             )
             for attribute_id, raw_group in groups.items()
@@ -575,13 +534,9 @@ class ValidationParser:
                 self._parse_object_validations(
                     self._group_rules(
                         raw_group,
-                        location=(
-                            f"{location}.{group_id}"
-                        ),
+                        location=(f"{location}.{group_id}"),
                     ),
-                    location=(
-                        f"{location}.{group_id}.rules"
-                    ),
+                    location=(f"{location}.{group_id}.rules"),
                 )
             )
             for group_id, raw_group in groups.items()
@@ -614,9 +569,7 @@ class ValidationParser:
                 "rules",
                 (),
             ),
-            location=(
-                f"{location}.rules"
-            ),
+            location=(f"{location}.rules"),
         )
 
     def _parse_attribute_validations(
@@ -635,16 +588,11 @@ class ValidationParser:
             self._parse_attribute_validation(
                 self._mapping(
                     raw_validation,
-                    location=(
-                        f"{location}[{index}]"
-                    ),
+                    location=(f"{location}[{index}]"),
                 ),
-                location=(
-                    f"{location}[{index}]"
-                ),
+                location=(f"{location}[{index}]"),
             )
-            for index, raw_validation
-            in enumerate(
+            for index, raw_validation in enumerate(
                 raw_validations,
             )
         )
@@ -693,18 +641,14 @@ class ValidationParser:
                 data.get(
                     "context_value",
                 ),
-                location=(
-                    f"{location}.context_value"
-                ),
+                location=(f"{location}.context_value"),
             ),
             parameters=self._parameters(
                 data.get(
                     "parameters",
                     {},
                 ),
-                location=(
-                    f"{location}.parameters"
-                ),
+                location=(f"{location}.parameters"),
             ),
         )
 
@@ -724,16 +668,11 @@ class ValidationParser:
             self._parse_object_validation(
                 self._mapping(
                     raw_validation,
-                    location=(
-                        f"{location}[{index}]"
-                    ),
+                    location=(f"{location}[{index}]"),
                 ),
-                location=(
-                    f"{location}[{index}]"
-                ),
+                location=(f"{location}[{index}]"),
             )
-            for index, raw_validation
-            in enumerate(
+            for index, raw_validation in enumerate(
                 raw_validations,
             )
         )
@@ -783,9 +722,7 @@ class ValidationParser:
                     "parameters",
                     {},
                 ),
-                location=(
-                    f"{location}.parameters"
-                ),
+                location=(f"{location}.parameters"),
             ),
         )
 
@@ -812,9 +749,7 @@ class ValidationParser:
             )
             or not validation_id
         ):
-            raise ValueError(
-                f"{location}.id must be a non-empty string."
-            )
+            raise ValueError(f"{location}.id must be a non-empty string.")
 
         return validation_id
 
@@ -841,8 +776,7 @@ class ValidationParser:
             )
         except ValueError as exception:
             raise ValueError(
-                f"{location}.level contains an unsupported "
-                f"severity: {raw_level!r}."
+                f"{location}.level contains an unsupported severity: {raw_level!r}."
             ) from exception
 
     def _operations(
@@ -866,17 +800,12 @@ class ValidationParser:
         """
         raw_operations = data.get(
             "operations",
-            tuple(
-                operation.value
-                for operation in default
-            ),
+            tuple(operation.value for operation in default),
         )
 
         operation_values = self._sequence(
             raw_operations,
-            location=(
-                f"{location}.operations"
-            ),
+            location=(f"{location}.operations"),
         )
 
         try:
@@ -888,8 +817,7 @@ class ValidationParser:
             )
         except ValueError as exception:
             raise ValueError(
-                f"{location}.operations contains an "
-                "unsupported change operation."
+                f"{location}.operations contains an unsupported change operation."
             ) from exception
 
     def _parameters(
@@ -916,12 +844,8 @@ class ValidationParser:
 
         if "attributes" in parameters:
             raw_attributes = self._sequence(
-                parameters[
-                    "attributes"
-                ],
-                location=(
-                    f"{location}.attributes"
-                ),
+                parameters["attributes"],
+                location=(f"{location}.attributes"),
             )
 
             attributes: list[str] = []
@@ -937,8 +861,7 @@ class ValidationParser:
                     or not attribute_id
                 ):
                     raise TypeError(
-                        f"{location}.attributes[{index}] "
-                        "must be a non-empty string."
+                        f"{location}.attributes[{index}] must be a non-empty string."
                     )
 
                 attributes.append(
@@ -971,8 +894,7 @@ class ValidationParser:
             Mapping,
         ):
             raise TypeError(
-                f"Expected mapping at {location}, "
-                f"got {type(value).__name__}."
+                f"Expected mapping at {location}, got {type(value).__name__}."
             )
 
         return value
@@ -1001,8 +923,7 @@ class ValidationParser:
             Sequence,
         ):
             raise TypeError(
-                f"Expected sequence at {location}, "
-                f"got {type(value).__name__}."
+                f"Expected sequence at {location}, got {type(value).__name__}."
             )
 
         return value
@@ -1026,10 +947,7 @@ class ValidationParser:
             )
             or not value
         ):
-            raise TypeError(
-                f"{location} must be a non-empty "
-                "string or null."
-            )
+            raise TypeError(f"{location} must be a non-empty string or null.")
 
         return value
 
@@ -1058,6 +976,5 @@ class ValidationParser:
 
         if unknown_keys:
             raise ValueError(
-                f"Unsupported keys at {location}: "
-                f"{sorted(unknown_keys)!r}."
+                f"Unsupported keys at {location}: {sorted(unknown_keys)!r}."
             )
