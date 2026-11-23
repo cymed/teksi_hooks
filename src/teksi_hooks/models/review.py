@@ -380,25 +380,6 @@ class DiffSchemaWriteResult:
     It does not contain the review features themselves and does not indicate
     that any accepted changes have been applied to live data.
 
-    Attributes
-    ----------
-    job_db_id:
-        Database-generated identifier of the inserted job metadata row.
-
-        This identifier is used internally by review-feature rows as their
-        reference to the job.
-
-    job_id:
-        Stable external identifier supplied by the review workflow.
-
-        This may be used by callers to retrieve or resolve the stored review
-        job without depending on its database-generated identifier.
-
-    row_count:
-        Total number of review-feature rows written across all canonical
-        class tables for the job.
-
-        The metadata row itself is not included in this count.
     """
 
     job_db_id: int = field(
@@ -413,14 +394,134 @@ class DiffSchemaWriteResult:
         metadata={"doc": ("Stable external identifier of the written review job.")},
     )
 
-    row_count: int = field(
+    row_counts_by_class: Mapping[
+        str,
+        int,
+    ] = field(
+        default_factory=dict,
         metadata={
             "doc": (
-                "Total number of review-feature rows written across all "
-                "canonical class tables. The metadata row is not included."
+                "Review-feature row counts keyed by canonical class "
+                "identifier. Classes without persisted rows are omitted."
             )
         },
     )
+
+    rejected_counts_by_class: Mapping[
+        str,
+        int,
+    ] = field(
+        default_factory=dict,
+        metadata={
+            "doc": (
+                "Rejected review-feature row counts keyed by canonical "
+                "class identifier. Classes without rejected rows are "
+                "omitted."
+            )
+        },
+    )
+
+    @property
+    def row_count(
+        self,
+    ) -> int:
+        """
+        Return the total number of persisted review-feature rows.
+        """
+        return sum(
+            self.row_counts_by_class.values(),
+        )
+
+    @property
+    def rejected_row_count(
+        self,
+    ) -> int:
+        """
+        Return the total number of rejected review-feature rows.
+        """
+        return sum(
+            self.rejected_counts_by_class.values(),
+        )
+
+    @property
+    def permitted_row_count(
+        self,
+    ) -> int:
+        """
+        Return the total number of permitted review-feature rows.
+        """
+        return self.row_count - self.rejected_row_count
+
+    @property
+    def class_count(
+        self,
+    ) -> int:
+        """
+        Return the number of classes with persisted review-feature rows.
+        """
+        return len(
+            self.row_counts_by_class,
+        )
+
+    @property
+    def rejected_class_count(
+        self,
+    ) -> int:
+        """
+        Return the number of classes containing rejected rows.
+        """
+        return len(
+            self.rejected_counts_by_class,
+        )
+
+    @property
+    def has_rejections(
+        self,
+    ) -> bool:
+        """
+        Return whether any persisted review-feature row was rejected.
+        """
+        return bool(
+            self.rejected_counts_by_class,
+        )
+
+    def rejected_classes(
+        self,
+    ) -> tuple[
+        tuple[
+            str,
+            int,
+            int,
+        ],
+        ...,
+    ]:
+        """
+        Return rejected classes ordered by rejection count.
+
+        Each result contains:
+
+        ``(class_id, total_count, rejected_count)``.
+        """
+        return tuple(
+            sorted(
+                (
+                    (
+                        class_id,
+                        self.row_counts_by_class[class_id],
+                        rejected_count,
+                    )
+                    for (
+                        class_id,
+                        rejected_count,
+                    ) in (self.rejected_counts_by_class.items())
+                ),
+                key=lambda item: (
+                    -item[2],
+                    -item[1],
+                    item[0],
+                ),
+            )
+        )
 
 
 @dataclass(slots=True)
