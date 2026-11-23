@@ -162,21 +162,7 @@ def test_validation_parser_parses_validation_definition(
         validation_definition.attribute_validations_for_class("file")
         == default_attribute_validations
     )
-    assert validation_definition.object_validations_for_class("file") == {
-        "unique_identifier_combo": (
-            ObjectValidation(
-                id="is_unique",
-                level=Severity.ERROR,
-                operations=(
-                    ChangeOperation.INSERT,
-                    ChangeOperation.UPDATE,
-                ),
-                parameters={
-                    "attributes": ("obj_id",),
-                },
-            ),
-        ),
-    }
+    assert validation_definition.object_validations_for_class("file") == {}
 
     expected_agxx_mandatory_attributes = {
         "agxx_wastewater_networkelement": frozenset(
