@@ -859,15 +859,14 @@ class ValidationDefinition:
         """
         Return effective mandatory attributes for one canonical class.
 
-        Default mandatory attributes are omitted when the class is listed
-        in ``mandatory_excluded_classes``. Class-specific mandatory
-        attributes always apply.
+        Default mandatory attributes are omitted when the class is listed in
+        ``mandatory_excluded_classes``. Class-specific mandatory attributes
+        always apply.
         """
-        mandatory_attributes = (
-            frozenset()
-            if class_id in self.mandatory_excluded_classes
-            else self.mandatory_attributes
-        )
+        if class_id in self.mandatory_excluded_classes:
+            mandatory_attributes = frozenset()
+        else:
+            mandatory_attributes = self.mandatory_attributes
 
         class_definition = self.classes.get(
             class_id,
@@ -876,7 +875,11 @@ class ValidationDefinition:
         if class_definition is None:
             return mandatory_attributes
 
-        return mandatory_attributes | class_definition.mandatory_attributes
+        return (
+            mandatory_attributes
+            | class_definition.mandatory_attributes
+        )
+
 
     def attribute_validations_for_class(
         self,
@@ -891,18 +894,26 @@ class ValidationDefinition:
         """
         Return effective attribute validations for one canonical class.
 
-        Default attribute validations are omitted when the class is listed
-        in ``attribute_validation_excluded_classes``. Class-specific
-        entries always apply and replace applicable default entries with
-        the same attribute identifier.
+        Default attribute-validation groups are omitted when the class is
+        listed in ``attribute_validation_excluded_classes``. Class-specific
+        entries always apply and replace applicable defaults with the same
+        attribute identifier.
         """
-        validations = (
-            {}
-            if (class_id in self.attribute_validation_excluded_classes)
-            else dict(
+        if (
+            class_id
+            in self.attribute_validation_excluded_classes
+        ):
+            validations: dict[
+                str,
+                tuple[
+                    AttributeValidation,
+                    ...,
+                ],
+            ] = {}
+        else:
+            validations = dict(
                 self.attribute_validations,
             )
-        )
 
         class_definition = self.classes.get(
             class_id,
@@ -914,6 +925,7 @@ class ValidationDefinition:
             )
 
         return validations
+
 
     def object_validations_for_class(
         self,
@@ -928,18 +940,23 @@ class ValidationDefinition:
         """
         Return effective object validations for one canonical class.
 
-        Default object validations are omitted when the class is listed in
-        ``object_validation_excluded_classes``. Class-specific groups
-        always apply and replace applicable default groups with the same
-        configuration identifier.
+        Default object-validation groups are omitted when the class is listed
+        in ``object_validation_excluded_classes``. Class-specific groups always
+        apply and replace applicable defaults with the same configuration
+        identifier.
         """
-        validations = (
-            {}
-            if (class_id in self.object_validation_excluded_classes)
-            else dict(
+        if class_id in self.object_validation_excluded_classes:
+            validations: dict[
+                str,
+                tuple[
+                    ObjectValidation,
+                    ...,
+                ],
+            ] = {}
+        else:
+            validations = dict(
                 self.object_validations,
             )
-        )
 
         class_definition = self.classes.get(
             class_id,
