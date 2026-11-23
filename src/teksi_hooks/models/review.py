@@ -450,10 +450,7 @@ class DiffSchemaWriteResult:
         """
         Return the total number of permitted review-feature rows.
         """
-        return (
-            self.row_count
-            - self.rejected_row_count
-        )
+        return self.row_count - self.rejected_row_count
 
     @property
     def class_count(
@@ -510,17 +507,13 @@ class DiffSchemaWriteResult:
                 (
                     (
                         class_id,
-                        self.row_counts_by_class[
-                            class_id
-                        ],
+                        self.row_counts_by_class[class_id],
                         rejected_count,
                     )
                     for (
                         class_id,
                         rejected_count,
-                    ) in (
-                        self.rejected_counts_by_class.items()
-                    )
+                    ) in (self.rejected_counts_by_class.items())
                 ),
                 key=lambda item: (
                     -item[2],
@@ -529,6 +522,7 @@ class DiffSchemaWriteResult:
                 ),
             )
         )
+
 
 @dataclass(slots=True)
 class ChangeCreationResult:
@@ -598,6 +592,7 @@ class ChangeCreationResult:
         default=None,
         metadata={"doc": ("Result of the Diff Schema Writer.")},
     )
+
 
 @dataclass(
     slots=True,
