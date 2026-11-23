@@ -10,7 +10,6 @@ from teksi_hooks.models.validation import (
     ValidationDefinition,
 )
 
-
 AGXX_EXTENSION_CLASSES = frozenset(
     {
         "agxx_wastewater_networkelement",
@@ -57,9 +56,7 @@ def test_validation_parser_parses_validation_definition(
             AttributeValidation(
                 id="equals_context_value",
                 level=Severity.ERROR,
-                operations=(
-                    ChangeOperation.INSERT,
-                ),
+                operations=(ChangeOperation.INSERT,),
                 context_value="provider_oid",
                 parameters={},
             ),
@@ -68,9 +65,7 @@ def test_validation_parser_parses_validation_definition(
             AttributeValidation(
                 id="equals_context_value",
                 level=Severity.ERROR,
-                operations=(
-                    ChangeOperation.INSERT,
-                ),
+                operations=(ChangeOperation.INSERT,),
                 context_value="dataowner_oid",
                 parameters={},
             ),
@@ -96,28 +91,16 @@ def test_validation_parser_parses_validation_definition(
         ),
     }
 
-    assert (
-        validation_definition.mandatory_attributes
-        == default_mandatory_attributes
-    )
-    assert (
-        validation_definition.mandatory_excluded_classes
-        == AGXX_EXTENSION_CLASSES
-    )
+    assert validation_definition.mandatory_attributes == default_mandatory_attributes
+    assert validation_definition.mandatory_excluded_classes == AGXX_EXTENSION_CLASSES
 
-    assert (
-        validation_definition.attribute_validations
-        == default_attribute_validations
-    )
+    assert validation_definition.attribute_validations == default_attribute_validations
     assert (
         validation_definition.attribute_validation_excluded_classes
         == AGXX_EXTENSION_CLASSES
     )
 
-    assert (
-        validation_definition.object_validations
-        == default_object_validations
-    )
+    assert validation_definition.object_validations == default_object_validations
     assert (
         validation_definition.object_validation_excluded_classes
         == AGXX_EXTENSION_CLASSES
@@ -126,15 +109,10 @@ def test_validation_parser_parses_validation_definition(
         }
     )
 
-    maintenance_event = validation_definition.classes[
-        "maintenance_event"
-    ]
+    maintenance_event = validation_definition.classes["maintenance_event"]
 
     assert maintenance_event.class_id == "maintenance_event"
-    assert (
-        maintenance_event.mandatory_attributes
-        == frozenset()
-    )
+    assert maintenance_event.mandatory_attributes == frozenset()
     assert maintenance_event.attribute_validations == {}
 
     maintenance_event_object_validations = {
@@ -157,70 +135,48 @@ def test_validation_parser_parses_validation_definition(
         ),
     }
 
-    assert (
-        maintenance_event.object_validations
-        == maintenance_event_object_validations
-    )
+    assert maintenance_event.object_validations == maintenance_event_object_validations
 
     assert (
-        validation_definition.mandatory_for_class(
-            "maintenance_event"
-        )
+        validation_definition.mandatory_for_class("maintenance_event")
         == default_mandatory_attributes
     )
     assert (
-        validation_definition.attribute_validations_for_class(
-            "maintenance_event"
-        )
+        validation_definition.attribute_validations_for_class("maintenance_event")
         == default_attribute_validations
     )
     assert (
-        validation_definition.object_validations_for_class(
-            "maintenance_event"
-        )
+        validation_definition.object_validations_for_class("maintenance_event")
         == maintenance_event_object_validations
     )
 
-    file_definition = validation_definition.classes[
-        "file"
-    ]
+    file_definition = validation_definition.classes["file"]
 
     assert file_definition.class_id == "file"
 
     assert (
-        validation_definition.mandatory_for_class(
-            "file"
-        )
+        validation_definition.mandatory_for_class("file")
         == default_mandatory_attributes
     )
     assert (
-        validation_definition.attribute_validations_for_class(
-            "file"
-        )
+        validation_definition.attribute_validations_for_class("file")
         == default_attribute_validations
     )
-    assert (
-        validation_definition.object_validations_for_class(
-            "file"
-        )
-        == {
-            "unique_identifier_combo": (
-                ObjectValidation(
-                    id="is_unique",
-                    level=Severity.ERROR,
-                    operations=(
-                        ChangeOperation.INSERT,
-                        ChangeOperation.UPDATE,
-                    ),
-                    parameters={
-                        "attributes": (
-                            "obj_id",
-                        ),
-                    },
+    assert validation_definition.object_validations_for_class("file") == {
+        "unique_identifier_combo": (
+            ObjectValidation(
+                id="is_unique",
+                level=Severity.ERROR,
+                operations=(
+                    ChangeOperation.INSERT,
+                    ChangeOperation.UPDATE,
                 ),
+                parameters={
+                    "attributes": ("obj_id",),
+                },
             ),
-        }
-    )
+        ),
+    }
 
     expected_agxx_mandatory_attributes = {
         "agxx_wastewater_networkelement": frozenset(
@@ -279,32 +235,18 @@ def test_validation_parser_parses_validation_definition(
         class_id,
         expected_mandatory_attributes,
     ) in expected_agxx_mandatory_attributes.items():
-        class_definition = (
-            validation_definition.classes[
-                class_id
-            ]
-        )
+        class_definition = validation_definition.classes[class_id]
+
+        assert class_definition.class_id == class_id
+        assert class_definition.mandatory_attributes == expected_mandatory_attributes
 
         assert (
-            class_definition.class_id
-            == class_id
-        )
-        assert (
-            class_definition.mandatory_attributes
+            validation_definition.mandatory_for_class(class_id)
             == expected_mandatory_attributes
         )
 
         assert (
-            validation_definition.mandatory_for_class(
-                class_id
-            )
-            == expected_mandatory_attributes
-        )
-
-        assert (
-            validation_definition.object_validations_for_class(
-                class_id
-            )
+            validation_definition.object_validations_for_class(class_id)
             == class_definition.object_validations
         )
 
@@ -338,11 +280,7 @@ def test_validation_parser_parses_validation_definition(
     }
 
     for class_id in AGXX_EXTENSION_CLASSES:
-        class_definition = (
-            validation_definition.classes[
-                class_id
-            ]
-        )
+        class_definition = validation_definition.classes[class_id]
 
         if class_id == "agxx_last_modification":
             assert (
@@ -350,33 +288,12 @@ def test_validation_parser_parses_validation_definition(
                 == agxx_last_modification_validations
             )
             assert (
-                validation_definition
-                .attribute_validations_for_class(
-                    class_id
-                )
+                validation_definition.attribute_validations_for_class(class_id)
                 == agxx_last_modification_validations
             )
         else:
-            assert (
-                class_definition.attribute_validations
-                == {}
-            )
-            assert (
-                validation_definition
-                .attribute_validations_for_class(
-                    class_id
-                )
-                == {}
-            )
+            assert class_definition.attribute_validations == {}
+            assert validation_definition.attribute_validations_for_class(class_id) == {}
 
-        assert (
-            class_definition.object_validations
-            == {}
-        )
-        assert (
-            validation_definition
-            .object_validations_for_class(
-                class_id
-            )
-            == {}
-        )
+        assert class_definition.object_validations == {}
+        assert validation_definition.object_validations_for_class(class_id) == {}

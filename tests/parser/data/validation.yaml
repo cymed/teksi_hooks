@@ -373,4 +373,3 @@ classes:
   - id: agxx_infiltration_zone
     mandatory:
       - fk_infiltration_zone
-
