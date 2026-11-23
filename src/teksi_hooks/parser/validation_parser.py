@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 
 import yaml
@@ -28,8 +29,11 @@ class ValidationParser:
     The parser handles:
 
     - default mandatory attributes;
+    - default mandatory-attribute class exclusions;
     - default attribute validation rules;
+    - default attribute-validation class exclusions;
     - default object validation rules;
+    - default object-validation class exclusions;
     - class-specific mandatory attributes;
     - class-specific attribute validation rules;
     - class-specific object validation rules.
@@ -38,6 +42,8 @@ class ValidationParser:
     rules, derived rights or state-transition privileges.
     """
 
+    _EXCLUDED_CLASSES_KEY = "excluded_classes"
+
     def parse_text(
         self,
         text: str,
@@ -45,7 +51,6 @@ class ValidationParser:
         """
         Parse validation configuration from YAML text.
         """
-
         data = yaml.safe_load(
             text,
         )
@@ -64,7 +69,6 @@ class ValidationParser:
         """
         Parse validation configuration from a YAML file.
         """
-
         with open(
             path,
             encoding="utf-8",
@@ -90,12 +94,29 @@ class ValidationParser:
         ],
     ) -> ValidationDefinition:
         """
-        Parse and materialize the validation configuration.
+        Parse the root validation configuration.
 
-        Defaults are resolved into each class here. The returned definition has
-        empty root defaults so downstream resolvers cannot merge defaults into a
-        class that explicitly sets ``inherit_defaults: false``.
+        Default mandatory attributes use this structure:
+
+        defaults:
+          mandatory:
+            attributes:
+              - obj_id
+            excluded_classes:
+              - relation_extension
+
+        Default attribute and object validation sections contain validation
+        groups alongside an optional ``excluded_classes`` entry.
         """
+        self._assert_known_keys(
+            data,
+            allowed_keys={
+                "defaults",
+                "classes",
+            },
+            location="validation document",
+        )
+
         defaults = self._mapping(
             data.get(
                 "defaults",
@@ -104,21 +125,42 @@ class ValidationParser:
             location="defaults",
         )
 
-        default_mandatory_attributes = self._parse_mandatory_attributes(
+        self._assert_known_keys(
+            defaults,
+            allowed_keys={
+                "mandatory",
+                "validation_rules",
+                "object_validation_rules",
+            },
+            location="defaults",
+        )
+
+        mandatory_defaults = self._mapping(
             defaults.get(
                 "mandatory",
-                (),
+                {},
             ),
             location="defaults.mandatory",
         )
-        default_attribute_validations = self._parse_attribute_validation_groups(
+
+        self._assert_known_keys(
+            mandatory_defaults,
+            allowed_keys={
+                "attributes",
+                self._EXCLUDED_CLASSES_KEY,
+            },
+            location="defaults.mandatory",
+        )
+
+        attribute_validation_defaults = self._mapping(
             defaults.get(
                 "validation_rules",
                 {},
             ),
             location="defaults.validation_rules",
         )
-        default_object_validations = self._parse_object_validation_groups(
+
+        object_validation_defaults = self._mapping(
             defaults.get(
                 "object_validation_rules",
                 {},
@@ -131,18 +173,79 @@ class ValidationParser:
                 "classes",
                 (),
             ),
-            default_mandatory_attributes=(default_mandatory_attributes),
-            default_attribute_validations=(default_attribute_validations),
-            default_object_validations=(default_object_validations),
         )
 
         return ValidationDefinition(
-            # Defaults have already been materialized into every class.
-            mandatory_attributes=frozenset(),
-            attribute_validations={},
-            object_validations={},
+            mandatory_attributes=(
+                self._parse_mandatory_attributes(
+                    mandatory_defaults.get(
+                        "attributes",
+                        (),
+                    ),
+                    location=(
+                        "defaults.mandatory.attributes"
+                    ),
+                )
+            ),
+            mandatory_excluded_classes=(
+                self._parse_class_ids(
+                    mandatory_defaults.get(
+                        self._EXCLUDED_CLASSES_KEY,
+                        (),
+                    ),
+                    location=(
+                        "defaults.mandatory."
+                        "excluded_classes"
+                    ),
+                )
+            ),
+            attribute_validations=(
+                self._parse_attribute_validation_groups(
+                    self._without_excluded_classes(
+                        attribute_validation_defaults,
+                    ),
+                    location=(
+                        "defaults.validation_rules"
+                    ),
+                )
+            ),
+            attribute_validation_excluded_classes=(
+                self._parse_class_ids(
+                    attribute_validation_defaults.get(
+                        self._EXCLUDED_CLASSES_KEY,
+                        (),
+                    ),
+                    location=(
+                        "defaults.validation_rules."
+                        "excluded_classes"
+                    ),
+                )
+            ),
+            object_validations=(
+                self._parse_object_validation_groups(
+                    self._without_excluded_classes(
+                        object_validation_defaults,
+                    ),
+                    location=(
+                        "defaults.object_validation_rules"
+                    ),
+                )
+            ),
+            object_validation_excluded_classes=(
+                self._parse_class_ids(
+                    object_validation_defaults.get(
+                        self._EXCLUDED_CLASSES_KEY,
+                        (),
+                    ),
+                    location=(
+                        "defaults.object_validation_rules."
+                        "excluded_classes"
+                    ),
+                )
+            ),
             classes={
-                class_definition.class_id: class_definition
+                class_definition.class_id:
+                    class_definition
                 for class_definition in classes
             },
         )
@@ -155,49 +258,22 @@ class ValidationParser:
         ],
         *,
         index: int,
-        default_mandatory_attributes: frozenset[str,],
-        default_attribute_validations: Mapping[
-            str,
-            tuple[
-                AttributeValidation,
-                ...,
-            ],
-        ],
-        default_object_validations: Mapping[
-            str,
-            tuple[
-                ObjectValidation,
-                ...,
-            ],
-        ],
     ) -> ClassValidationDefinition:
         """
-        Parse one class definition and materialize applicable defaults.
-
-        ``inherit_defaults`` defaults to true. When false, only the class's
-        explicitly configured mandatory attributes and validation rules are
-        retained.
+        Parse one class-specific validation definition.
         """
         location = f"classes[{index}]"
 
-        allowed_keys = {
-            "id",
-            "inherit_defaults",
-            "mandatory",
-            "validation_rules",
-            "object_validation_rules",
-        }
-        unknown_keys = (
-            set(
-                raw,
-            )
-            - allowed_keys
+        self._assert_known_keys(
+            raw,
+            allowed_keys={
+                "id",
+                "mandatory",
+                "validation_rules",
+                "object_validation_rules",
+            },
+            location=location,
         )
-
-        if unknown_keys:
-            raise ValueError(
-                f"Unsupported keys at {location}: {sorted(unknown_keys)!r}."
-            )
 
         class_id = raw.get(
             "id",
@@ -210,97 +286,57 @@ class ValidationParser:
             )
             or not class_id
         ):
-            raise ValueError(f"{location}.id must be a non-empty string.")
-
-        inherit_defaults = self._boolean(
-            raw.get(
-                "inherit_defaults",
-                True,
-            ),
-            location=f"{location}.inherit_defaults",
-        )
-
-        class_mandatory_attributes = self._parse_mandatory_attributes(
-            raw.get(
-                "mandatory",
-                (),
-            ),
-            location=f"{location}.mandatory",
-        )
-        class_attribute_validations = self._parse_attribute_validation_groups(
-            raw.get(
-                "validation_rules",
-                {},
-            ),
-            location=f"{location}.validation_rules",
-        )
-        class_object_validations = self._parse_object_validation_groups(
-            raw.get(
-                "object_validation_rules",
-                {},
-            ),
-            location=(f"{location}.object_validation_rules"),
-        )
-
-        if inherit_defaults:
-            mandatory_attributes = (
-                default_mandatory_attributes | class_mandatory_attributes
-            )
-
-            attribute_validations = dict(
-                default_attribute_validations,
-            )
-            attribute_validations.update(
-                class_attribute_validations,
-            )
-
-            object_validations = dict(
-                default_object_validations,
-            )
-            object_validations.update(
-                class_object_validations,
-            )
-        else:
-            mandatory_attributes = class_mandatory_attributes
-            attribute_validations = dict(
-                class_attribute_validations,
-            )
-            object_validations = dict(
-                class_object_validations,
+            raise ValueError(
+                f"{location}.id must be a non-empty string."
             )
 
         return ClassValidationDefinition(
             class_id=class_id,
-            mandatory_attributes=(mandatory_attributes),
-            attribute_validations=(attribute_validations),
-            object_validations=(object_validations),
+            mandatory_attributes=(
+                self._parse_mandatory_attributes(
+                    raw.get(
+                        "mandatory",
+                        (),
+                    ),
+                    location=(
+                        f"{location}.mandatory"
+                    ),
+                )
+            ),
+            attribute_validations=(
+                self._parse_attribute_validation_groups(
+                    raw.get(
+                        "validation_rules",
+                        {},
+                    ),
+                    location=(
+                        f"{location}.validation_rules"
+                    ),
+                )
+            ),
+            object_validations=(
+                self._parse_object_validation_groups(
+                    raw.get(
+                        "object_validation_rules",
+                        {},
+                    ),
+                    location=(
+                        f"{location}."
+                        "object_validation_rules"
+                    ),
+                )
+            ),
         )
 
     def _parse_classes(
         self,
         raw_classes: Any,
-        *,
-        default_mandatory_attributes: frozenset[str,],
-        default_attribute_validations: Mapping[
-            str,
-            tuple[
-                AttributeValidation,
-                ...,
-            ],
-        ],
-        default_object_validations: Mapping[
-            str,
-            tuple[
-                ObjectValidation,
-                ...,
-            ],
-        ],
     ) -> tuple[
         ClassValidationDefinition,
         ...,
     ]:
         """
-        Parse class-specific definitions and materialize defaults.
+        Parse class-specific validation definitions.
         """
         classes = self._sequence(
             raw_classes,
@@ -311,19 +347,22 @@ class ValidationParser:
             self._parse_class(
                 self._mapping(
                     raw_class,
-                    location=f"classes[{index}]",
+                    location=(
+                        f"classes[{index}]"
+                    ),
                 ),
                 index=index,
-                default_mandatory_attributes=(default_mandatory_attributes),
-                default_attribute_validations=(default_attribute_validations),
-                default_object_validations=(default_object_validations),
             )
             for index, raw_class in enumerate(
                 classes,
             )
         )
 
-        class_ids = [class_definition.class_id for class_definition in parsed_classes]
+        class_ids = [
+            class_definition.class_id
+            for class_definition
+            in parsed_classes
+        ]
 
         duplicate_class_ids = {
             class_id
@@ -343,41 +382,43 @@ class ValidationParser:
 
         return parsed_classes
 
-    def _boolean(
+    def _without_excluded_classes(
         self,
-        value: Any,
-        *,
-        location: str,
-    ) -> bool:
+        groups: Mapping[
+            str,
+            Any,
+        ],
+    ) -> dict[
+        str,
+        Any,
+    ]:
         """
-        Return a Boolean value or raise a configuration error.
+        Return validation groups without the reserved exclusion entry.
+
+        ``excluded_classes`` configures default applicability; it is not a
+        validation group and must not be parsed as a canonical attribute or
+        object-validation identifier.
         """
-        if not isinstance(
-            value,
-            bool,
-        ):
-            raise TypeError(
-                f"Expected boolean at {location}, got {type(value).__name__}."
-            )
+        return {
+            group_id: raw_group
+            for group_id, raw_group in groups.items()
+            if group_id != self._EXCLUDED_CLASSES_KEY
+        }
 
-        return value
-
-    def _parse_mandatory_attributes(
+    def _parse_class_ids(
         self,
         raw: Any,
         *,
         location: str,
-    ) -> frozenset[str]:
+    ) -> frozenset"""
+        Parse canonical class identifiers in a default-exclusion list.
         """
-        Parse mandatory canonical attribute identifiers.
-        """
-
         values = self._sequence(
             raw,
             location=location,
         )
 
-        mandatory_attributes = []
+        class_ids: list[str] = []
 
         for index, value in enumerate(
             values,
@@ -389,10 +430,81 @@ class ValidationParser:
                 )
                 or not value
             ):
-                raise TypeError(f"{location}[{index}] must be a non-empty string.")
+                raise TypeError(
+                    f"{location}[{index}] must be a "
+                    "non-empty string."
+                )
+
+            class_ids.append(
+                value,
+            )
+
+        duplicate_class_ids = {
+            class_id
+            for class_id in class_ids
+            if class_ids.count(
+                class_id,
+            )
+            > 1
+        }
+
+        if duplicate_class_ids:
+            raise ValueError(
+                f"{location} contains duplicate class "
+                f"identifiers: {sorted(duplicate_class_ids)!r}."
+            )
+
+        return frozenset(
+            class_ids,
+        )
+
+    def _parse_mandatory_attributes(
+        self,
+        raw: Any,
+        *,
+        location: str,
+    ) -> frozenset"""
+        Parse mandatory canonical attribute identifiers.
+        """
+        values = self._sequence(
+            raw,
+            location=location,
+        )
+
+        mandatory_attributes: list[str] = []
+
+        for index, value in enumerate(
+            values,
+        ):
+            if (
+                not isinstance(
+                    value,
+                    str,
+                )
+                or not value
+            ):
+                raise TypeError(
+                    f"{location}[{index}] must be a "
+                    "non-empty string."
+                )
 
             mandatory_attributes.append(
                 value,
+            )
+
+        duplicate_attributes = {
+            attribute_id
+            for attribute_id in mandatory_attributes
+            if mandatory_attributes.count(
+                attribute_id,
+            )
+            > 1
+        }
+
+        if duplicate_attributes:
+            raise ValueError(
+                f"{location} contains duplicate attribute "
+                f"identifiers: {sorted(duplicate_attributes)!r}."
             )
 
         return frozenset(
@@ -414,7 +526,6 @@ class ValidationParser:
         """
         Parse attribute validation groups keyed by attribute identifier.
         """
-
         groups = self._mapping(
             raw,
             location=location,
@@ -425,9 +536,13 @@ class ValidationParser:
                 self._parse_attribute_validations(
                     self._group_rules(
                         raw_group,
-                        location=(f"{location}.{attribute_id}"),
+                        location=(
+                            f"{location}.{attribute_id}"
+                        ),
                     ),
-                    location=(f"{location}.{attribute_id}.rules"),
+                    location=(
+                        f"{location}.{attribute_id}.rules"
+                    ),
                 )
             )
             for attribute_id, raw_group in groups.items()
@@ -448,7 +563,6 @@ class ValidationParser:
         """
         Parse object validation groups keyed by configuration identifier.
         """
-
         groups = self._mapping(
             raw,
             location=location,
@@ -459,9 +573,13 @@ class ValidationParser:
                 self._parse_object_validations(
                     self._group_rules(
                         raw_group,
-                        location=(f"{location}.{group_id}"),
+                        location=(
+                            f"{location}.{group_id}"
+                        ),
                     ),
-                    location=(f"{location}.{group_id}.rules"),
+                    location=(
+                        f"{location}.{group_id}.rules"
+                    ),
                 )
             )
             for group_id, raw_group in groups.items()
@@ -472,13 +590,19 @@ class ValidationParser:
         raw_group: Any,
         *,
         location: str,
-    ) -> Sequence[Any,]:
-        """
+    ) -> Sequence"""
         Return the raw rules contained in one validation group.
         """
-
         group = self._mapping(
             raw_group,
+            location=location,
+        )
+
+        self._assert_known_keys(
+            group,
+            allowed_keys={
+                "rules",
+            },
             location=location,
         )
 
@@ -487,12 +611,14 @@ class ValidationParser:
                 "rules",
                 (),
             ),
-            location=f"{location}.rules",
+            location=(
+                f"{location}.rules"
+            ),
         )
 
     def _parse_attribute_validations(
         self,
-        raw_validations: Sequence[Any,],
+        raw_validations: Sequence[Any],
         *,
         location: str,
     ) -> tuple[
@@ -502,16 +628,20 @@ class ValidationParser:
         """
         Parse attribute-level validation rules.
         """
-
         return tuple(
             self._parse_attribute_validation(
                 self._mapping(
                     raw_validation,
-                    location=(f"{location}[{index}]"),
+                    location=(
+                        f"{location}[{index}]"
+                    ),
                 ),
-                location=(f"{location}[{index}]"),
+                location=(
+                    f"{location}[{index}]"
+                ),
             )
-            for index, raw_validation in enumerate(
+            for index, raw_validation
+            in enumerate(
                 raw_validations,
             )
         )
@@ -528,6 +658,17 @@ class ValidationParser:
         """
         Parse one attribute-level validation rule.
         """
+        self._assert_known_keys(
+            data,
+            allowed_keys={
+                "id",
+                "level",
+                "operations",
+                "context_value",
+                "parameters",
+            },
+            location=location,
+        )
 
         return AttributeValidation(
             id=self._validation_id(
@@ -549,20 +690,24 @@ class ValidationParser:
                 data.get(
                     "context_value",
                 ),
-                location=(f"{location}.context_value"),
+                location=(
+                    f"{location}.context_value"
+                ),
             ),
             parameters=self._parameters(
                 data.get(
                     "parameters",
                     {},
                 ),
-                location=f"{location}.parameters",
+                location=(
+                    f"{location}.parameters"
+                ),
             ),
         )
 
     def _parse_object_validations(
         self,
-        raw_validations: Sequence[Any,],
+        raw_validations: Sequence[Any],
         *,
         location: str,
     ) -> tuple[
@@ -572,16 +717,20 @@ class ValidationParser:
         """
         Parse object-level validation rules.
         """
-
         return tuple(
             self._parse_object_validation(
                 self._mapping(
                     raw_validation,
-                    location=(f"{location}[{index}]"),
+                    location=(
+                        f"{location}[{index}]"
+                    ),
                 ),
-                location=(f"{location}[{index}]"),
+                location=(
+                    f"{location}[{index}]"
+                ),
             )
-            for index, raw_validation in enumerate(
+            for index, raw_validation
+            in enumerate(
                 raw_validations,
             )
         )
@@ -598,6 +747,16 @@ class ValidationParser:
         """
         Parse one object-level validation rule.
         """
+        self._assert_known_keys(
+            data,
+            allowed_keys={
+                "id",
+                "level",
+                "operations",
+                "parameters",
+            },
+            location=location,
+        )
 
         return ObjectValidation(
             id=self._validation_id(
@@ -621,7 +780,9 @@ class ValidationParser:
                     "parameters",
                     {},
                 ),
-                location=f"{location}.parameters",
+                location=(
+                    f"{location}.parameters"
+                ),
             ),
         )
 
@@ -637,7 +798,6 @@ class ValidationParser:
         """
         Return and validate a validation identifier.
         """
-
         validation_id = data.get(
             "id",
         )
@@ -649,7 +809,9 @@ class ValidationParser:
             )
             or not validation_id
         ):
-            raise ValueError(f"{location}.id must be a non-empty string.")
+            raise ValueError(
+                f"{location}.id must be a non-empty string."
+            )
 
         return validation_id
 
@@ -665,18 +827,19 @@ class ValidationParser:
         """
         Parse a validation finding severity.
         """
+        raw_level = data.get(
+            "level",
+            "error",
+        )
 
         try:
             return Severity(
-                data.get(
-                    "level",
-                    "error",
-                )
+                raw_level,
             )
         except ValueError as exception:
             raise ValueError(
                 f"{location}.level contains an unsupported "
-                f"severity: {data.get('level')!r}."
+                f"severity: {raw_level!r}."
             ) from exception
 
     def _operations(
@@ -698,15 +861,19 @@ class ValidationParser:
         """
         Parse applicable change operations.
         """
-
         raw_operations = data.get(
             "operations",
-            tuple(operation.value for operation in default),
+            tuple(
+                operation.value
+                for operation in default
+            ),
         )
 
         operation_values = self._sequence(
             raw_operations,
-            location=f"{location}.operations",
+            location=(
+                f"{location}.operations"
+            ),
         )
 
         try:
@@ -718,7 +885,8 @@ class ValidationParser:
             )
         except ValueError as exception:
             raise ValueError(
-                f"{location}.operations contains an unsupported change operation."
+                f"{location}.operations contains an "
+                "unsupported change operation."
             ) from exception
 
     def _parameters(
@@ -736,7 +904,6 @@ class ValidationParser:
         The ``attributes`` parameter is normalized to a tuple of canonical
         attribute identifiers.
         """
-
         parameters = dict(
             self._mapping(
                 raw,
@@ -746,11 +913,15 @@ class ValidationParser:
 
         if "attributes" in parameters:
             raw_attributes = self._sequence(
-                parameters["attributes"],
-                location=f"{location}.attributes",
+                parameters[
+                    "attributes"
+                ],
+                location=(
+                    f"{location}.attributes"
+                ),
             )
 
-            attributes = []
+            attributes: list[str] = []
 
             for index, attribute_id in enumerate(
                 raw_attributes,
@@ -763,7 +934,8 @@ class ValidationParser:
                     or not attribute_id
                 ):
                     raise TypeError(
-                        f"{location}.attributes[{index}] must be a non-empty string."
+                        f"{location}.attributes[{index}] "
+                        "must be a non-empty string."
                     )
 
                 attributes.append(
@@ -788,7 +960,6 @@ class ValidationParser:
         """
         Return a mapping or raise a configuration error.
         """
-
         if value is None:
             return {}
 
@@ -797,7 +968,8 @@ class ValidationParser:
             Mapping,
         ):
             raise TypeError(
-                f"Expected mapping at {location}, got {type(value).__name__}."
+                f"Expected mapping at {location}, "
+                f"got {type(value).__name__}."
             )
 
         return value
@@ -807,11 +979,9 @@ class ValidationParser:
         value: Any,
         *,
         location: str,
-    ) -> Sequence[Any,]:
-        """
+    ) -> Sequence"""
         Return a non-string sequence or raise a configuration error.
         """
-
         if value is None:
             return ()
 
@@ -827,7 +997,8 @@ class ValidationParser:
             Sequence,
         ):
             raise TypeError(
-                f"Expected sequence at {location}, got {type(value).__name__}."
+                f"Expected sequence at {location}, "
+                f"got {type(value).__name__}."
             )
 
         return value
@@ -841,7 +1012,6 @@ class ValidationParser:
         """
         Return an optional non-empty string.
         """
-
         if value is None:
             return None
 
@@ -852,6 +1022,38 @@ class ValidationParser:
             )
             or not value
         ):
-            raise TypeError(f"{location} must be a non-empty string or null.")
+            raise TypeError(
+                f"{location} must be a non-empty "
+                "string or null."
+            )
 
         return value
+
+    def _assert_known_keys(
+        self,
+        raw: Mapping[
+            str,
+            Any,
+        ],
+        *,
+        allowed_keys: set[str],
+        location: str,
+    ) -> None:
+        """
+        Reject unknown configuration keys.
+
+        This prevents misspelled fields and misplaced reserved entries from
+        silently becoming validation groups.
+        """
+        unknown_keys = (
+            set(
+                raw,
+            )
+            - allowed_keys
+        )
+
+        if unknown_keys:
+            raise ValueError(
+                f"Unsupported keys at {location}: "
+                f"{sorted(unknown_keys)!r}."
+            )

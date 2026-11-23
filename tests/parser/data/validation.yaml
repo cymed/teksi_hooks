@@ -1,9 +1,21 @@
 defaults:
   mandatory:
+    attributes:
       - obj_id
       - identifier
       - fk_provider
       - fk_dataowner
+    excluded_classes:
+      - agxx_wastewater_networkelement
+      - agxx_last_modification
+      - agxx_wastewater_node
+      - agxx_wastewater_structure
+      - agxx_reach
+      - agxx_reach_point
+      - agxx_overflow
+      - agxx_building_group
+      - agxx_catchment_area_totals
+      - agxx_infiltration_zone
   validation_rules:
     last_modification:
       rules:
@@ -23,6 +35,17 @@ defaults:
           level: error
           operations:
             - insert
+    excluded_classes:
+      - agxx_wastewater_networkelement
+      - agxx_last_modification
+      - agxx_wastewater_node
+      - agxx_wastewater_structure
+      - agxx_reach
+      - agxx_reach_point
+      - agxx_overflow
+      - agxx_building_group
+      - agxx_catchment_area_totals
+      - agxx_infiltration_zone
   object_validation_rules:
     unique_identifier_combo:
       rules:
@@ -32,6 +55,18 @@ defaults:
               - identifier
               - fk_dataowner
           level: error
+    excluded_classes:
+      - file
+      - agxx_wastewater_networkelement
+      - agxx_last_modification
+      - agxx_wastewater_node
+      - agxx_wastewater_structure
+      - agxx_reach
+      - agxx_reach_point
+      - agxx_overflow
+      - agxx_building_group
+      - agxx_catchment_area_totals
+      - agxx_infiltration_zone
 
 
 
@@ -42,7 +77,7 @@ classes:
 
   - id: reach
 
-  - id: reach_alternative
+  - id: reach_progression_alternative
 
   - id: reach_text
 
@@ -74,7 +109,7 @@ classes:
 
   - id: special_structure
 
-  - id: infiltration_instalation
+  - id: infiltration_installation
 
   - id: mechanical_pretreatment
 
@@ -232,7 +267,7 @@ classes:
   - id: catchment_area_totals
 
 
-  - id: biol_ecol_assessment
+  - id: bio_ecol_assessment
 
 
   # ---------------------------------------------------------
@@ -267,20 +302,75 @@ classes:
 
   - id: data_media
 
-  - id: agxx_wastewater_networkelement
 
+  # ---------------------
+  # weitere
+  # ---------------------
+
+
+  - id: mutation
+
+  - id: param_ca_general
+
+  - id: param_ca_mouse1
+
+  # -------------
+  # AG-64 / AG-96
+  # -------------
+
+  - id: agxx_wastewater_networkelement
+    mandatory:
+      - fk_wastewater_networkelement
   - id: agxx_last_modification
+    mandatory:
+      - fk_element
+    validation_rules:
+      ag64_last_modification:
+        rules:
+          - id: newer_than_existing
+            level: info
+      ag96_last_modification:
+        rules:
+          - id: newer_than_existing
+            level: info
+
+
+
 
   - id: agxx_wastewater_node
+    mandatory:
+      - fk_wastewater_node
+
 
   - id: agxx_wastewater_structure
+    mandatory:
+      - fk_wastewater_structure
+
 
   - id: agxx_reach
+    mandatory:
+      - fk_reach
+
+
+  - id: agxx_reach_point
+    mandatory:
+      - fk_reach_point
+
 
   - id: agxx_overflow
+    mandatory:
+      - fk_overflow
+
 
   - id: agxx_building_group
+    mandatory:
+      - fk_building_group
 
   - id: agxx_catchment_area_totals
+    mandatory:
+      - fk_catchment_area_totals
 
   - id: agxx_infiltration_zone
+    mandatory:
+      - fk_infiltration_zone
+
