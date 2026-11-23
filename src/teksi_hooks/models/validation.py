@@ -852,19 +852,6 @@ class ValidationDefinition:
         },
     )
 
-    classes: Mapping[
-        str,
-        ClassValidationDefinition,
-    ] = field(
-        default_factory=dict,
-        metadata={
-            "doc": (
-                "Class-specific validation definitions keyed by canonical "
-                "class identifier."
-            )
-        },
-    )
-
     def mandatory_for_class(
         self,
         class_id: str,
