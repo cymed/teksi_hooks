@@ -326,6 +326,7 @@ class Change:
             f"comparison type: {type(comparison)!r}."
         )
 
+
 class ChangeOperation(StrEnum):
     """
     Supported row-level change operations.
